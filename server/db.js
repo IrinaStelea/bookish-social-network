@@ -46,6 +46,20 @@ module.exports.findUser = (email) => {
     return db.query(`SELECT * FROM users WHERE email = $1`, [email]);
 };
 
+module.exports.getUserData = (id) => {
+    return db.query(`SELECT first, last, avatarurl FROM users WHERE id = $1`, [
+        id,
+    ]);
+};
+
+module.exports.updateImage = (userId, imageUrl) => {
+    return db.query(
+        `
+    UPDATE users SET avatarurl=$2 WHERE id=$1 RETURNING avatarurl`,
+        [userId, imageUrl]
+    );
+};
+
 module.exports.updatePassword = (email, password) => {
     return hashPassword(password).then((hashedPass) => {
         console.log("hashed new pass", hashedPass);

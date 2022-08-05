@@ -12,16 +12,17 @@ class Registration extends Component {
             password: "",
             // isUserLoggedIn: false, //convention is that variables with boolean values are prefixed with "is"
             errorMessage: "",
-            // errors: {
-            //     firstName: false,
-            //     lastName: false,
-            //     email: false,
-            //     password: false,
-            // },
+            errors: {
+                firstName: false,
+                lastName: false,
+                email: false,
+                password: false,
+            },
         };
         //very important to bind these two functions here
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
+        this.validateFields = this.validateFields.bind(this);
     }
 
     componentDidMount() {
@@ -41,11 +42,32 @@ class Registration extends Component {
         });
     }
 
+    validateFields() {
+        const errors = {};
+        let valid = true;
+        const fields = ["firstName", "lastName", "email", "password"];
+
+        for (let field of fields) {
+            if (!this.state[field]) {
+                errors[field] = true;
+                console.log("this field is not filled", field);
+                console.log("errors object", errors);
+                this.setState({ errors: errors });
+                console.log("state errors are", this.state.errors);
+            } else {
+                return valid;
+            }
+        }
+    }
+
     onFormSubmit(e) {
         e.preventDefault();
-        // if(this.validateFields()){
-        //     return;
-        // }
+
+        if (!this.validateFields()) {
+            console.log("not all fields are valid, return");
+            console.log("the errors are", this.state.errors);
+            return;
+        }
 
         const formData = {
             firstName: this.state.firstName,
@@ -78,13 +100,6 @@ class Registration extends Component {
                 console.log(err);
             });
     }
-
-    // validateFields() {
-    //     const errors = {};
-    //     let valid = true;
-    //     const fields = ["firstName", "lastName", "email", "password"];
-    // }
-
     // logInUser() {
     //     this.setState({
     //         isUserLoggedIn: true,
@@ -121,7 +136,9 @@ class Registration extends Component {
                             placeholder="First name"
                             value={this.state.firstName}
                             onChange={this.onFormInputChange}
-                            // className={this.state.errors.firstName ? "error" : ""}
+                            className={
+                                this.state.errors.firstName ? "errorfield" : ""
+                            }
                         ></input>
                         <label htmlFor="lastName">Last Name</label>
                         <input
@@ -130,6 +147,9 @@ class Registration extends Component {
                             placeholder="Last name"
                             value={this.state.lastName}
                             onChange={this.onFormInputChange}
+                            className={
+                                this.state.errors.lastName ? "errorfield" : ""
+                            }
                         ></input>
                         <label htmlFor="email">Email</label>
                         <input
@@ -138,6 +158,9 @@ class Registration extends Component {
                             placeholder="Email"
                             value={this.state.email}
                             onChange={this.onFormInputChange}
+                            className={
+                                this.state.errors.email ? "errorfield" : ""
+                            }
                         ></input>
                         <label htmlFor="password">Password</label>
                         <input
@@ -146,6 +169,9 @@ class Registration extends Component {
                             placeholder="Password"
                             value={this.state.password}
                             onChange={this.onFormInputChange}
+                            className={
+                                this.state.errors.password ? "errorfield" : ""
+                            }
                         ></input>
                         <input
                             type="submit"

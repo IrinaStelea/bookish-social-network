@@ -16,3 +16,7 @@ CREATE TABLE reset_codes(
     code VARCHAR NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+imageUrl TEXT
+
+ALTER TABLE users ADD COLUMN avatarurl TEXT;

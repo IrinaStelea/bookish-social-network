@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom";
 import Welcome from "./components/Welcome.js";
-import Logo from "./components/Logo.js";
+import App from "./components/App.js";
 
 // ReactDOM.render(<Welcome />, document.querySelector("main"));
 
@@ -14,10 +14,10 @@ fetch("/user/id.json")
     .then((data) => {
         if (!data.userId) {
             // this means that the user doens't have a userId and should see Welcome/Registration for now
-            console.log("data userId should be undefined", data.userId);
+            // console.log("data userId should be undefined", data.userId);
             ReactDOM.render(<Welcome />, document.querySelector("main"));
         } else {
             // this means the user is registered because their browser DID have the right cookie and they should be shown a page with the logo
-            ReactDOM.render(<Logo />, document.querySelector("main"));
+            ReactDOM.render(<App />, document.querySelector("main"));
         }
     });
