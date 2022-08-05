@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { Link } from "react-router-dom";
 import "./Registration.css";
 
 class Registration extends Component {
@@ -11,16 +12,24 @@ class Registration extends Component {
             password: "",
             // isUserLoggedIn: false, //convention is that variables with boolean values are prefixed with "is"
             errorMessage: "",
-            errors: {
-                firstName: false,
-                lastName: false,
-                email: false,
-                password: false,
-            },
+            // errors: {
+            //     firstName: false,
+            //     lastName: false,
+            //     email: false,
+            //     password: false,
+            // },
         };
-        //very important to bind these two functions
+        //very important to bind these two functions here
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        console.log("the registration component mounted");
+    }
+
+    componentWillUnmount() {
+        //here you can clear up resources that might be needed
     }
 
     //whenever there is a change in one of the input fields, set the state immediately to update it
@@ -38,7 +47,7 @@ class Registration extends Component {
         //     return;
         // }
 
-        const userData = {
+        const formData = {
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             email: this.state.email,
@@ -50,11 +59,12 @@ class Registration extends Component {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(formData),
         })
             .then((response) => response.json())
             .then((data) => {
                 console.log("data after register fetch", data);
+                //if something goes wrong, stay on page and display error message
                 if (!data.success && data.message) {
                     this.setState({
                         errorMessage: data.message,
@@ -72,7 +82,7 @@ class Registration extends Component {
     // validateFields() {
     //     const errors = {};
     //     let valid = true;
-    //     const fields = ["firstName"];
+    //     const fields = ["firstName", "lastName", "email", "password"];
     // }
 
     // logInUser() {
@@ -88,14 +98,15 @@ class Registration extends Component {
                 {/* {!this.state.isUserLoggedIn && ( */}
                 {/* //the second set of brackets to create another parent element
                     <> */}
-                {this.state.errorMessage && (
-                    <p className="error">{this.state.errorMessage}</p>
-                )}
+                <h3>Welcome</h3>
                 <div className="container">
                     <img
                         src="https://cdn.socialchamp.io/wp-content/uploads/2019/01/SC-Blog-Banner_Nov_2018_1078x516_14.png"
                         alt="social media illustration"
                     />
+                    {this.state.errorMessage && (
+                        <p className="error">{this.state.errorMessage}</p>
+                    )}
                     <p>Please register by filling out the form below:</p>
                     <form
                         id="registration"
@@ -143,7 +154,7 @@ class Registration extends Component {
                         ></input>
                     </form>
                     <p>
-                        Already a member? <a href="#">Log in</a>
+                        Already a member? <Link to="/login">Log in</Link>
                     </p>
                     {/* <button onClick={() => this.logInUser()}>Log in</button> */}
                 </div>

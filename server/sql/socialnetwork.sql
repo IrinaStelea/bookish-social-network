@@ -8,3 +8,11 @@ CREATE TABLE users(
     password VARCHAR NOT NULL CHECK (password != ''),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE reset_codes(
+    id SERIAL PRIMARY KEY,
+    email VARCHAR NOT NULL,
+    code VARCHAR NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

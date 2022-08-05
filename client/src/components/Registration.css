@@ -1,11 +1,17 @@
-#registration {
+#registration,
+#login,
+#reset,
+#send-code {
     /* width: 30vw; */
     display: flex;
     flex-direction: column;
     gap: 1vh;
 }
 
-#registration label {
+#registration,
+#login,
+#reset,
+#send-code label {
     margin-top: 2vh;
 }
 
@@ -20,6 +26,15 @@
     width: 40vw;
 }
 
+#logo {
+    width: 10vw;
+}
+
 #submit {
     margin-top: 2vh;
+}
+
+.error {
+    color: red;
+    font-style: italic;
 }

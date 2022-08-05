@@ -5,22 +5,37 @@ const path = require("path");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const db = require("./db.js");
+const cryptoRandomString = require("crypto-random-string");
+const { sendCodeEmail } = require("./ses");
 
 app.use(compression());
 
+//middleware that generates a random string
+const secretCode = cryptoRandomString({
+    length: 6,
+});
+
+const COOKIE_SECRET =
+    process.env.COOKIE_SECRET || require("../secrets.json").COOKIE_SECRET;
+
 app.use(
     cookieSession({
-        secret: "Sloths are the fastest animals",
+        secret: COOKIE_SECRET,
         maxAge: 1000 * 60 * 60 * 24 * 14,
+        sameSite: true,
     })
 );
 
+//enable us to unpack JSON IN the request body
 app.use(express.json());
+//important to include body parser
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-app.post("/register.json", (req, res) => {
-    //to do: form validation
+//TO DO: add middleware ensureSignedOut, validateRegistration (form validation) in the post register route
 
+app.post("/register.json", (req, res) => {
+    //add user to database
     db.insertUser(
         req.body.firstName,
         req.body.lastName,
@@ -38,7 +53,7 @@ app.post("/register.json", (req, res) => {
                 // firstName,
             };
             console.log("user id cookie assigned", req.session.userId);
-            // redirect to petition page
+            //send success message
             res.json({ success: true });
         })
         .catch((err) => {
@@ -50,10 +65,183 @@ app.post("/register.json", (req, res) => {
         });
 });
 
+app.post("/login.json", (req, res) => {
+    //to do - clean email
+    //check user details in database
+    db.findUser(req.body.email)
+        .then((results) => {
+            console.log(
+                "user email exists, here is the entire info",
+                results.rows
+            );
+            //check password
+            let inputPass = req.body.password;
+            let dbPass = results.rows[0].password;
+            //authenticate the user
+            // (TO DO: consider moving this password check to db.js)
+            return bcrypt
+                .compare(inputPass, dbPass)
+                .then((result) => {
+                    if (result) {
+                        console.log("authentication successful");
+
+                        //set the cookie session on the user id to keep track of login
+                        const userId = results.rows[0].id;
+                        // const firstName = results.rows[0].first;
+                        req.session = {
+                            userId,
+                            // firstName,
+                        };
+                        console.log(
+                            "user id cookie assigned at login",
+                            req.session.userId
+                        );
+
+                        return res.json({
+                            success: true,
+                        });
+                    } else {
+                        console.log(
+                            "authentication failed. passwords don't match"
+                        );
+                        return res.json({
+                            success: false,
+                            message: "Invalid email or password",
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log("error bcrypt compare", err);
+                });
+        })
+        .catch((err) => {
+            console.log("error in finding user in the database", err);
+            return res.json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        });
+});
+
+app.post("/password/reset/start.json", (req, res) => {
+    //to do: clean email
+    db.findUser(req.body.email)
+        .then((results) => {
+            console.log(
+                "user email exists, here is the entire info",
+                results.rows
+            );
+            //generate secret code
+            //insert secret code in new table
+            db.insertCode(results.rows[0].email, secretCode)
+                .then((results) => {
+                    console.log(
+                        "secret code was added successfully",
+                        results.rows
+                    );
+                    //send code to user
+                    let code = results.rows[0].code;
+                    return sendCodeEmail(code)
+                        .then(() => {
+                            console.log("email code sent successfully");
+                            return res.json({
+                                success: true,
+                            });
+                        })
+                        .catch((err) => {
+                            console.log("error in sending code via email", err);
+                            return res.json({
+                                success: false,
+                                message:
+                                    "Something went wrong, please try again",
+                            });
+                        });
+                })
+                .catch((error) => {
+                    console.log("error in inserting code", error);
+                    return res.json({
+                        success: false,
+                        message: "Something went wrong, please try again",
+                    });
+                });
+        })
+        .catch((err) => {
+            console.log("error in finding user in the database", err);
+            return res.json({
+                success: false,
+                message: "Please check if you entered your email correctly",
+            });
+        });
+});
+
+app.post("/password/reset/verify.json", (req, res) => {
+    //to do: clean email
+
+    //find code in the most recent ones
+    db.findCode(req.body.email)
+        .then((results) => {
+            console.log(
+                "user email exists in reset codes table, here is the entire info",
+                results.rows
+            );
+            //check if the codes correspond
+            if (results.rows[0].code === req.body.code) {
+                console.log("the two codes correspond");
+
+                //hash the password and update the users row in the users table
+                db.updatePassword(results.rows[0].email, req.body.password)
+                    .then((results) => {
+                        console.log("update password worked", results);
+                        return res.json({
+                            success: true,
+                        });
+                    })
+                    .catch((error) => {
+                        console.log("error in updating password", error);
+                        return res.json({
+                            success: false,
+                            message: "Something went wrong, please try again!",
+                        });
+                    });
+            } else {
+                return res.json({
+                    success: false,
+                    message: "Please check if you entered your code correctly",
+                });
+            }
+        })
+        .catch((err) => {
+            console.log(
+                "error in finding the email in the reset codes table",
+                err
+            );
+            return res.json({
+                success: false,
+                message: "Please check if you entered your email correctly",
+            });
+        });
+});
+
+// app.post("/sendCode", (req, res) => {
+// database queries: confirm that email exists then  generate secret code calling the function then store the code in the table then send the secret code in via ses to the user
+//check code in resetcodes table in the time gap of 10 mins
+//send a success at the end
+// }) - this corresponds to the fetch we do in startResetFunction
+
+// app.post("/reset-password", (req, res) => {
+// receive the new code, compare in the db with code and email, and if they match, update the password - rehash it and update it in the db
+// });
+
 app.get("/user/id.json", function (req, res) {
-    res.json({
-        userId: req.session.userId,
-    });
+    if (req.session.userId) {
+        console.log("cookie exists exists");
+        res.json({
+            userId: req.session.userId,
+        });
+    } else {
+        console.log("cookie does not exist");
+        res.json({});
+    }
 });
 
 app.get("*", function (req, res) {
