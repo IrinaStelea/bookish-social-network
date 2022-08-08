@@ -55,7 +55,7 @@ export default class Uploader extends Component {
     render() {
         return (
             <div id="uploader">
-                <p>Want to change your image?</p>
+                <h3>Want to change your image?</h3>
                 {this.state.errorMessage && (
                     <p className="error">{this.state.errorMessage}</p>
                 )}

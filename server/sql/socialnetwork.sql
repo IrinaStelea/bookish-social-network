@@ -20,3 +20,5 @@ CREATE TABLE reset_codes(
 imageUrl TEXT
 
 ALTER TABLE users ADD COLUMN avatarurl TEXT;
+
+ALTER TABLE users ADD COLUMN bio TEXT;

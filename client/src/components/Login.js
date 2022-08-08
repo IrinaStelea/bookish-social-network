@@ -76,17 +76,12 @@ class Login extends Component {
     render() {
         return (
             <>
-                <h3>Welcome</h3>
-
                 <div className="container">
-                    <img
-                        src="https://cdn.socialchamp.io/wp-content/uploads/2019/01/SC-Blog-Banner_Nov_2018_1078x516_14.png"
-                        alt="social media illustration"
-                    />
+                    <img src="../../Logo_Bookish.png" alt="Logo" />
                     {this.state.errorMessage && (
                         <p className="error">{this.state.errorMessage}</p>
                     )}
-                    <p>Please login below:</p>
+                    <h3>Login to discuss your favorite books:</h3>
                     <form
                         id="login"
                         onSubmit={this.onFormSubmit}

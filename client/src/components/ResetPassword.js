@@ -99,7 +99,7 @@ export default class resetPassword extends Component {
         if (this.state.view === 1) {
             return (
                 <>
-                    <div className="container">
+                    <div className="reset-container">
                         <h3>Reset your password</h3>
                         {this.state.errorMessage && (
                             <p className="error">{this.state.errorMessage}</p>
@@ -123,7 +123,7 @@ export default class resetPassword extends Component {
                             <input
                                 type="submit"
                                 id="submit"
-                                value="Send verification code"
+                                value="Send code"
                             ></input>
                         </form>
                         <p>
@@ -138,7 +138,7 @@ export default class resetPassword extends Component {
             //another fetch
             return (
                 <>
-                    <div className="container">
+                    <div className="reset-container">
                         <h3>Reset your password</h3>
                         {this.state.errorMessage && (
                             <p className="error">{this.state.errorMessage}</p>
@@ -184,7 +184,7 @@ export default class resetPassword extends Component {
             //TO DO: set a button / interval to send the person back to login instead of the link
             return (
                 <>
-                    <div className="container">
+                    <div className="reset-container">
                         <h3>You have successfully updated your password</h3>
                         <p>
                             Go back to <Link to="/login">login</Link> page
@@ -197,11 +197,11 @@ export default class resetPassword extends Component {
 
     render() {
         return (
-            <div>
+            <>
                 <Logo />
                 {/* note syntax for calling the function */}
                 {this.currentView()}
-            </div>
+            </>
         );
     }
 }

@@ -13,9 +13,9 @@ const { uploader } = require("./middleware");
 app.use(compression());
 
 //middleware that generates a random string
-const secretCode = cryptoRandomString({
-    length: 6,
-});
+// let secretCode = cryptoRandomString({
+//     length: 6,
+// });
 
 const COOKIE_SECRET =
     process.env.COOKIE_SECRET || require("../secrets.json").COOKIE_SECRET;
@@ -134,6 +134,9 @@ app.post("/password/reset/start.json", (req, res) => {
                 results.rows
             );
             //generate secret code
+            let secretCode = cryptoRandomString({
+                length: 6,
+            });
             //insert secret code in new table
             db.insertCode(results.rows[0].email, secretCode)
                 .then((results) => {
@@ -141,7 +144,7 @@ app.post("/password/reset/start.json", (req, res) => {
                         "secret code was added successfully",
                         results.rows
                     );
-                    //send code to user
+                    //send code to user via SES
                     let code = results.rows[0].code;
                     return sendCodeEmail(code)
                         .then(() => {
@@ -179,7 +182,7 @@ app.post("/password/reset/start.json", (req, res) => {
 app.post("/password/reset/verify.json", (req, res) => {
     //to do: clean email
 
-    //find code in the most recent ones
+    //find code among the codes saved in the last 10 mins
     db.findCode(req.body.email)
         .then((results) => {
             console.log(
@@ -247,42 +250,25 @@ app.post("/upload-image", uploader.single("file"), s3.upload, (req, res) => {
                 message: "Something went wrong, please try again",
             });
         });
-    //     filePath,
-    //     req.body.username,
-    //     req.body.title,
-    //     req.body.description
-    // )
-    //     .then((results) => {
-    //         console.log("inserting new image worked, info is", results.rows);
-    //         // send response back to Vue once we know that the INSERT was successfull
-    //         res.json({
-    //             success: true,
-    //             message: "File uploaded successfully",
-    //             uploadedFile: results.rows[0],
-    //         });
-
-    //         //after the response above is sent, we are back in app.js (Vue) -> the .then() part of the fetch request will run
-    //     })
-    //     .catch((err) => {
-    //         console.log("error in adding new image", err);
-    //         res.json({
-    //             success: false,
-    //             message: "File upload failed",
-    //         });
-    //     });
-
-    // req.file ? res.json({ success: true }) : res.json({ success: false });
 });
 
-// app.post("/sendCode", (req, res) => {
-// database queries: confirm that email exists then  generate secret code calling the function then store the code in the table then send the secret code in via ses to the user
-//check code in resetcodes table in the time gap of 10 mins
-//send a success at the end
-// }) - this corresponds to the fetch we do in startResetFunction
-
-// app.post("/reset-password", (req, res) => {
-// receive the new code, compare in the db with code and email, and if they match, update the password - rehash it and update it in the db
-// });
+app.post("/edit-bio", (req, res) => {
+    db.updateBio(req.session.userId, req.body.bio)
+        .then((results) => {
+            console.log("updating bio worked, new bio is", results.rows[0].bio);
+            return res.json({
+                success: true,
+                bio: results.rows[0].bio,
+            });
+        })
+        .catch((err) => {
+            console.log("error in updating the bio", err);
+            return res.json({
+                success: false,
+                message: "Something went wrong, please try again",
+            });
+        });
+});
 
 app.get("/user", function (req, res) {
     db.getUserData(req.session.userId)

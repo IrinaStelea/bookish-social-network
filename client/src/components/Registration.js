@@ -44,7 +44,7 @@ class Registration extends Component {
 
     validateFields() {
         const errors = {};
-        let valid = true;
+        // let valid = true;
         const fields = ["firstName", "lastName", "email", "password"];
 
         for (let field of fields) {
@@ -52,10 +52,12 @@ class Registration extends Component {
                 errors[field] = true;
                 console.log("this field is not filled", field);
                 console.log("errors object", errors);
-                this.setState({ errors: errors });
+                this.setState({
+                    errors: errors,
+                    errorMessage: "Please complete all fields",
+                });
                 console.log("state errors are", this.state.errors);
-            } else {
-                return valid;
+                return errors;
             }
         }
     }
@@ -63,9 +65,9 @@ class Registration extends Component {
     onFormSubmit(e) {
         e.preventDefault();
 
-        if (!this.validateFields()) {
+        if (this.validateFields()) {
             console.log("not all fields are valid, return");
-            console.log("the errors are", this.state.errors);
+            console.log("state errors are", this.state.errors);
             return;
         }
 
@@ -113,72 +115,77 @@ class Registration extends Component {
                 {/* {!this.state.isUserLoggedIn && ( */}
                 {/* //the second set of brackets to create another parent element
                     <> */}
-                <h3>Welcome</h3>
+
                 <div className="container">
-                    <img
-                        src="https://cdn.socialchamp.io/wp-content/uploads/2019/01/SC-Blog-Banner_Nov_2018_1078x516_14.png"
-                        alt="social media illustration"
-                    />
+                    <img src="../../Logo_Bookish.png" alt="Logo" />
                     {this.state.errorMessage && (
                         <p className="error">{this.state.errorMessage}</p>
                     )}
-                    <p>Please register by filling out the form below:</p>
-                    <form
-                        id="registration"
-                        onSubmit={this.onFormSubmit}
-                        method="post"
-                        action="/register"
-                    >
-                        <label htmlFor="firstName">First Name</label>
-                        <input
-                            type="text"
-                            name="firstName"
-                            placeholder="First name"
-                            value={this.state.firstName}
-                            onChange={this.onFormInputChange}
-                            className={
-                                this.state.errors.firstName ? "errorfield" : ""
-                            }
-                        ></input>
-                        <label htmlFor="lastName">Last Name</label>
-                        <input
-                            type="text"
-                            name="lastName"
-                            placeholder="Last name"
-                            value={this.state.lastName}
-                            onChange={this.onFormInputChange}
-                            className={
-                                this.state.errors.lastName ? "errorfield" : ""
-                            }
-                        ></input>
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={this.state.email}
-                            onChange={this.onFormInputChange}
-                            className={
-                                this.state.errors.email ? "errorfield" : ""
-                            }
-                        ></input>
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            value={this.state.password}
-                            onChange={this.onFormInputChange}
-                            className={
-                                this.state.errors.password ? "errorfield" : ""
-                            }
-                        ></input>
-                        <input
-                            type="submit"
-                            id="submit"
-                            value="Register"
-                        ></input>
-                    </form>
+                    <h3>Register to discuss your favorite books:</h3>
+                    <div className="form-container">
+                        <form
+                            id="registration"
+                            onSubmit={this.onFormSubmit}
+                            method="post"
+                            action="/register"
+                        >
+                            <label htmlFor="firstName">First Name</label>
+                            <input
+                                type="text"
+                                name="firstName"
+                                placeholder="First name"
+                                value={this.state.firstName}
+                                onChange={this.onFormInputChange}
+                                className={
+                                    this.state.errors.firstName
+                                        ? "errorfield"
+                                        : ""
+                                }
+                            ></input>
+                            <label htmlFor="lastName">Last Name</label>
+                            <input
+                                type="text"
+                                name="lastName"
+                                placeholder="Last name"
+                                value={this.state.lastName}
+                                onChange={this.onFormInputChange}
+                                className={
+                                    this.state.errors.lastName
+                                        ? "errorfield"
+                                        : ""
+                                }
+                            ></input>
+                            <label htmlFor="email">Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={this.state.email}
+                                onChange={this.onFormInputChange}
+                                className={
+                                    this.state.errors.email ? "errorfield" : ""
+                                }
+                            ></input>
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={this.state.password}
+                                onChange={this.onFormInputChange}
+                                className={
+                                    this.state.errors.password
+                                        ? "errorfield"
+                                        : ""
+                                }
+                            ></input>
+                            <input
+                                type="submit"
+                                id="submit"
+                                value="Register"
+                            ></input>
+                        </form>
+                    </div>
                     <p>
                         Already a member? <Link to="/login">Log in</Link>
                     </p>
