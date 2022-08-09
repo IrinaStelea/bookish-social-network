@@ -55,6 +55,9 @@ export default class Uploader extends Component {
     render() {
         return (
             <div id="uploader">
+                <h4 id="close" onClick={this.props.toggleUploader}>
+                    X
+                </h4>
                 <h3>Want to change your image?</h3>
                 {this.state.errorMessage && (
                     <p className="error">{this.state.errorMessage}</p>

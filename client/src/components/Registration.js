@@ -22,7 +22,7 @@ class Registration extends Component {
         //very important to bind these two functions here
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
-        this.validateFields = this.validateFields.bind(this);
+        this.validateForm = this.validateForm.bind(this);
     }
 
     componentDidMount() {
@@ -42,32 +42,66 @@ class Registration extends Component {
         });
     }
 
-    validateFields() {
+    validateForm() {
         const errors = {};
-        // let valid = true;
+        let validField = false;
+        let errorMessage = ``;
         const fields = ["firstName", "lastName", "email", "password"];
 
         for (let field of fields) {
             if (!this.state[field]) {
                 errors[field] = true;
+                errorMessage = "Please fill out all fields \n";
                 console.log("this field is not filled", field);
-                console.log("errors object", errors);
-                this.setState({
-                    errors: errors,
-                    errorMessage: "Please complete all fields",
-                });
-                console.log("state errors are", this.state.errors);
-                return errors;
+                validField = true;
             }
         }
+
+        //email
+        if (this.state.email) {
+            let lastAtPos = this.state.email.lastIndexOf("@");
+            let lastDotPos = this.state.email.lastIndexOf(".");
+
+            if (
+                !(
+                    lastAtPos < lastDotPos &&
+                    lastAtPos > 0 &&
+                    this.state.email.indexOf("@@") == -1 &&
+                    lastDotPos > 2 &&
+                    this.state.email.length - lastDotPos > 2
+                )
+            ) {
+                errors.email = true;
+                validField = true;
+                errorMessage += "Please provide a valid email \n";
+            }
+        }
+
+        //password
+        if (this.state.password && this.state.password.length < 6) {
+            errors.password = true;
+            validField = true;
+            errorMessage +=
+                "Please provide a password that's longer than 6 characters \n";
+        }
+
+        //consider using error = error first OR error last OR error email OR error password to set the whole thing in one step
+
+        //important to set state only at the end otherwise async behaviour of setState might not lead to realtime updates
+        this.setState({
+            errors: errors,
+            errorMessage: errorMessage,
+        });
+        console.log("errors state in validateForm", this.state.errors);
+        return validField;
     }
 
     onFormSubmit(e) {
         e.preventDefault();
 
-        if (this.validateFields()) {
+        if (this.validateForm()) {
             console.log("not all fields are valid, return");
-            console.log("state errors are", this.state.errors);
+            console.log("error state in onFormSubmit", this.state.errors);
             return;
         }
 
@@ -170,7 +204,7 @@ class Registration extends Component {
                             <input
                                 type="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder="Min 6 characters"
                                 value={this.state.password}
                                 onChange={this.onFormInputChange}
                                 className={

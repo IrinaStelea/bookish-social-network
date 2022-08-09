@@ -6,6 +6,9 @@ import ProfilePic from "./ProfilePic.js";
 import Uploader from "./Uploader.js";
 import "./Registration.css";
 import Profile from "./Profile.js";
+import FindPeople from "./FindPeople.js";
+
+import { BrowserRouter, Route, Redirect } from "react-router-dom";
 
 export default class App extends Component {
     constructor(props) {
@@ -29,7 +32,7 @@ export default class App extends Component {
         // console.log("the app component mounted");
         //fetch user info from the server
 
-        fetch("/user")
+        fetch("/user.json")
             .then((response) => response.json())
             .then((data) => {
                 console.log("data after fetching user data", data);
@@ -93,25 +96,39 @@ export default class App extends Component {
                 </div>
                 <div className="uploader-container">
                     {this.state.uploaderIsVisible && (
-                        <Uploader changePic={this.changeProfilePic} />
+                        <Uploader
+                            changePic={this.changeProfilePic}
+                            toggleUploader={this.toggleUploader}
+                        />
                     )}
                 </div>
                 {this.state.uploaderIsVisible && (
                     <div className="overlay"></div>
                 )}
-
-                {/* setting a separate css class for the profile that will also affect ProfilePic */}
-                <div className="profile-container">
-                    {/* passing the user data to Profile */}
-                    <Profile
-                        first={this.state.first}
-                        last={this.state.last}
-                        bio={this.state.bio}
-                        image={this.state.avatarUrl}
-                        toggleUploader={this.toggleUploader}
-                        saveDraftBioToApp={this.saveDraftBioToApp}
-                    />
-                </div>
+                {/* browser router for profile vs findpeople */}
+                <BrowserRouter>
+                    <Route exact path="/">
+                        {/* setting a separate css class for the profile that will also affect ProfilePic */}
+                        <div className="profile-container">
+                            {/* passing the user data to Profile */}
+                            <Profile
+                                first={this.state.first}
+                                last={this.state.last}
+                                bio={this.state.bio}
+                                image={this.state.avatarUrl}
+                                toggleUploader={this.toggleUploader}
+                                saveDraftBioToApp={this.saveDraftBioToApp}
+                            />
+                        </div>
+                    </Route>
+                    <Route path="/users">
+                        <FindPeople />
+                    </Route>
+                    {/* <Route path="*">
+                        <Redirect to="/" />
+                    </Route> */}
+                    {/* <Route path="*" render={() => <Redirect to="/" />} /> */}
+                </BrowserRouter>
             </>
         );
     }

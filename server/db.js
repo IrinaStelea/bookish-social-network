@@ -53,6 +53,13 @@ module.exports.getUserData = (id) => {
     );
 };
 
+module.exports.getUsers = (val) => {
+    return db.query(
+        `SELECT * FROM users WHERE first ILIKE $1 ORDER BY id DESC LIMIT 5`,
+        [val + "%" || null]
+    );
+};
+
 module.exports.updateImage = (userId, imageUrl) => {
     return db.query(
         `

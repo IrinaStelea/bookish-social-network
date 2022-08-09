@@ -9,6 +9,7 @@ const cryptoRandomString = require("crypto-random-string");
 const { sendCodeEmail } = require("./ses");
 const s3 = require("./s3");
 const { uploader } = require("./middleware");
+const helpers = require("./helpers.js");
 
 app.use(compression());
 
@@ -37,11 +38,11 @@ app.use(express.static(path.join(__dirname, "..", "client", "public")));
 //TO DO: add middleware ensureSignedOut, validateRegistration (form validation) in the post register route
 
 app.post("/register.json", (req, res) => {
-    //add user to database
+    //add user to database, cleaning the data
     db.insertUser(
-        req.body.firstName,
-        req.body.lastName,
-        req.body.email,
+        helpers.cleanString(req.body.firstName),
+        helpers.cleanString(req.body.lastName),
+        req.body.email.toLowerCase(),
         req.body.password
     )
         .then((results) => {
@@ -270,13 +271,28 @@ app.post("/edit-bio", (req, res) => {
         });
 });
 
-app.get("/user", function (req, res) {
+//fetch request on main App mount
+app.get("/user.json", function (req, res) {
     db.getUserData(req.session.userId)
         .then((result) => {
             return res.json(result.rows[0]);
         })
         .catch((err) => {
             console.log("error in getting user data", err);
+        });
+});
+
+//fetch request on FindPeople mount
+app.get("/findusers/:val", function (req, res) {
+    //get just the value of the query, without json
+    let val = req.params.val.split(".").shift();
+    // console.log("val: 	", val);
+    db.getUsers(val)
+        .then((result) => {
+            return res.json(result.rows);
+        })
+        .catch((err) => {
+            console.log("error in getting the three most recent users", err);
         });
 });
 

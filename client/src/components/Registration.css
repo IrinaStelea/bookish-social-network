@@ -87,8 +87,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 5vh;
+    padding: 2vw;
     width: 100%;
+}
+
+#uploader h4 {
+    align-self: flex-end;
+    cursor: default;
+    margin: 0;
 }
 
 #upload-avatar {
@@ -127,6 +133,29 @@
     flex-direction: column;
     align-items: flex-start;
 }
+
+.people {
+    align-self: flex-start;
+    margin-top: 3vh;
+}
+
+.people-container {
+    /* align-self: flex-start; */
+    display: grid;
+    width: 30vw;
+    grid-template-columns: 1fr 1fr;
+    justify-items: start;
+    align-items: center;
+    margin-top: 1vh;
+}
+
+.people-container img {
+    border-radius: 5%;
+    width: 10vw;
+    height: 10vw;
+    object-fit: cover;
+}
+
 #bio {
     font-size: 0.9em;
 }
@@ -146,4 +175,7 @@ button {
 .error {
     color: red;
     font-style: italic;
+    /* this is important for multiple error messages to be displayed on separate lines */
+    white-space:pre-wrap;
+    text-align: center;
 }
