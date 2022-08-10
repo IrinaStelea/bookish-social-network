@@ -11,7 +11,7 @@ export default function FindPeople() {
         let abort; //starting as undefined = falsey
         console.log("useEffect on mount is running");
         (async () => {
-            const data = await fetch(`/findusers/${first}.json`).then(
+            const data = await fetch(`/api/findusers/${first}.json`).then(
                 (response) => response.json()
             );
             //only update user data if abort is falsey
@@ -56,21 +56,21 @@ export default function FindPeople() {
                 users.map((item) => (
                     // note use of key to so that each element is considered unique by React
                     <div key={item.id} className="people-container">
-                        <a href="#">
+                        <a href={"/user/" + item.id}>
                             <img
-                                src={item.avatarurl}
+                                src={item.avatarurl || "../../no_avatar.png"}
                                 alt={item.first + " " + item.last}
                             />
                         </a>
 
-                        <a href="#">
+                        <a href={"/user/" + item.id}>
                             {item.first} {item.last}
                         </a>
                     </div>
                 ))}
             {!first && (
                 <>
-                    <hr></hr>
+                    <hr />
                     <p>Looking for someone in particular?</p>
                 </>
             )}
@@ -83,14 +83,14 @@ export default function FindPeople() {
                 users.map((item) => (
                     // note use of key to so that each element is considered unique by React
                     <div key={item.id} className="people-container">
-                        <a href="#">
+                        <a href={"/user/" + item.id}>
                             <img
-                                src={item.avatarurl}
+                                src={item.avatarurl || "../../no_avatar.png"}
                                 alt={item.first + " " + item.last}
                             />
                         </a>
 
-                        <a href="#">
+                        <a href={"/user/" + item.id}>
                             {item.first} {item.last}
                         </a>
                     </div>

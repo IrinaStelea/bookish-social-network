@@ -48,7 +48,7 @@ module.exports.findUser = (email) => {
 
 module.exports.getUserData = (id) => {
     return db.query(
-        `SELECT first, last, avatarurl, bio FROM users WHERE id = $1`,
+        `SELECT id, first, last, avatarurl, bio FROM users WHERE id = $1`,
         [id]
     );
 };

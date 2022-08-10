@@ -20,9 +20,7 @@ export default function ProfilePic({ first, last, image, toggleUploader }) {
     // console.log("props in profile pic", firstName, changeName); //props
 
     //render a default image if there is no image
-    image =
-        image ||
-        "https://www.pinpng.com/pngs/m/341-3415688_no-avatar-png-transparent-png.png";
+    image = image || "../../no_avatar.png";
 
     first = first || "avatar";
 

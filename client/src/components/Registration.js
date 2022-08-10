@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import "./Registration.css";
+// import useStatefulFields from "../hooks/useStatefulFields";
 
 class Registration extends Component {
     constructor() {

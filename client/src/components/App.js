@@ -7,6 +7,7 @@ import Uploader from "./Uploader.js";
 import "./Registration.css";
 import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
+import OtherProfile from "./OtherProfile.js";
 
 import { BrowserRouter, Route, Redirect } from "react-router-dom";
 
@@ -32,11 +33,10 @@ export default class App extends Component {
         // console.log("the app component mounted");
         //fetch user info from the server
 
-        fetch("/user.json")
+        fetch("/api/user")
             .then((response) => response.json())
             .then((data) => {
-                console.log("data after fetching user data", data);
-                //TO DO: also get the bio info
+                // console.log("data after fetching user data", data);
                 //pass the user info to the app
                 this.setState({
                     first: data.first,
@@ -81,18 +81,6 @@ export default class App extends Component {
                         image={this.state.avatarUrl}
                         toggleUploader={this.toggleUploader}
                     />
-
-                    {/* // firstName={this.state.firstName}
-                // changeName={this.changeNamefromProfilePic} */}
-                    {/* <button
-                    onClick={() =>
-                        this.setState({ isPopupOpen: !this.state.isPopupOpen })
-                    }
-                >
-                    Popup
-                </button> */}
-                    {/* <h1>Hello {this.state.firstName}</h1> */}
-                    {/* <h1>Hello {this.state.first}</h1> */}
                 </div>
                 <div className="uploader-container">
                     {this.state.uploaderIsVisible && (
@@ -105,7 +93,7 @@ export default class App extends Component {
                 {this.state.uploaderIsVisible && (
                     <div className="overlay"></div>
                 )}
-                {/* browser router for profile vs findpeople */}
+                {/* browser router for profile, FindPeople & OtherProfile */}
                 <BrowserRouter>
                     <Route exact path="/">
                         {/* setting a separate css class for the profile that will also affect ProfilePic */}
@@ -123,6 +111,10 @@ export default class App extends Component {
                     </Route>
                     <Route path="/users">
                         <FindPeople />
+                    </Route>
+                    <Route path="/user/:id">
+                        {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
+                        <OtherProfile />
                     </Route>
                     {/* <Route path="*">
                         <Redirect to="/" />

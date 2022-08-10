@@ -71,7 +71,9 @@ app.post("/register.json", (req, res) => {
 app.post("/login.json", (req, res) => {
     //to do - clean email
     //check user details in database
-    db.findUser(req.body.email)
+
+    //to do - db.validateUser with email and password as parameters, handle the password on the db side
+    db.findUser(req.body.email.toLowerCase())
         .then((results) => {
             console.log(
                 "user email exists, here is the entire info",
@@ -272,7 +274,7 @@ app.post("/edit-bio", (req, res) => {
 });
 
 //fetch request on main App mount
-app.get("/user.json", function (req, res) {
+app.get("/api/user", function (req, res) {
     db.getUserData(req.session.userId)
         .then((result) => {
             return res.json(result.rows[0]);
@@ -282,8 +284,31 @@ app.get("/user.json", function (req, res) {
         });
 });
 
+//fetch request on OtherProfile mount
+app.get("/api/user/:id", function (req, res) {
+    const { id } = req.params;
+    db.getUserData(id)
+        .then((result) => {
+            //handle edge cases for the id - when it does not exist or when it is the same id of the loggedin user
+            console.log("result of getUserdata", result);
+            if (result.rows.length == 0 || id == req.session.userId) {
+                return res.json({
+                    success: false,
+                });
+            } else {
+                return res.json({
+                    success: true,
+                    profile: result.rows[0],
+                });
+            }
+        })
+        .catch((err) => {
+            console.log("error in getting user data", err);
+        });
+});
+
 //fetch request on FindPeople mount
-app.get("/findusers/:val", function (req, res) {
+app.get("/api/findusers/:val", function (req, res) {
     //get just the value of the query, without json
     let val = req.params.val.split(".").shift();
     // console.log("val: 	", val);

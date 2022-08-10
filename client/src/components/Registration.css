@@ -12,7 +12,7 @@
 #login,
 #reset,
 #send-code label {
-    margin: 2vh 0;
+    /* margin: 2vh 0; */
     font-size: 0.9em;
     font-weight: 600;
 }
@@ -41,11 +41,15 @@
     width: 95vw;
     justify-content: space-between;
     align-items: flex-start;
+    margin-top: 2vh;
 }
 
 .profile-container {
     align-self: flex-start;
     width: 20vw;
+    gap: 2vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-container #avatar {
@@ -53,13 +57,27 @@
     width: 15vw;
     height: 15vw;
 }
+.other-profile-container {
+    align-self: flex-start;
+    display: grid;
+    width: 40vw;
+    grid-template-columns: 1fr 1fr;
+    /* justify-items: start;
+    align-items: flex-start; */
+    margin-top: 5vh;
+}
+
+.name-bio-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
 
 .container img {
-    width: 40vw;
+    width: 30vw;
 }
 
 .uploader-container {
-    background-color: snow;
     width: 30vw;
     position: fixed;
     align-self: center;
@@ -89,6 +107,7 @@
     align-items: center;
     padding: 2vw;
     width: 100%;
+    gap: 1vh;
 }
 
 #uploader h4 {
@@ -132,11 +151,16 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    gap: 2vh;
 }
 
 .people {
     align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
     margin-top: 3vh;
+    align-items: flex-start;
 }
 
 .people-container {
@@ -151,8 +175,19 @@
 
 .people-container img {
     border-radius: 5%;
-    width: 10vw;
-    height: 10vw;
+    width: 8vw;
+    height: 8vw;
+    object-fit: cover;
+}
+
+hr {
+    align-self: stretch;
+}
+
+.other-profile-container img {
+    border-radius: 5%;
+    width: 12vw;
+    height: 12vw;
     object-fit: cover;
 }
 
@@ -176,6 +211,6 @@ button {
     color: red;
     font-style: italic;
     /* this is important for multiple error messages to be displayed on separate lines */
-    white-space:pre-wrap;
+    white-space: pre-wrap;
     text-align: center;
 }

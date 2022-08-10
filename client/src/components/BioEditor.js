@@ -80,6 +80,7 @@ export default class BioEditor extends Component {
                         {/* if the editor is visible show textarea with save button */}
                         <textarea
                             name="draftBio"
+                            id="textarea"
                             cols="30"
                             rows="10"
                             value={this.state.draftBio}
