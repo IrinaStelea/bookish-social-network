@@ -98,6 +98,7 @@ class Registration extends Component {
     }
 
     onFormSubmit(e) {
+        //prevent form from submitting (default behaviour of forms)
         e.preventDefault();
 
         if (this.validateForm()) {

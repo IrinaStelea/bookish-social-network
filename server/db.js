@@ -55,8 +55,8 @@ module.exports.getUserData = (id) => {
 
 module.exports.getUsers = (val) => {
     return db.query(
-        `SELECT * FROM users WHERE first ILIKE $1 ORDER BY id DESC LIMIT 5`,
-        [val + "%" || null]
+        `SELECT * FROM users WHERE first ILIKE $1 OR last ILIKE $1 ORDER BY id DESC LIMIT 5`,
+        ["%" + val + "%" || null]
     );
 };
 
@@ -99,5 +99,38 @@ module.exports.findCode = (email) => {
     return db.query(
         `SELECT * FROM reset_codes WHERE email = $1 AND CURRENT_TIMESTAMP - timestamp < INTERVAL '10 minutes' ORDER BY timestamp DESC LIMIT 1`,
         [email]
+    );
+};
+
+module.exports.findFriendship = (sender, recipient) => {
+    return db.query(
+        `
+        SELECT * FROM friendships
+        WHERE (sender_id = $1 AND recipient_id = $2)
+        OR (sender_id = $2 AND recipient_id = $1)`,
+        [sender, recipient]
+    );
+};
+
+module.exports.friendshipRequest = (sender, recipient) => {
+    return db.query(
+        `INSERT INTO friendships (sender_id, recipient_id)
+                VALUES ($1, $2) RETURNING *`,
+        [sender, recipient]
+    );
+};
+
+module.exports.acceptFriendship = (sender, recipient) => {
+    return db.query(
+        `UPDATE friendships SET accepted=true WHERE sender_id=$1 AND recipient_id=$2 RETURNING *`,
+        [sender, recipient]
+    );
+};
+
+module.exports.cancelFriendship = (sender, recipient) => {
+    return db.query(
+        `DELETE FROM friendships WHERE (sender_id=$1 AND recipient_id=$2) OR (sender_id=$2 AND recipient_id=$1)
+        `,
+        [sender, recipient]
     );
 };

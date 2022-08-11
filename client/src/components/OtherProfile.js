@@ -4,6 +4,7 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import FriendButton from "./FriendButton";
 
 export default function OtherProfile() {
     //grab ID from params
@@ -22,7 +23,7 @@ export default function OtherProfile() {
         fetch(`/api/user/${id}`)
             .then((resp) => resp.json())
             .then((data) => {
-                console.log("data after fetch user data in OtherProfile", data);
+                // console.log("data after fetch user data in OtherProfile", data);
                 //handle edge cases
                 if (!data.success) {
                     //redirect the user away using the history object from the React Router
@@ -46,10 +47,13 @@ export default function OtherProfile() {
     return (
         <>
             <div className="other-profile-container">
-                <img
-                    src={user.avatarurl || "../../no_avatar.png"}
-                    alt={user.first + " " + user.last}
-                />
+                <div className="name-bio-container">
+                    <img
+                        src={user.avatarurl || "../../no_avatar.png"}
+                        alt={user.first + " " + user.last}
+                    />
+                    <FriendButton />
+                </div>
                 <div className="name-bio-container">
                     <h3>
                         {user.first} {user.last}

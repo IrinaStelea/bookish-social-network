@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 export default function FindPeople() {
     // define the properties
-    const [first, setFirst] = useState("");
+    const [value, setValue] = useState("");
     const [users, setUsers] = useState([]);
 
     // useEffect for fetch when components mounts
@@ -11,12 +11,12 @@ export default function FindPeople() {
         let abort; //starting as undefined = falsey
         console.log("useEffect on mount is running");
         (async () => {
-            const data = await fetch(`/api/findusers/${first}.json`).then(
+            const data = await fetch(`/api/findusers/${value}.json`).then(
                 (response) => response.json()
             );
             //only update user data if abort is falsey
             if (!abort) {
-                setUsers(!first ? data.slice(0, 3) : data);
+                setUsers(!value ? data.slice(0, 3) : data);
             }
         })();
         //cleanup function - React will call it before every re-render of the component (and for the unmount)
@@ -45,14 +45,14 @@ export default function FindPeople() {
         //         });
 
         //note second arg below: this means useEffect will run when the component mounts and each time first changes
-    }, [first]);
+    }, [value]);
 
     return (
         <div className="people">
             {/* conditional rendering of elements on this page based on whether there is a search query */}
             <h3>Find people</h3>
-            {!first && <p>Check out who just joined:</p>}
-            {!first &&
+            {!value && <p>Check out who just joined:</p>}
+            {!value &&
                 users.map((item) => (
                     // note use of key to so that each element is considered unique by React
                     <div key={item.id} className="people-container">
@@ -68,7 +68,7 @@ export default function FindPeople() {
                         </a>
                     </div>
                 ))}
-            {!first && (
+            {!value && (
                 <>
                     <hr />
                     <p>Looking for someone in particular?</p>
@@ -76,10 +76,10 @@ export default function FindPeople() {
             )}
             <input
                 placeholder="Enter name"
-                onChange={(e) => setFirst(e.target.value)}
-                defaultValue={first}
+                onChange={(e) => setValue(e.target.value)}
+                defaultValue={value}
             />
-            {first &&
+            {value &&
                 users.map((item) => (
                     // note use of key to so that each element is considered unique by React
                     <div key={item.id} className="people-container">

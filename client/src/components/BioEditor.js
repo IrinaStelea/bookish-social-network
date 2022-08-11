@@ -4,23 +4,21 @@ export default class BioEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            draftBio: "",
+            // bio comes from app -> when the component mounts it checks whetehr there is a bio -> this is going to make the component change accordingly
+            draftBio: props.bio,
             isEditorVisible: false,
             errorMessage: "",
-            button: "Cancel",
+            editing: false,
         };
         this.showEditor = this.showEditor.bind(this);
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.editBio = this.editBio.bind(this);
     }
 
-    // bio above comes from app -> when the component mounts it checks whetehr there is a bio -> this is going to make the component change accordingly
-
     showEditor() {
         this.setState({
             isEditorVisible: !this.state.isEditorVisible,
-            //note the line below telling it explicitly to get the draftBio from the bio passed down as props; putting this directly in state would not work
-            draftBio: this.props.bio,
+            editing: false,
         });
     }
 
@@ -28,13 +26,17 @@ export default class BioEditor extends Component {
         const target = e.currentTarget;
         console.log(`${target.value}`);
         this.setState({
-            [target.name]: target.value,
-            button: "Save",
+            draftBio: target.value,
+            editing: true,
         });
     }
 
-    editBio(e) {
-        // e.preventDefault();
+    editBio() {
+        //hide editor and return if there haven't been any changes
+        if (!this.state.editing) {
+            this.showEditor();
+            return;
+        }
 
         fetch("/edit-bio", {
             method: "POST",
@@ -52,13 +54,13 @@ export default class BioEditor extends Component {
                         errorMessage: data.message,
                     });
                 } else {
+                    //calling show editor to toggle the editor and update the editing state
+                    this.showEditor();
                     //if all is well call saveDraftBiotoApp to send new bio to app
                     this.props.saveDraftBioToApp(data.bio);
-                    //calling show editor to toggle the editor and updating the button state
-                    this.showEditor();
-                    this.setState({
-                        button: "Cancel",
-                    });
+                    // this.setState({
+                    //     button: "Cancel",
+                    // });
                 }
             })
             .catch((err) => {
@@ -83,12 +85,23 @@ export default class BioEditor extends Component {
                             id="textarea"
                             cols="30"
                             rows="10"
-                            value={this.state.draftBio}
+                            defaultValue={this.props.bio}
                             onChange={(event) => this.onFormInputChange(event)}
                         ></textarea>{" "}
-                        <button type="submit" onClick={this.editBio}>
-                            {this.state.button}
-                        </button>
+                        {this.state.editing && (
+                            <button
+                                id="save"
+                                type="submit"
+                                onClick={this.editBio}
+                            >
+                                Save
+                            </button>
+                        )}
+                        {!this.state.editing && (
+                            <button id="cancel" onClick={this.showEditor}>
+                                Cancel
+                            </button>
+                        )}
                     </>
                 ) : (
                     <>
@@ -103,7 +116,9 @@ export default class BioEditor extends Component {
                             </>
                         ) : (
                             // if there is no bio show an add bio button
-                            <button onClick={this.showEditor}>Add bio</button>
+                            <button id="add" onClick={this.showEditor}>
+                                Add bio
+                            </button>
                         )}
                     </>
                 )}

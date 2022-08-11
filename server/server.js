@@ -290,7 +290,7 @@ app.get("/api/user/:id", function (req, res) {
     db.getUserData(id)
         .then((result) => {
             //handle edge cases for the id - when it does not exist or when it is the same id of the loggedin user
-            console.log("result of getUserdata", result);
+            // console.log("result of getUserdata", result);
             if (result.rows.length == 0 || id == req.session.userId) {
                 return res.json({
                     success: false,
@@ -331,6 +331,38 @@ app.get("/user/id.json", function (req, res) {
         console.log("cookie does not exist");
         res.json({});
     }
+});
+
+//fetch request for FriendButton mount
+app.get("/api/friendship/:id", function (req, res) {
+    let sender = req.session.userId;
+    let recipient = req.params.id;
+    console.log("sender id", sender, "recipient id", recipient);
+    db.findFriendship(sender, recipient)
+        .then((result) => {
+            console.log("find friendship result", result.rows);
+            return res.json(result.rows);
+        })
+        .catch((err) => {
+            console.log("error in find friendship", err);
+        });
+});
+
+//post fetches for FriendshipButton - make sure they return data identical in structure to the get friendship request
+app.post("/friendshiprequest", async (req, res) => {
+    const result = await db.friendshipRequest(req.session.userId, req.body.id);
+    res.json(result.rows);
+});
+
+app.post("/acceptfriendship", async (req, res) => {
+    //note the order of the parameters, in this case the recipient is the user stored in the cookie session
+    const result = await db.acceptFriendship(req.body.id, req.session.userId);
+    res.json(result.rows);
+});
+
+app.post("/cancelfriendship", async (req, res) => {
+    const result = await db.cancelFriendship(req.session.userId, req.body.id);
+    res.json(result.rows);
 });
 
 app.get("*", function (req, res) {
