@@ -40,8 +40,30 @@
     display: flex;
     width: 95vw;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-top: 2vh;
+}
+
+.navmenu {
+    display: flex;
+    width: 45vw;
+    justify-content: space-around;
+    background-color: salmon;
+    padding: 0.7vw;
+    gap: 1vw;
+    clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
+    font-size: 1.5 em;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.navmenu a {
+    color: darkslategrey;
+    text-decoration: none;
+}
+
+.active {
+    color: snow !important;
+    text-decoration: none;
 }
 
 .profile-container {

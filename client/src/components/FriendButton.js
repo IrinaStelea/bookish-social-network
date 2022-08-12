@@ -7,6 +7,12 @@ export default function FriendButton() {
         text: "Send friend request",
         url: "/addfriend",
     });
+    //button for rejecting
+    const rejectButton = {
+        text: "Deny friend request",
+        url: "/cancelfriendship",
+    };
+    const [error, setError] = useState({});
 
     // const [friendMode, setFriendMode] = useState({
     //     hasRequest: false,
@@ -23,7 +29,11 @@ export default function FriendButton() {
                 console.log("data after fetch user data in FriendButton", data);
                 let newState = handleResponse(data);
                 console.log("new state", newState);
-                setButton(newState);
+                console.log("new state equals false", newState === false);
+                //separating error from new button state
+                if (Object.keys(newState).length) {
+                    setButton(newState);
+                }
             })
             .catch((err) => {
                 //TO DO: handle error here
@@ -33,7 +43,10 @@ export default function FriendButton() {
 
     const handleResponse = (data) => {
         let button = {};
-        if (data.length == 0) {
+        if (data.message) {
+            console.log(data.message);
+            setError(data);
+        } else if (data.length == 0) {
             button.text = "Send friend request";
             button.url = "/friendshiprequest";
             console.log("button value changed");
@@ -54,9 +67,9 @@ export default function FriendButton() {
         return button;
     };
 
-    const handleClick = () => {
+    const handleClick = (url) => {
         console.log("click on the button");
-        fetch(`${button.url}`, {
+        fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id }),
@@ -66,7 +79,10 @@ export default function FriendButton() {
                 console.log("data after button click");
                 let newState = handleResponse(data);
                 console.log("new state", newState);
-                setButton(newState);
+                //separating error from new button state
+                if (Object.keys(newState).length) {
+                    setButton(newState);
+                }
             })
             .catch((err) => {
                 console.log("error in changing friendship status", err);
@@ -75,7 +91,15 @@ export default function FriendButton() {
 
     return (
         <>
-            <button onClick={handleClick}>{button.text}</button>
+            <button onClick={() => handleClick(button.url)}>
+                {button.text}
+            </button>
+            {button.text == "Accept friend request" && (
+                <button onClick={() => handleClick(rejectButton.url)}>
+                    {rejectButton.text}
+                </button>
+            )}
+            {error.message && <p className="error">{error.message}</p>}
         </>
     );
 }

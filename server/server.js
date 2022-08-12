@@ -334,35 +334,65 @@ app.get("/user/id.json", function (req, res) {
 });
 
 //fetch request for FriendButton mount
-app.get("/api/friendship/:id", function (req, res) {
+app.get("/api/friendship/:id", async (req, res) => {
     let sender = req.session.userId;
     let recipient = req.params.id;
-    console.log("sender id", sender, "recipient id", recipient);
-    db.findFriendship(sender, recipient)
-        .then((result) => {
-            console.log("find friendship result", result.rows);
-            return res.json(result.rows);
-        })
-        .catch((err) => {
-            console.log("error in find friendship", err);
-        });
+    // console.log("sender id", sender, "recipient id", recipient);
+    try {
+        const result = await db.findFriendship(sender, recipient);
+        return res.json(result.rows);
+    } catch (err) {
+        console.log("error in get friendship results");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
 });
 
-//post fetches for FriendshipButton - make sure they return data identical in structure to the get friendship request
+//post fetches for FriendshipButton - make sure they return data identical in structure to the GET friendship request
 app.post("/friendshiprequest", async (req, res) => {
-    const result = await db.friendshipRequest(req.session.userId, req.body.id);
-    res.json(result.rows);
+    try {
+        const result = await db.friendshipRequest(
+            req.session.userId,
+            req.body.id
+        );
+        return res.json(result.rows);
+    } catch (err) {
+        console.log("error in get friendship results");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
 });
 
 app.post("/acceptfriendship", async (req, res) => {
-    //note the order of the parameters, in this case the recipient is the user stored in the cookie session
-    const result = await db.acceptFriendship(req.body.id, req.session.userId);
-    res.json(result.rows);
+    //note the order of the parameters, in this case the recipient is actually the user stored in the cookie session
+
+    //TO DO: check that the friendship exists first
+    try {
+        const result = await db.acceptFriendship(
+            req.body.id,
+            req.session.userId
+        );
+        return res.json(result.rows);
+    } catch (err) {
+        console.log("error in get friendship results");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
 });
 
 app.post("/cancelfriendship", async (req, res) => {
-    const result = await db.cancelFriendship(req.session.userId, req.body.id);
-    res.json(result.rows);
+    try {
+        const result = await db.cancelFriendship(
+            req.session.userId,
+            req.body.id
+        );
+        return res.json(result.rows);
+    } catch (err) {
+        console.log("error in get friendship results");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
+});
+
+app.get("/logout", (req, res) => {
+    req.session = null;
+    return res.redirect("/login");
 });
 
 app.get("*", function (req, res) {

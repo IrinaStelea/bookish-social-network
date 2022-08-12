@@ -8,8 +8,9 @@ import "./Registration.css";
 import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
+import Logout from "./Logout.js";
 
-import { BrowserRouter, Route, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, NavLink, Redirect } from "react-router-dom";
 
 export default class App extends Component {
     constructor(props) {
@@ -71,30 +72,45 @@ export default class App extends Component {
     render() {
         return (
             <>
-                <div className="loggedin-container">
-                    <Logo />
-
-                    {/* passing the user data to ProfilePic */}
-                    <ProfilePic
-                        first={this.state.first}
-                        last={this.state.last}
-                        image={this.state.avatarUrl}
-                        toggleUploader={this.toggleUploader}
-                    />
-                </div>
-                <div className="uploader-container">
-                    {this.state.uploaderIsVisible && (
-                        <Uploader
-                            changePic={this.changeProfilePic}
+                <BrowserRouter>
+                    <div className="loggedin-container">
+                        <Logo />
+                        <div className="navmenu">
+                            <NavLink
+                                // "exact" ensures only this link is marked as active when its descendant paths are matched
+                                exact
+                                to="/"
+                            >
+                                My profile
+                            </NavLink>
+                            <NavLink exact to="/users">
+                                Find people
+                            </NavLink>
+                            <NavLink exact to="/logout">
+                                Logout
+                            </NavLink>
+                        </div>
+                        {/* passing the user data to ProfilePic */}
+                        <ProfilePic
+                            first={this.state.first}
+                            last={this.state.last}
+                            image={this.state.avatarUrl}
                             toggleUploader={this.toggleUploader}
                         />
+                    </div>
+                    <div className="uploader-container">
+                        {this.state.uploaderIsVisible && (
+                            <Uploader
+                                changePic={this.changeProfilePic}
+                                toggleUploader={this.toggleUploader}
+                            />
+                        )}
+                    </div>
+                    {this.state.uploaderIsVisible && (
+                        <div className="overlay"></div>
                     )}
-                </div>
-                {this.state.uploaderIsVisible && (
-                    <div className="overlay"></div>
-                )}
-                {/* browser router for profile, FindPeople & OtherProfile */}
-                <BrowserRouter>
+                    {/* browser router for profile, FindPeople & OtherProfile */}
+
                     <Route exact path="/">
                         {/* setting a separate css class for the profile that will also affect ProfilePic */}
                         <div className="profile-container">
@@ -109,17 +125,20 @@ export default class App extends Component {
                             />
                         </div>
                     </Route>
-                    <Route path="/users">
+                    <Route exact path="/users">
                         <FindPeople />
                     </Route>
-                    <Route path="/user/:id">
+                    <Route exact path="/user/:id">
                         {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
                         <OtherProfile />
+                    </Route>
+                    <Route exact path="/logout">
+                        <Logout />
+                        <Redirect to="/login"></Redirect>
                     </Route>
                     {/* <Route path="*">
                         <Redirect to="/" />
                     </Route> */}
-                    {/* <Route path="*" render={() => <Redirect to="/" />} /> */}
                 </BrowserRouter>
             </>
         );
