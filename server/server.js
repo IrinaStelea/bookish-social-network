@@ -392,7 +392,7 @@ app.post("/cancelfriendship", async (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session = null;
-    return res.redirect("/login");
+    res.json({ logout: true });
 });
 
 app.get("*", function (req, res) {

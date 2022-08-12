@@ -8,9 +8,14 @@ import "./Registration.css";
 import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
-import Logout from "./Logout.js";
 
-import { BrowserRouter, Route, NavLink, Redirect } from "react-router-dom";
+import {
+    BrowserRouter,
+    Route,
+    NavLink,
+    Redirect,
+    Link,
+} from "react-router-dom";
 
 export default class App extends Component {
     constructor(props) {
@@ -27,6 +32,7 @@ export default class App extends Component {
         this.changeProfilePic = this.changeProfilePic.bind(this);
         this.toggleUploader = this.toggleUploader.bind(this);
         this.saveDraftBioToApp = this.saveDraftBioToApp.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     //to fetch server info once the component mounts; this runs actually after the render
@@ -69,6 +75,20 @@ export default class App extends Component {
         });
     }
 
+    logout() {
+        fetch("/logout")
+            .then((resp) => resp.json())
+            .then(() => {
+                // console.log("data after logout", data);
+                //redirect to login
+                location.replace("/login");
+                // location.reload("/");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
     render() {
         return (
             <>
@@ -86,7 +106,7 @@ export default class App extends Component {
                             <NavLink exact to="/users">
                                 Find people
                             </NavLink>
-                            <NavLink exact to="/logout">
+                            <NavLink exact to="/logout" onClick={this.logout}>
                                 Logout
                             </NavLink>
                         </div>
@@ -132,10 +152,9 @@ export default class App extends Component {
                         {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
                         <OtherProfile />
                     </Route>
-                    <Route exact path="/logout">
-                        <Logout />
-                        <Redirect to="/login"></Redirect>
-                    </Route>
+                    {/* <Route path="/logout">
+                        <Redirect to="/" />
+                    </Route> */}
                     {/* <Route path="*">
                         <Redirect to="/" />
                     </Route> */}
