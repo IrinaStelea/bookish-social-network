@@ -21,7 +21,7 @@ exports.upload = (req, res, next) => {
     }
 
     //boilerplate code - if we get at this point, req.file exists and we pull info from it
-    console.log("req.file: 	", req.file);
+    // console.log("req.file: 	", req.file);
 
     const { filename, mimetype, size, path } = req.file;
 

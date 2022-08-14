@@ -31,7 +31,7 @@ function hashPassword(pass) {
 
 module.exports.insertUser = (first, last, email, password) => {
     return hashPassword(password).then((hashedPass) => {
-        console.log("hashed pass", hashedPass);
+        // console.log("hashed pass", hashedPass);
         return db.query(
             //add user to users table returning the id & first name to store in the cookie session
             `
@@ -44,6 +44,37 @@ module.exports.insertUser = (first, last, email, password) => {
 
 module.exports.findUser = (email) => {
     return db.query(`SELECT * FROM users WHERE email = $1`, [email]);
+};
+
+module.exports.validateUser = (email, inputPass) => {
+    let userId;
+    return db
+        .query(`SELECT * FROM users WHERE email = $1`, [email])
+        .then((results) => {
+            console.log(
+                "user email exists, here is the entire info",
+                results.rows
+            );
+            //get db password
+            let dbPass = results.rows[0].password;
+
+            //get id from db
+            userId = results.rows[0].id;
+
+            //compare passwords
+            return bcrypt.compare(inputPass, dbPass).then((result) => {
+                if (result) {
+                    console.log("authentication successful");
+                    // const firstName = results.rows[0].first;
+                    //return userId for the cookie
+                    return userId;
+                } else {
+                    console.log("authentication failed. passwords don't match");
+                    // throw error for the POST login catch
+                    throw new Error("Passwords don't match");
+                }
+            });
+        });
 };
 
 module.exports.getUserData = (id) => {

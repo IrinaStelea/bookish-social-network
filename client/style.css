@@ -4,6 +4,17 @@
     padding: 0;
 }
 
+h3 {
+    font-family: "Barlow Condensed";
+    font-size: 2em;
+}
+
+h4 {
+    font-size: 1.5em;
+    font-family: "Barlow Condensed";
+    margin-top: 3vh;
+}
+
 body {
     background-color: floralwhite;
     display: flex;
@@ -18,4 +29,14 @@ main {
     flex-direction: column;
     align-items: center;
     margin-top: 2vh;
+}
+
+a {
+    color: slategray;
+    /* text-decoration: none; */
+}
+
+a:hover {
+    color: darkslategray;
+    font-weight: bolder;
 }

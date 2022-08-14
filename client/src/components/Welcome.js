@@ -11,7 +11,7 @@ export default class Welcome extends Component {
         //the render function always has to return something
         return (
             <>
-                <h1>Welcome to Bookish</h1>
+                {/* <h1>Welcome to Bookish</h1> */}
                 <BrowserRouter>
                     {/* the / route is too vague and all routes will go to it unless we include the attribute exact */}
                     <Route exact path="/">

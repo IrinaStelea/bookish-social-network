@@ -9,13 +9,7 @@ import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
 
-import {
-    BrowserRouter,
-    Route,
-    NavLink,
-    Redirect,
-    Link,
-} from "react-router-dom";
+import { BrowserRouter, Route, NavLink } from "react-router-dom";
 
 export default class App extends Component {
     constructor(props) {
@@ -82,7 +76,7 @@ export default class App extends Component {
                 // console.log("data after logout", data);
                 //redirect to login
                 location.replace("/login");
-                // location.reload("/");
+                // location.reload("/"); //this did not work
             })
             .catch((err) => {
                 console.log(err);
@@ -133,17 +127,17 @@ export default class App extends Component {
 
                     <Route exact path="/">
                         {/* setting a separate css class for the profile that will also affect ProfilePic */}
-                        <div className="profile-container">
-                            {/* passing the user data to Profile */}
-                            <Profile
-                                first={this.state.first}
-                                last={this.state.last}
-                                bio={this.state.bio}
-                                image={this.state.avatarUrl}
-                                toggleUploader={this.toggleUploader}
-                                saveDraftBioToApp={this.saveDraftBioToApp}
-                            />
-                        </div>
+                        {/* <div className="title-container"> */}
+                        {/* passing the user data to Profile */}
+                        <Profile
+                            first={this.state.first}
+                            last={this.state.last}
+                            bio={this.state.bio}
+                            image={this.state.avatarUrl}
+                            toggleUploader={this.toggleUploader}
+                            saveDraftBioToApp={this.saveDraftBioToApp}
+                        />
+                        {/* </div> */}
                     </Route>
                     <Route exact path="/users">
                         <FindPeople />

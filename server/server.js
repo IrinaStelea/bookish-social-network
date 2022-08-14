@@ -3,7 +3,6 @@ const app = express();
 const compression = require("compression");
 const path = require("path");
 const cookieSession = require("cookie-session");
-const bcrypt = require("bcryptjs");
 const db = require("./db.js");
 const cryptoRandomString = require("crypto-random-string");
 const { sendCodeEmail } = require("./ses");
@@ -47,7 +46,6 @@ app.post("/register.json", (req, res) => {
     )
         .then((results) => {
             console.log("inserting new user worked");
-
             //set the cookie session on the user id to keep track of login
             const userId = results.rows[0].id;
             // const firstName = results.rows[0].first;
@@ -55,13 +53,13 @@ app.post("/register.json", (req, res) => {
                 userId,
                 // firstName,
             };
-            console.log("user id cookie assigned", req.session.userId);
+            // console.log("user id cookie assigned", req.session.userId);
             //send success message
-            res.json({ success: true });
+            return res.json({ success: true });
         })
         .catch((err) => {
             console.log("error in adding new user", err);
-            res.json({
+            return res.json({
                 success: false,
                 message: "Something went wrong, please try again!",
             });
@@ -69,58 +67,19 @@ app.post("/register.json", (req, res) => {
 });
 
 app.post("/login.json", (req, res) => {
-    //to do - clean email
-    //check user details in database
-
-    //to do - db.validateUser with email and password as parameters, handle the password on the db side
-    db.findUser(req.body.email.toLowerCase())
-        .then((results) => {
-            console.log(
-                "user email exists, here is the entire info",
-                results.rows
-            );
-            //check password
-            let inputPass = req.body.password;
-            let dbPass = results.rows[0].password;
-            //authenticate the user
-            // (TO DO: consider moving this password check to db.js)
-            return bcrypt
-                .compare(inputPass, dbPass)
-                .then((result) => {
-                    if (result) {
-                        console.log("authentication successful");
-
-                        //set the cookie session on the user id to keep track of login
-                        const userId = results.rows[0].id;
-                        // const firstName = results.rows[0].first;
-                        req.session = {
-                            userId,
-                            // firstName,
-                        };
-                        console.log(
-                            "user id cookie assigned at login",
-                            req.session.userId
-                        );
-
-                        return res.json({
-                            success: true,
-                        });
-                    } else {
-                        console.log(
-                            "authentication failed. passwords don't match"
-                        );
-                        return res.json({
-                            success: false,
-                            message: "Invalid email or password",
-                        });
-                    }
-                })
-                .catch((err) => {
-                    console.log("error bcrypt compare", err);
-                });
+    db.validateUser(req.body.email.toLowerCase(), req.body.password)
+        .then((result) => {
+            console.log("user id cookie assigned at login", result);
+            //set the cookie
+            req.session = {
+                userId: result,
+            };
+            return res.json({
+                success: true,
+            });
         })
         .catch((err) => {
-            console.log("error in finding user in the database", err);
+            console.log("error in validating user", err);
             return res.json({
                 success: false,
                 message: "Invalid email or password",
@@ -129,13 +88,9 @@ app.post("/login.json", (req, res) => {
 });
 
 app.post("/password/reset/start.json", (req, res) => {
-    //to do: clean email
-    db.findUser(req.body.email)
+    db.findUser(req.body.email.toLowerCase())
         .then((results) => {
-            console.log(
-                "user email exists, here is the entire info",
-                results.rows
-            );
+            console.log("user exists", results.rows);
             //generate secret code
             let secretCode = cryptoRandomString({
                 length: 6,
@@ -183,10 +138,8 @@ app.post("/password/reset/start.json", (req, res) => {
 });
 
 app.post("/password/reset/verify.json", (req, res) => {
-    //to do: clean email
-
     //find code among the codes saved in the last 10 mins
-    db.findCode(req.body.email)
+    db.findCode(req.body.email.toLowerCase())
         .then((results) => {
             console.log(
                 "user email exists in reset codes table, here is the entire info",
@@ -230,30 +183,34 @@ app.post("/password/reset/verify.json", (req, res) => {
         });
 });
 
-app.post("/upload-image", uploader.single("file"), s3.upload, (req, res) => {
-    //get the full URL of the image (amazon url + filename)
-    const avatarUrl = path.join(
-        "https://s3.amazonaws.com/ihamspiced",
-        `${req.file.filename}`
-    );
-    console.log("avatarUrl", avatarUrl);
+app.post(
+    "/upload-image",
+    uploader.single("file"),
+    s3.upload,
+    async (req, res) => {
+        //get the full URL of the image (amazon url + filename)
+        const avatarUrl = path.join(
+            "https://s3.amazonaws.com/ihamspiced",
+            `${req.file.filename}`
+        );
+        // console.log("avatarUrl", avatarUrl);
 
-    db.updateImage(req.session.userId, avatarUrl)
-        .then((results) => {
-            console.log("updating image url worked", results.rows[0].avatarurl);
+        try {
+            const result = await db.updateImage(req.session.userId, avatarUrl);
+            // console.log("updating image url worked", result.rows[0].avatarurl);
             return res.json({
                 success: true,
-                avatar: results.rows[0].avatarurl,
+                avatar: result.rows[0].avatarurl,
             });
-        })
-        .catch((err) => {
-            console.log("error in uploading new profile pic", err);
+        } catch (err) {
+            // console.log("error in uploading new profile pic", err);
             return res.json({
                 success: false,
                 message: "Something went wrong, please try again",
             });
-        });
-});
+        }
+    }
+);
 
 app.post("/edit-bio", (req, res) => {
     db.updateBio(req.session.userId, req.body.bio)
@@ -289,8 +246,10 @@ app.get("/api/user/:id", function (req, res) {
     const { id } = req.params;
     db.getUserData(id)
         .then((result) => {
-            //handle edge cases for the id - when it does not exist or when it is the same id of the loggedin user
             // console.log("result of getUserdata", result);
+
+            //handle edge cases: invalid user id or id matches that of the loggedin user - send success: false response so that the App redirects to /
+
             if (result.rows.length == 0 || id == req.session.userId) {
                 return res.json({
                     success: false,
@@ -323,7 +282,7 @@ app.get("/api/findusers/:val", function (req, res) {
 
 app.get("/user/id.json", function (req, res) {
     if (req.session.userId) {
-        console.log("cookie exists exists");
+        console.log("cookie exists");
         res.json({
             userId: req.session.userId,
         });

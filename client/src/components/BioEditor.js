@@ -70,10 +70,10 @@ export default class BioEditor extends Component {
 
     render() {
         return (
-            <div className="editor-container">
-                <h4>
+            <div className="name-bio-container">
+                <h3>
                     {this.props.first} {this.props.last}
-                </h4>
+                </h3>
                 {this.state.errorMessage && (
                     <p className="error">{this.state.errorMessage}</p>
                 )}
@@ -83,7 +83,7 @@ export default class BioEditor extends Component {
                         <textarea
                             name="draftBio"
                             id="textarea"
-                            cols="30"
+                            cols="40"
                             rows="10"
                             defaultValue={this.props.bio}
                             onChange={(event) => this.onFormInputChange(event)}
@@ -98,7 +98,7 @@ export default class BioEditor extends Component {
                             </button>
                         )}
                         {!this.state.editing && (
-                            <button id="cancel" onClick={this.showEditor}>
+                            <button id="cancel-button" onClick={this.showEditor}>
                                 Cancel
                             </button>
                         )}

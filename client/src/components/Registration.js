@@ -151,13 +151,13 @@ class Registration extends Component {
                 {/* {!this.state.isUserLoggedIn && ( */}
                 {/* //the second set of brackets to create another parent element
                     <> */}
-
-                <div className="container">
+                <h1>Welcome to Bookish</h1>
+                <div className="loggedout-container">
                     <img src="../../Logo_Bookish.png" alt="Logo" />
                     {this.state.errorMessage && (
                         <p className="error">{this.state.errorMessage}</p>
                     )}
-                    <h3>Register to discuss your favorite books:</h3>
+                    <h4>Register to discuss your favorite books:</h4>
                     <div className="form-container">
                         <form
                             id="registration"
@@ -165,7 +165,7 @@ class Registration extends Component {
                             method="post"
                             action="/register"
                         >
-                            <label htmlFor="firstName">First Name</label>
+                            <label htmlFor="firstName">First name</label>
                             <input
                                 type="text"
                                 name="firstName"
@@ -178,7 +178,7 @@ class Registration extends Component {
                                         : ""
                                 }
                             ></input>
-                            <label htmlFor="lastName">Last Name</label>
+                            <label htmlFor="lastName">Last name</label>
                             <input
                                 type="text"
                                 name="lastName"

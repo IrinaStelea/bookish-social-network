@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 export default function FriendButton() {
     const { id } = useParams();
     const [button, setButton] = useState({
-        text: "Send friend request",
+        text: "Send request",
         url: "/addfriend",
+        class: "friend-button",
     });
     //button for rejecting
     const rejectButton = {
-        text: "Deny friend request",
+        text: "Decline request",
         url: "/cancelfriendship",
     };
     const [error, setError] = useState({});
@@ -47,20 +48,24 @@ export default function FriendButton() {
             console.log(data.message);
             setError(data);
         } else if (data.length == 0) {
-            button.text = "Send friend request";
+            button.text = "Send request";
             button.url = "/friendshiprequest";
+            button.class = "friend-button";
             console.log("button value changed");
         } else if (!data[0].accepted && data[0].sender_id == id) {
-            button.text = "Accept friend request";
+            button.text = "Add as friend";
             button.url = "/acceptfriendship";
+            button.class = "friend-button";
             console.log("button value changed");
         } else if (!data[0].accepted && data[0].recipient_id == id) {
-            button.text = "Cancel friend request";
+            button.text = "Cancel request";
             button.url = "/cancelfriendship";
+            button.class = "unfriend";
             console.log("button value changed");
         } else if (data[0].accepted) {
             button.text = "Unfriend";
             button.url = "/cancelfriendship";
+            button.class = "unfriend";
             console.log("button value changed");
         }
 
@@ -91,11 +96,17 @@ export default function FriendButton() {
 
     return (
         <>
-            <button onClick={() => handleClick(button.url)}>
+            <button
+                className={button.class}
+                onClick={() => handleClick(button.url)}
+            >
                 {button.text}
             </button>
-            {button.text == "Accept friend request" && (
-                <button onClick={() => handleClick(rejectButton.url)}>
+            {button.text == "Add as friend" && (
+                <button
+                    className="deny-friend-button"
+                    onClick={() => handleClick(rejectButton.url)}
+                >
                     {rejectButton.text}
                 </button>
             )}

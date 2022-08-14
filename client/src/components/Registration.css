@@ -14,26 +14,22 @@
 #send-code label {
     /* margin: 2vh 0; */
     font-size: 0.9em;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .errorfield {
     border-color: red;
 }
 
-.container {
+.loggedout-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2vh;
 }
 
-.reset-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2vh;
-    margin-top: 10vh;
+.loggedout-container img {
+    width: 30vw;
 }
 
 .loggedin-container {
@@ -55,6 +51,7 @@
     font-size: 1.5 em;
     font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 .navmenu a {
     color: darkslategrey;
@@ -66,27 +63,28 @@
     text-decoration: none;
 }
 
-.profile-container {
+/* .profile-container {
     align-self: flex-start;
     width: 20vw;
     gap: 2vh;
     display: flex;
     flex-direction: column;
+} */
+
+.profile-container {
+    align-self: flex-start;
+    display: grid;
+    width: 60vw;
+    grid-template-columns: 1fr 2fr;
+    /* justify-items: start;
+    align-items: flex-start; */
+    margin-top: 5vh;
 }
 
 .profile-container #avatar {
     border-radius: 5%;
     width: 15vw;
     height: 15vw;
-}
-.other-profile-container {
-    align-self: flex-start;
-    display: grid;
-    width: 40vw;
-    grid-template-columns: 1fr 1fr;
-    /* justify-items: start;
-    align-items: flex-start; */
-    margin-top: 5vh;
 }
 
 .name-bio-container {
@@ -95,10 +93,11 @@
     align-items: flex-start;
 }
 
-.container img {
-    width: 30vw;
+#bio {
+    line-height: 1.5em;
+    margin-top: 2vh;
+    font-size: 0.9em;
 }
-
 .uploader-container {
     width: 30vw;
     position: fixed;
@@ -157,24 +156,12 @@
     object-fit: contain;
 }
 
-#submit {
-    margin-top: 2vh;
-    background-color: salmon;
-    color: floralwhite;
-    font-size: 1.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-    border: 1px solid salmon;
-    border-radius: 10px;
-    padding: 1vw;
-}
-
-.editor-container {
+/* .editor-container {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 2vh;
-}
+} */
 
 .people {
     align-self: flex-start;
@@ -213,20 +200,63 @@ hr {
     object-fit: cover;
 }
 
-#bio {
-    font-size: 0.9em;
-}
-
-button {
+button,
+#submit {
     background-color: salmon;
     color: floralwhite;
     font-size: 0.9em;
     text-transform: uppercase;
-    font-weight: 500;
-    border: 1px solid salmon;
-    border-radius: 10px;
+    font-weight: 400;
+    border: 1px solid transparent;
+    border-radius: 6px;
     padding: 0.7vw;
-    margin-top: 1vh;
+    margin-top: 1.5vh;
+}
+
+#submit {
+    font-size: 1.2em;
+}
+
+button:hover,
+#submit:hover {
+    background-color: darkorange;
+}
+
+button:active,
+#submit:active {
+    transform: translateY(2px);
+}
+
+.friend-button {
+    font-size: 0.9em;
+    text-transform: none;
+    padding: 0.5vw;
+    letter-spacing: 0.05em;
+    margin-top: 2vh;
+}
+
+.friend-button:hover {
+    background-color: darkorange;
+}
+
+.deny-friend-button,
+.unfriend {
+    background-color: slategray;
+    font-size: 0.9em;
+    text-transform: none;
+    padding: 0.5vw;
+    letter-spacing: 0.05em;
+    margin-top: 2vh;
+}
+
+.deny-friend-button:hover,
+.unfriend:hover,
+#cancel-button:hover {
+    background-color: darkslategray;
+}
+
+#cancel-button {
+    background-color: slategray;
 }
 
 .error {

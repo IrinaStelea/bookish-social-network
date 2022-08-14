@@ -1,5 +1,4 @@
 import { Component } from "react";
-import Logo from "./Logo.js";
 import { Link } from "react-router-dom";
 
 export default class resetPassword extends Component {
@@ -99,8 +98,9 @@ export default class resetPassword extends Component {
         if (this.state.view === 1) {
             return (
                 <>
-                    <div className="reset-container">
-                        <h3>Reset your password</h3>
+                    <div className="loggedout-container">
+                        <img src="../../Logo_Bookish.png" alt="Logo" />
+                        <h4>Reset your password</h4>
                         {this.state.errorMessage && (
                             <p className="error">{this.state.errorMessage}</p>
                         )}
@@ -138,8 +138,9 @@ export default class resetPassword extends Component {
             //another fetch
             return (
                 <>
-                    <div className="reset-container">
-                        <h3>Reset your password</h3>
+                    <div className="loggedout-container">
+                        <img src="../../Logo_Bookish.png" alt="Logo" />
+                        <h4>Reset your password</h4>
                         {this.state.errorMessage && (
                             <p className="error">{this.state.errorMessage}</p>
                         )}
@@ -184,8 +185,9 @@ export default class resetPassword extends Component {
             //TO DO: set a button / interval to send the person back to login instead of the link
             return (
                 <>
-                    <div className="reset-container">
-                        <h3>You have successfully updated your password</h3>
+                    <div className="loggedout-container">
+                        <img src="../../Logo_Bookish.png" alt="Logo" />
+                        <h4>You have successfully updated your password</h4>
                         <p>
                             Go back to <Link to="/login">login</Link> page
                         </p>
@@ -198,7 +200,7 @@ export default class resetPassword extends Component {
     render() {
         return (
             <>
-                <Logo />
+                {/* <Logo /> */}
                 {/* note syntax for calling the function */}
                 {this.currentView()}
             </>
