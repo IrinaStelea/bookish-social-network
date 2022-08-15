@@ -55,7 +55,7 @@ export default class Uploader extends Component {
     render() {
         return (
             <div id="uploader">
-                <h4 id="close" onClick={this.props.toggleUploader}>
+                <h4 id="close-uploader" onClick={this.props.toggleUploader}>
                     X
                 </h4>
                 <h3>Want to change your image?</h3>

@@ -45,13 +45,13 @@
     width: 45vw;
     justify-content: space-around;
     background-color: salmon;
-    padding: 0.7vw;
+    padding: 1vh 1vw;
     gap: 1vw;
     clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
     font-size: 1.5 em;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.05em;
 }
 .navmenu a {
     color: darkslategrey;
@@ -131,10 +131,12 @@
     gap: 1vh;
 }
 
-#uploader h4 {
+#close-uploader {
     align-self: flex-end;
     cursor: default;
     margin: 0;
+    font-size: 1em;
+    font-family: "Montserrat", sans-serif;
 }
 
 #upload-avatar {
@@ -163,7 +165,8 @@
     gap: 2vh;
 } */
 
-.people {
+.people,
+.friends {
     align-self: flex-start;
     display: flex;
     flex-direction: column;
@@ -182,7 +185,8 @@
     margin-top: 1vh;
 }
 
-.people-container img {
+.people-container img,
+.friends-container img {
     border-radius: 5%;
     width: 8vw;
     height: 8vw;
@@ -259,10 +263,39 @@ button:active,
     background-color: slategray;
 }
 
+.friends-container {
+    display: grid;
+    width: 75vw;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2vw;
+    margin-top: 2vh;
+}
+
+/* .friends h3 {
+    margin-top: 2vh; 
+} */
+
+.friends-cell {
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+}
+
+.friends-name-button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 .error {
     color: red;
     font-style: italic;
     /* this is important for multiple error messages to be displayed on separate lines */
     white-space: pre-wrap;
     text-align: center;
+}
+
+.error-button {
+    font-size: 0.8em;
+    margin-top: 2vh;
 }

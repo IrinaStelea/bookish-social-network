@@ -8,6 +8,7 @@ import "./Registration.css";
 import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
+import FriendsAndWannabes from "./FriendsAndWannabes.js";
 
 import { BrowserRouter, Route, NavLink } from "react-router-dom";
 
@@ -97,6 +98,9 @@ export default class App extends Component {
                             >
                                 My profile
                             </NavLink>
+                            <NavLink exact to="/friends">
+                                Friends
+                            </NavLink>
                             <NavLink exact to="/users">
                                 Find people
                             </NavLink>
@@ -145,6 +149,9 @@ export default class App extends Component {
                     <Route exact path="/user/:id">
                         {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
                         <OtherProfile />
+                    </Route>
+                    <Route exact path="/friends">
+                        <FriendsAndWannabes />
                     </Route>
                     {/* <Route path="/logout">
                         <Redirect to="/" />

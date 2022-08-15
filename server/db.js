@@ -87,8 +87,9 @@ module.exports.getUserData = (id) => {
 module.exports.getUsers = (val) => {
     return db.query(
         `SELECT * FROM users WHERE first ILIKE $1 OR last ILIKE $1 ORDER BY id DESC LIMIT 5`,
-        ["%" + val + "%" || null]
+        [val + "%" || null]
     );
+    // could add to find the search query inside the words "%" + val + "%"
 };
 
 module.exports.updateImage = (userId, imageUrl) => {
@@ -163,5 +164,13 @@ module.exports.cancelFriendship = (sender, recipient) => {
         `DELETE FROM friendships WHERE (sender_id=$1 AND recipient_id=$2) OR (sender_id=$2 AND recipient_id=$1)
         `,
         [sender, recipient]
+    );
+};
+
+//get friends query - needs to use both users & friendships table; the joins refer to the person we want info about
+module.exports.getFriendsAndWannabes = (id) => {
+    return db.query(
+        `SELECT users.id, first, last, avatarurl, accepted FROM users  JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) OR (accepted = false AND recipient_id=$1 AND users.id = friendships.sender_id)`,
+        [id]
     );
 };

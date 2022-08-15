@@ -349,6 +349,16 @@ app.post("/cancelfriendship", async (req, res) => {
     }
 });
 
+app.get("/api/friends", async (req, res) => {
+    try {
+        const result = await db.getFriendsAndWannabes(req.session.userId);
+        return res.json({ friends: result.rows });
+    } catch (err) {
+        console.log("error in get friends and wannabes");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
+});
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.json({ logout: true });

@@ -110,7 +110,9 @@ export default function FriendButton() {
                     {rejectButton.text}
                 </button>
             )}
-            {error.message && <p className="error">{error.message}</p>}
+            {error.message && (
+                <p className="error error-button">{error.message}</p>
+            )}
         </>
     );
 }
