@@ -250,7 +250,7 @@ button:active,
     text-transform: none;
     padding: 0.5vw;
     letter-spacing: 0.05em;
-    margin-top: 2vh;
+    margin-top: 1vh;
 }
 
 .deny-friend-button:hover,
@@ -298,4 +298,15 @@ button:active,
 .error-button {
     font-size: 0.8em;
     margin-top: 2vh;
+}
+
+#footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 40vw;
+    object-fit: contain;
+    opacity: 0.7;
+    transform: translateY(1vh);
+    z-index: -100;
 }

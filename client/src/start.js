@@ -2,7 +2,10 @@
 //best practice is to put 3rd party imports before my own imports
 import { createStore, applyMiddleware } from "redux";
 import * as immutableState from "redux-immutable-state-invariant";
+//import the React DevTools
 import { composeWithDevTools } from "redux-devtools-extension";
+//import thunk
+import thunk from "redux-thunk";
 import rootReducer from "./redux/reducer.js";
 import ReactDOM from "react-dom";
 import Welcome from "./components/Welcome.js";
@@ -12,9 +15,10 @@ import App from "./components/App.js";
 import { Provider } from "react-redux";
 // ReactDOM.render(<Welcome />, document.querySelector("main"));
 
+//use DevTools as middleware
 const store = createStore(
     rootReducer,
-    composeWithDevTools(applyMiddleware(immutableState.default()))
+    composeWithDevTools(applyMiddleware(thunk, immutableState.default()))
 );
 
 // figure out what should be rendered based on whether users are logged in or not (this check happens before React even renders anything)

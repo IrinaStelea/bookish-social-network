@@ -2,6 +2,7 @@
 
 import { Component } from "react";
 import Logo from "./Logo.js";
+import Footer from "./Footer.js";
 import ProfilePic from "./ProfilePic.js";
 import Uploader from "./Uploader.js";
 import "./Registration.css";
@@ -115,6 +116,9 @@ export default class App extends Component {
                             image={this.state.avatarUrl}
                             toggleUploader={this.toggleUploader}
                         />
+                    </div>
+                    <div id="footer">
+                        <Footer />
                     </div>
                     <div className="uploader-container">
                         {this.state.uploaderIsVisible && (
