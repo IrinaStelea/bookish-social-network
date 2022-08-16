@@ -98,7 +98,10 @@ export default class BioEditor extends Component {
                             </button>
                         )}
                         {!this.state.editing && (
-                            <button id="cancel-button" onClick={this.showEditor}>
+                            <button
+                                id="cancel-button"
+                                onClick={this.showEditor}
+                            >
                                 Cancel
                             </button>
                         )}

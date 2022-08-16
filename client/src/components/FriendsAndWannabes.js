@@ -143,7 +143,7 @@ export default function FriendsAndWannabes() {
                                                 handleUnfriend(wannabe.id)
                                             }
                                         >
-                                            Decline request
+                                            Do not add
                                         </button>
                                     </div>
                                 </div>

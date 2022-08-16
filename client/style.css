@@ -38,5 +38,5 @@ a {
 
 a:hover {
     color: darkslategray;
-    font-weight: bolder;
+    /* text-decoration: underline; */
 }

@@ -12,6 +12,15 @@ const helpers = require("./helpers.js");
 
 app.use(compression());
 
+//boilerplate code for web socket - socket io requires a native node server (not express) for handling the initial http request
+//creating a native node server and passing to it our express app so that the app can also work with sockets
+//TO DO: adapt the io code to work for a deployment environment
+const server = require("http").Server(app);
+const io = require("socket.io")(server, {
+    allowRequest: (req, callback) =>
+        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+});
+
 //middleware that generates a random string
 // let secretCode = cryptoRandomString({
 //     length: 6,
@@ -368,6 +377,24 @@ app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
-app.listen(process.env.PORT || 3001, function () {
+// app.listen(process.env.PORT || 3001, function () {
+//     console.log("I'm listening.");
+// });
+
+//listen to the server instead to make the socket work
+server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
+});
+
+//when the connection event fires it will run a callback; socket is an object representing the network connection between client and server
+io.on("connection", (socket) => {
+    console.log(`socket with id ${socket.id} has connected`);
+
+    //here:emit custom events and send some data -> the client needs to listen to this event
+    //all the code has to be inside the "connection"
+    //...
+    //listen to when the connection disconnects
+    socket.on("disconnect", () => {
+        console.log(`socket with id ${socket.id} just disconnected`);
+    });
 });

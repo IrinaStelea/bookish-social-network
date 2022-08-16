@@ -10,7 +10,7 @@ export default function FriendButton() {
     });
     //button for rejecting
     const rejectButton = {
-        text: "Decline request",
+        text: "Do not add",
         url: "/cancelfriendship",
     };
     const [error, setError] = useState({});

@@ -11,7 +11,13 @@ import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
 import FriendsAndWannabes from "./FriendsAndWannabes.js";
 
-import { BrowserRouter, Route, NavLink } from "react-router-dom";
+import {
+    BrowserRouter,
+    Route,
+    NavLink,
+    Redirect,
+    Switch,
+} from "react-router-dom";
 
 export default class App extends Component {
     constructor(props) {
@@ -102,6 +108,9 @@ export default class App extends Component {
                             <NavLink exact to="/friends">
                                 Friends
                             </NavLink>
+                            <NavLink exact to="/chat">
+                                Chat
+                            </NavLink>
                             <NavLink exact to="/users">
                                 Find people
                             </NavLink>
@@ -131,38 +140,39 @@ export default class App extends Component {
                     {this.state.uploaderIsVisible && (
                         <div className="overlay"></div>
                     )}
-                    {/* browser router for profile, FindPeople & OtherProfile */}
-
-                    <Route exact path="/">
-                        {/* setting a separate css class for the profile that will also affect ProfilePic */}
-                        {/* <div className="title-container"> */}
-                        {/* passing the user data to Profile */}
-                        <Profile
-                            first={this.state.first}
-                            last={this.state.last}
-                            bio={this.state.bio}
-                            image={this.state.avatarUrl}
-                            toggleUploader={this.toggleUploader}
-                            saveDraftBioToApp={this.saveDraftBioToApp}
-                        />
-                        {/* </div> */}
-                    </Route>
-                    <Route exact path="/users">
-                        <FindPeople />
-                    </Route>
-                    <Route exact path="/user/:id">
-                        {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
-                        <OtherProfile />
-                    </Route>
-                    <Route exact path="/friends">
-                        <FriendsAndWannabes />
-                    </Route>
-                    {/* <Route path="/logout">
+                    {/* browser router for profile, FindPeople & OtherProfile, use the Switch to be able to add a catch all */}
+                    <Switch>
+                        <Route exact path="/">
+                            {/* setting a separate css class for the profile that will also affect ProfilePic */}
+                            {/* <div className="title-container"> */}
+                            {/* passing the user data to Profile */}
+                            <Profile
+                                first={this.state.first}
+                                last={this.state.last}
+                                bio={this.state.bio}
+                                image={this.state.avatarUrl}
+                                toggleUploader={this.toggleUploader}
+                                saveDraftBioToApp={this.saveDraftBioToApp}
+                            />
+                            {/* </div> */}
+                        </Route>
+                        <Route exact path="/users">
+                            <FindPeople />
+                        </Route>
+                        <Route exact path="/user/:id">
+                            {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
+                            <OtherProfile />
+                        </Route>
+                        <Route exact path="/friends">
+                            <FriendsAndWannabes />
+                        </Route>
+                        {/* <Route path="/logout">
                         <Redirect to="/" />
                     </Route> */}
-                    {/* <Route path="*">
-                        <Redirect to="/" />
-                    </Route> */}
+                        <Route path="*">
+                            <Redirect to="/" />
+                        </Route>
+                    </Switch>
                 </BrowserRouter>
             </>
         );

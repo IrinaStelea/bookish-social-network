@@ -10,11 +10,17 @@ export default class resetPassword extends Component {
             code: "",
             password: "",
             errorMessage: "",
+            errors: {
+                email: false,
+                code: false,
+                password: false,
+            },
         };
         this.currentView = this.currentView.bind(this);
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.startResetPassword = this.startResetPassword.bind(this);
         this.resetPassword = this.resetPassword.bind(this);
+        this.validateForm = this.validateForm.bind(this);
     }
 
     onFormInputChange(e) {
@@ -23,6 +29,27 @@ export default class resetPassword extends Component {
         this.setState({
             [target.name]: target.value,
         });
+    }
+
+    validateForm() {
+        const errors = {};
+        let validField = false;
+        let errorMessage = ``;
+
+        //password
+        if (this.state.password && this.state.password.length < 6) {
+            errors.password = true;
+            validField = true;
+            errorMessage +=
+                "Please provide a password that's longer than 6 characters \n";
+        }
+
+        this.setState({
+            errors: errors,
+            errorMessage: errorMessage,
+        });
+        console.log("errors state in validateForm", this.state.errors);
+        return validField;
     }
 
     //function which sets the view stat
@@ -45,12 +72,23 @@ export default class resetPassword extends Component {
                 console.log("data after reset password stage 1 fetch", data);
                 //if something goes wrong, display error message
                 if (!data.success && data.message) {
+                    if (
+                        data.message ==
+                        "Please check if you entered your email correctly"
+                    ) {
+                        this.setState({
+                            errors: {
+                                email: true,
+                            },
+                        });
+                    }
+
                     this.setState({
                         errorMessage: data.message,
                     });
                 } else {
                     //if all is well change to view 2
-                    this.setState({ view: 2 });
+                    this.setState({ view: 2, errorMessage: "" });
                 }
             })
             .catch((err) => {
@@ -60,6 +98,12 @@ export default class resetPassword extends Component {
 
     resetPassword(e) {
         e.preventDefault();
+
+        if (this.validateForm()) {
+            console.log("password field not valied, return");
+            console.log("error is", this.state.errors);
+            return;
+        }
 
         const formData = {
             email: this.state.email,
@@ -80,12 +124,27 @@ export default class resetPassword extends Component {
                 console.log("data after reset password stage 2 fetch", data);
                 //if something goes wrong, display error message
                 if (!data.success && data.message) {
+                    if (
+                        data.message ==
+                        "Please check if you entered your code correctly"
+                    ) {
+                        this.setState({
+                            errors: {
+                                code: true,
+                            },
+                        });
+                    }
+
                     this.setState({
                         errorMessage: data.message,
                     });
                 } else {
                     //if all is well change to view 3
                     this.setState({ view: 3 });
+                    //redirect to login - note it is important to use this.props because we are inside a componeent
+                    setTimeout(() => {
+                        this.props.history.push("/login");
+                    }, 3000);
                 }
             })
             .catch((err) => {
@@ -118,7 +177,9 @@ export default class resetPassword extends Component {
                                 placeholder="Email"
                                 value={this.state.email}
                                 onChange={this.onFormInputChange}
-                                // className={this.state.errors.firstName ? "error" : ""}
+                                className={
+                                    this.state.errors.email ? "errorfield" : ""
+                                }
                             ></input>
                             <input
                                 type="submit"
@@ -160,7 +221,9 @@ export default class resetPassword extends Component {
                                 placeholder="Code"
                                 value={this.state.code}
                                 onChange={this.onFormInputChange}
-                                // className={this.state.errors.firstName ? "error" : ""}
+                                className={
+                                    this.state.errors.code ? "errorfield" : ""
+                                }
                             ></input>
                             <label htmlFor="password">
                                 Enter a new password:
@@ -171,6 +234,11 @@ export default class resetPassword extends Component {
                                 placeholder="Password"
                                 value={this.state.password}
                                 onChange={this.onFormInputChange}
+                                className={
+                                    this.state.errors.password
+                                        ? "errorfield"
+                                        : ""
+                                }
                             ></input>
                             <input
                                 type="submit"
@@ -182,14 +250,14 @@ export default class resetPassword extends Component {
                 </>
             );
         } else if (this.state.view === 3) {
-            //TO DO: set a button / interval to send the person back to login instead of the link
             return (
                 <>
                     <div className="loggedout-container">
                         <img src="../../Logo_Bookish.png" alt="Logo" />
-                        <h4>You have successfully updated your password</h4>
+                        <h4>Password update successful!</h4>
                         <p>
-                            Go back to <Link to="/login">login</Link> page
+                            You are being redirected to the{" "}
+                            <Link to="/login">login page</Link>
                         </p>
                     </div>
                 </>

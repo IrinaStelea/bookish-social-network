@@ -4,7 +4,7 @@ import ResetPassword from "./ResetPassword";
 import Login from "./Login.js";
 
 //setup for React router
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
 export default class Welcome extends Component {
     render() {
@@ -13,17 +13,22 @@ export default class Welcome extends Component {
             <>
                 {/* <h1>Welcome to Bookish</h1> */}
                 <BrowserRouter>
-                    {/* the / route is too vague and all routes will go to it unless we include the attribute exact */}
-                    <Route exact path="/">
-                        <Registration />
-                    </Route>
-                    <Route path="/login">
-                        <Login />
-                    </Route>
-                    <Route
-                        path="/reset-password"
-                        component={ResetPassword}
-                    ></Route>
+                    <Switch>
+                        {/* the / route is too vague and all routes will go to it unless we include the attribute exact */}
+                        <Route exact path="/">
+                            <Registration />
+                        </Route>
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route
+                            path="/reset-password"
+                            component={ResetPassword}
+                        ></Route>
+                        <Route path="*">
+                            <Redirect to="/" />
+                        </Route>
+                    </Switch>
                 </BrowserRouter>
             </>
         );

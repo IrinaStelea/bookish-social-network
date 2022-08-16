@@ -98,7 +98,7 @@ class Registration extends Component {
     }
 
     onFormSubmit(e) {
-        //prevent form from submitting (default behaviour of forms)
+        //preventDefault prevents the page from reloading on submission, which is the default HTML form behavior
         e.preventDefault();
 
         if (this.validateForm()) {

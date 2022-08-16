@@ -17,12 +17,12 @@ import "./Registration.css";
 
 //pass a second argument image from app as prop
 export default function ProfilePic({ first, last, image, toggleUploader }) {
-    // console.log("props in profile pic", firstName, changeName); //props
+    // console.log("props in profile pic", first, last);
 
     //render a default image if there is no image
     image = image || "../../no_avatar.png";
-
-    first = first || "avatar";
+    first = first || "default";
+    last = last || "avatar";
 
     return (
         <>

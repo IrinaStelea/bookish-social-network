@@ -25,7 +25,30 @@ export default class Uploader extends Component {
         e.preventDefault();
         // console.log("this state file is", this.state.file);
 
-        //TO DO: file input validation
+        //file validation: check the file extension
+        let extension = this.state.file.name.substr(
+            this.state.file.name.lastIndexOf(".")
+        );
+
+        if (extension == "") {
+            this.setState({
+                errorMessage: "Please upload a valid image file",
+            });
+            return;
+        }
+        // console.log("file extension", extension);
+        if (
+            extension.toLowerCase() != ".gif" &&
+            extension.toLowerCase() != ".jpg" &&
+            extension.toLowerCase() != ".jpeg" &&
+            extension.toLowerCase() != ".png" &&
+            extension != ""
+        ) {
+            this.setState({
+                errorMessage: "Please upload a valid image file",
+            });
+            return;
+        }
 
         const formData = new FormData();
         formData.append("file", this.state.file);
@@ -58,7 +81,7 @@ export default class Uploader extends Component {
                 <h4 id="close-uploader" onClick={this.props.toggleUploader}>
                     X
                 </h4>
-                <h3>Want to change your image?</h3>
+                <h3>Change your profile picture</h3>
                 {this.state.errorMessage && (
                     <p className="error">{this.state.errorMessage}</p>
                 )}

@@ -35,18 +35,23 @@
 .loggedin-container {
     display: flex;
     width: 95vw;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    justify-content: flex-start;
     align-items: center;
-    margin-top: 2vh;
+    /* margin-top: 2vh; */
+    gap: 6vw;
 }
 
 .navmenu {
     display: flex;
-    width: 45vw;
+    /* width: 45vw; */
+    width: 60%;
+    /* justify-content: space-around; */
     justify-content: space-around;
     background-color: salmon;
-    padding: 1vh 1vw;
-    gap: 1vw;
+    /* padding: 1vh 1vw; */
+    padding: 1.5vh 4vw;
+    gap: 4vw;
     clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
     font-size: 1.5 em;
     font-weight: 600;
@@ -56,6 +61,14 @@
 .navmenu a {
     color: darkslategrey;
     text-decoration: none;
+}
+
+.navmenu a:hover {
+    color: snow;
+}
+
+.navmenu a:active {
+    transform: translateY(2px);
 }
 
 .active {
@@ -74,17 +87,20 @@
 .profile-container {
     align-self: flex-start;
     display: grid;
-    width: 60vw;
-    grid-template-columns: 1fr 2fr;
+    width: 45vw;
+    grid-template-columns: 1fr 1.5fr;
     /* justify-items: start;
     align-items: flex-start; */
     margin-top: 5vh;
+    /* margin left calculated based on space occupied top items */
+    margin-left: 16vw;
 }
 
 .profile-container #avatar {
     border-radius: 5%;
     width: 15vw;
     height: 15vw;
+    margin-left: 0;
 }
 
 .name-bio-container {
@@ -121,14 +137,14 @@
 
 #uploader {
     background-color: whitesmoke;
-    border: 1px solid salmon;
+    border: 1px solid transparent;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 2vw;
     width: 100%;
-    gap: 1vh;
+    gap: 2vh;
 }
 
 #close-uploader {
@@ -151,6 +167,8 @@
     object-fit: cover;
     border: 1px solid transparent;
     border-radius: 50%;
+    /* align to the right-most part of the flexbox */
+    margin-left: auto;
 }
 
 #logo {
@@ -173,6 +191,7 @@
     gap: 1.5vh;
     margin-top: 3vh;
     align-items: flex-start;
+    margin-left: 16vw;
 }
 
 .people-container {
@@ -265,7 +284,7 @@ button:active,
 
 .friends-container {
     display: grid;
-    width: 75vw;
+    width: 55vw;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 2vw;
     margin-top: 2vh;
@@ -303,10 +322,10 @@ button:active,
 #footer {
     position: fixed;
     bottom: 0;
-    right: 0;
-    width: 40vw;
+    right: 2.5vw;
+    width: 12vw;
     object-fit: contain;
     opacity: 0.7;
-    transform: translateY(1vh);
+
     z-index: -100;
 }
