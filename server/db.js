@@ -170,7 +170,20 @@ module.exports.cancelFriendship = (sender, recipient) => {
 //get friends query - needs to use both users & friendships table; the joins refer to the person we want info about
 module.exports.getFriendsAndWannabes = (id) => {
     return db.query(
-        `SELECT users.id, first, last, avatarurl, accepted FROM users  JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) OR (accepted = false AND recipient_id=$1 AND users.id = friendships.sender_id)`,
+        `SELECT users.id, first, last, avatarurl, accepted FROM users JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) OR (accepted = false AND recipient_id=$1 AND users.id = friendships.sender_id)`,
         [id]
+    );
+};
+
+module.exports.getGroupMessages = () => {
+    return db.query(
+        `SELECT messages.id, sender_id, message, timestamp, first, last, avatarurl FROM messages JOIN users ON messages.sender_id=users.id ORDER BY messages.id DESC LIMIT 10`
+    );
+};
+
+module.exports.insertMessage = (id, text) => {
+    return db.query(
+        `WITH "user" AS (SELECT * FROM users WHERE id = $1), inserted_message as (INSERT INTO messages (sender_id, message) VALUES ($1, $2) RETURNING *) SELECT inserted_message.id, sender_id, message, timestamp, first, last, avatarurl FROM "user", inserted_message`,
+        [id, text]
     );
 };

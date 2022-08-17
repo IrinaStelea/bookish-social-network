@@ -21,21 +21,20 @@ const io = require("socket.io")(server, {
         callback(null, req.headers.referer.startsWith("http://localhost:3000")),
 });
 
-//middleware that generates a random string
-// let secretCode = cryptoRandomString({
-//     length: 6,
-// });
-
 const COOKIE_SECRET =
     process.env.COOKIE_SECRET || require("../secrets.json").COOKIE_SECRET;
 
-app.use(
-    cookieSession({
-        secret: COOKIE_SECRET,
-        maxAge: 1000 * 60 * 60 * 24 * 14,
-        sameSite: true,
-    })
-);
+const cookieSessionMiddleware = cookieSession({
+    secret: COOKIE_SECRET,
+    maxAge: 1000 * 60 * 60 * 24 * 14,
+    sameSite: true,
+});
+
+app.use(cookieSessionMiddleware);
+//additional middleware so that socket has access to cookie
+io.use((socket, next) => {
+    cookieSessionMiddleware(socket.request, socket.request.res, next);
+});
 
 //enable us to unpack JSON IN the request body
 app.use(express.json());
@@ -386,15 +385,54 @@ server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
-//when the connection event fires it will run a callback; socket is an object representing the network connection between client and server
+//SOCKET CODE
+//when the connection event fires it will run a callback; socket is an object representing the network connection between client and server; all the socket code has to be inside this connection event
 io.on("connection", (socket) => {
-    console.log(`socket with id ${socket.id} has connected`);
+    //check if there is a userId set first
+    if (!socket.request.session.userId) {
+        return socket.disconnect(true);
+    }
+    //if we've reached this point, we have a userId
+    const userId = socket.request.session.userId;
+    console.log(
+        `User with id ${userId} and socket-id ${socket.id} has connected`
+    );
 
-    //here:emit custom events and send some data -> the client needs to listen to this event
-    //all the code has to be inside the "connection"
-    //...
+    //here:emit custom events and send some data (the payload of the event) -> we need to listen to these events on the client side
+
+    (async () => {
+        let result;
+        try {
+            result = await db.getGroupMessages();
+            console.log("result from get messages", result.rows);
+            if (result.rows.length !== 0) {
+                //emit the latest 10 messages to the user who just connected
+                io.to(socket.id).emit("last-10-messages", result.rows);
+            }
+        } catch (err) {
+            console.log("error in getting latest 10 messages");
+        }
+    })();
+
+    //listen to the new message event emitted in the ChatInput component
+    socket.on("new-message", async (message) => {
+        console.log("new message is", message, "user id is", userId);
+        //add new message to database
+        let result;
+        try {
+            result = await db.insertMessage(userId, message.text);
+            console.log("result from inserting new message", result.rows[0]);
+            //emit the new message to all users
+            io.emit("added-new-message", result.rows[0]);
+        } catch (err) {
+            console.log("error in adding new message to the database");
+        }
+    });
+
     //listen to when the connection disconnects
     socket.on("disconnect", () => {
-        console.log(`socket with id ${socket.id} just disconnected`);
+        console.log(
+            `User with id ${userId} and socket-id ${socket.id} just disconnected`
+        );
     });
 });

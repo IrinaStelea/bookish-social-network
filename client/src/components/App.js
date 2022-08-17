@@ -10,6 +10,7 @@ import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
 import FriendsAndWannabes from "./FriendsAndWannabes.js";
+import Chat from "./chat/Chat.js";
 
 import {
     BrowserRouter,
@@ -165,6 +166,9 @@ export default class App extends Component {
                         </Route>
                         <Route exact path="/friends">
                             <FriendsAndWannabes />
+                        </Route>
+                        <Route exact path="/chat">
+                            <Chat />
                         </Route>
                         {/* <Route path="/logout">
                         <Redirect to="/" />

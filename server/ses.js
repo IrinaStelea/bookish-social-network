@@ -17,7 +17,7 @@ const ses = new aws.SES({
 //normally we would also pass an email to the function
 exports.sendCodeEmail = (code) => {
     let params = {
-        Source: "Your social network <irina.a.stelea@gmail.com>",
+        Source: "Bookish <irina.a.stelea@gmail.com>",
         Destination: {
             ToAddresses: ["irina.a.stelea@gmail.com"],
         },
@@ -26,9 +26,9 @@ exports.sendCodeEmail = (code) => {
             Body: {
                 Text: {
                     Data: `
-                    Hello,    
+                    Hello from Bookish,    
                     
-                    Your code is:
+                    Your password reset code is:
                     ${code}
                     
                     Your verification code expires in 10 minutes, make sure to use it before that.
@@ -40,17 +40,17 @@ exports.sendCodeEmail = (code) => {
                     <title>Your password reset code</title>
                     </head>
                     <body>
-                    <h1 style="color:rgb(60, 110, 113);">Hello</h1>
+                    <h1 style="color:rgb(60, 110, 113);">Hello from Bookish,</h1>
                     <p>Your password reset code is</p>
                     <h2 id="code" style="color:red;">${code}</h2>
-                    <p>Simply copy this code and paste it into the verification input field.</p>
-                    <em>Your social network team</em>
+                    <p>Simply copy this code and paste it into the verification field in your browser.</p>
+                    <em>Your team at Bookish</em>
                     </body>
                     </html>`,
                 },
             },
             Subject: {
-                Data: "Your password reset code / Social network",
+                Data: "Your password reset code / Bookish",
             },
         },
     };

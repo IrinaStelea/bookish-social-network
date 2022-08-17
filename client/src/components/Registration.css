@@ -184,7 +184,8 @@
 } */
 
 .people,
-.friends {
+.friends,
+.chat {
     align-self: flex-start;
     display: flex;
     flex-direction: column;
@@ -202,6 +203,49 @@
     justify-items: start;
     align-items: center;
     margin-top: 1vh;
+}
+
+.chat-container {
+    display: flex;
+    /* use column reverse to have hte last comment appear at the end of the scroll */
+    flex-direction: column-reverse;
+    width: 45vw;
+    height: 40vh;
+    grid-template-columns: 1fr;
+    justify-items: start;
+    overflow-y: scroll;
+    padding: 1vh 1vw;
+    background-color: rgba(211, 211, 211, 0.5);
+}
+
+.chat-cell {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 6fr;
+    justify-items: start;
+    margin-top: 3vh;
+}
+
+.chat-cell img {
+    border-radius: 5%;
+    width: 5vw;
+    height: 5vw;
+    object-fit: cover;
+}
+
+.chat-text-posted {
+    line-height: 1.5em;
+}
+
+.chat-text-posted p:last-of-type {
+    font-size: 0.9em;
+    margin-top: 1vh;
+}
+
+.chat-input {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .people-container img,

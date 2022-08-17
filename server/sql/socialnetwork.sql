@@ -29,3 +29,11 @@ CREATE TABLE friendships(
     recipient_id INTEGER NOT NULL REFERENCES users(id),
     accepted BOOLEAN DEFAULT false
 );
+
+CREATE TABLE messages(
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id INTEGER DEFAULT null REFERENCES users(id) ON DELETE CASCADE,
+    message TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

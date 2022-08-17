@@ -15,6 +15,8 @@ import App from "./components/App.js";
 import { Provider } from "react-redux";
 // ReactDOM.render(<Welcome />, document.querySelector("main"));
 
+import { init } from "./socket.js";
+
 //use DevTools as middleware
 const store = createStore(
     rootReducer,
@@ -31,6 +33,8 @@ fetch("/user/id.json")
             ReactDOM.render(<Welcome />, document.querySelector("main"));
         } else {
             // this means the user is registered because their browser DID have the right cookie and they should be shown a page with the logo
+            //call the init and provide the store to it at the beginning of the App lifecycle
+            init(store);
             //wrap redux around app
             ReactDOM.render(
                 <Provider store={store}>
