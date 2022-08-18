@@ -1,11 +1,7 @@
 //this component needs a bit of state -> function component
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-    acceptFriend,
-    rejectFriend,
-    receiveFriendsAndWannabes,
-} from "../../redux/friends/slice.js";
+import { receiveFriendsAndWannabes } from "../../redux/friends/slice.js";
 import Friends from "./Friends.js";
 import Wannabes from "./Wannabes.js";
 
@@ -27,48 +23,48 @@ export default function FriendsAndWannabes() {
     );
     console.log("friends from the global state", friends);
 
-    //handle accept function - accept a single user
+    // //handle accept function - accept a single user
 
-    const handleAccept = async (id) => {
-        try {
-            const res = await fetch("/acceptfriendship", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id }),
-            });
+    // const handleAccept = async (id) => {
+    //     try {
+    //         const res = await fetch("/acceptfriendship", {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ id }),
+    //         });
 
-            const data = await res.json();
-            console.log("data after clicking on accept button", data);
-            if (!data.message) {
-                //prepare the action and dispatch it to our acceptFriend reducer (action = acceptFriend(id))
-                console.log("data id is", data[0].sender_id);
-                dispatch(acceptFriend(data[0].sender_id));
-            }
-        } catch (err) {
-            console.log("error in changing friendship status", err);
-        }
-    };
+    //         const data = await res.json();
+    //         console.log("data after clicking on accept button", data);
+    //         if (!data.message) {
+    //             //prepare the action and dispatch it to our acceptFriend reducer (action = acceptFriend(id))
+    //             console.log("data id is", data[0].sender_id);
+    //             dispatch(acceptFriend(data[0].sender_id));
+    //         }
+    //     } catch (err) {
+    //         console.log("error in changing friendship status", err);
+    //     }
+    // };
 
-    const handleUnfriend = async (id) => {
-        try {
-            const res = await fetch("/cancelfriendship", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id }),
-            });
+    // const handleUnfriend = async (id) => {
+    //     try {
+    //         const res = await fetch("/cancelfriendship", {
+    //             method: "POST",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ id }),
+    //         });
 
-            const data = await res.json();
-            console.log("data after clicking on unfriend button", data);
-            if (!data.message) {
-                //prepare the action and dispatch it to our rejectFriend reducer
-                console.log("data id is", data);
-                console.log("id in reject is", id);
-                dispatch(rejectFriend(id));
-            }
-        } catch (err) {
-            console.log("error in changing friendship status", err);
-        }
-    };
+    //         const data = await res.json();
+    //         console.log("data after clicking on unfriend button", data);
+    //         if (!data.message) {
+    //             //prepare the action and dispatch it to our rejectFriend reducer
+    //             console.log("data id is", data);
+    //             console.log("id in reject is", id);
+    //             dispatch(rejectFriend(id));
+    //         }
+    //     } catch (err) {
+    //         console.log("error in changing friendship status", err);
+    //     }
+    // };
 
     useEffect(() => {
         //note the argument of useEffect: do this just once on mount, the rest of the state will be handled by Redux!
@@ -110,22 +106,11 @@ export default function FriendsAndWannabes() {
         <>
             <section className="friends">
                 <h3>Friend requests:</h3>
-                {(wannabes.length !== 0 && (
-                    <Wannabes
-                        wannabes={wannabes}
-                        handleAccept={handleAccept}
-                        handleUnfriend={handleUnfriend}
-                    />
-                )) || <p>You have no pending friend requests.</p>}
+                <Wannabes />
 
                 <hr></hr>
                 <h3>Friends:</h3>
-                {(friends.length !== 0 && (
-                    <Friends
-                        friends={friends}
-                        handleUnfriend={handleUnfriend}
-                    />
-                )) || <p>You have no friends.</p>}
+                <Friends />
             </section>
         </>
     );
