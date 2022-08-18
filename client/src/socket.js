@@ -14,13 +14,13 @@ export const init = (store) => {
 
         socket.on("last-10-messages", (messages) => {
             //messages should be an array of objects
-            console.log("got last 10 messages:", messages);
+            // console.log("got last 10 messages:", messages);
             store.dispatch(messagesReceived(messages));
         });
 
         //listening to when a new message was just added to the database via the server socket that emits an event for this
         socket.on("added-new-message", (message) => {
-            console.log("the latest message is:", message);
+            // console.log("the latest message is:", message);
             store.dispatch(messageReceived(message));
         });
     }

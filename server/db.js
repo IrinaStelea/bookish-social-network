@@ -170,7 +170,14 @@ module.exports.cancelFriendship = (sender, recipient) => {
 //get friends query - needs to use both users & friendships table; the joins refer to the person we want info about
 module.exports.getFriendsAndWannabes = (id) => {
     return db.query(
-        `SELECT users.id, first, last, avatarurl, accepted FROM users JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) OR (accepted = false AND recipient_id=$1 AND users.id = friendships.sender_id)`,
+        `SELECT users.id, first, last, avatarurl, accepted FROM users JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) OR (accepted = false AND recipient_id=$1 AND users.id = friendships.sender_id) ORDER BY first`,
+        [id]
+    );
+};
+
+module.exports.getOtherFriends = (id) => {
+    return db.query(
+        `SELECT users.id, first, last, avatarurl, sender_id, recipient_id FROM users JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) ORDER BY first`,
         [id]
     );
 };

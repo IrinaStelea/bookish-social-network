@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 export default function Chat() {
     const messages = useSelector((state) => state.messages);
 
-    console.log("messages in the main Chat component", messages);
+    // console.log("messages in the main Chat component", messages);
     return (
         <section className="chat">
             <h3>Chat</h3>

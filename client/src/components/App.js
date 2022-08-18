@@ -1,7 +1,5 @@
 // this component holds all the log in info
 
-// import { Component } from "react";
-
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { receiveFriendsAndWannabes } from "../redux/friends/slice.js";
@@ -53,55 +51,6 @@ export default function App() {
             });
     }, []);
 
-    //FRIENDS AND WANNABES INFO
-    //data from the global store
-    // const dispatch = useDispatch();
-    // //very important to define the following two variables: they allow the DOM to react to changes in Redux data
-
-    // //first case of useSelector - if there is friends data, give back the ones with accepted false (wannabes)
-    // //be careful about not messing up the arrow function state => ..., it needs to return smth
-    // const wannabes = useSelector(
-    //     (state) =>
-    //         state.friends && state.friends.filter((friend) => !friend.accepted)
-    // );
-    // console.log("wannabes from the global state", wannabes);
-    // //second case useSelector - if there is friends data, give back the ones with accepted true (friends)
-    // const friends = useSelector(
-    //     (state) =>
-    //         state.friends && state.friends.filter((friend) => friend.accepted)
-    // );
-    // console.log("friends from the global state", friends);
-
-    // useEffect(() => {
-    //     //note the argument of useEffect: do this just once on mount, the rest of the state will be handled by Redux!
-
-    //     //the condition below ensures we don't talk to the database needlessly
-    //     if (friends.length == 0 || wannabes.length == 0) {
-    //         (async () => {
-    //             try {
-    //                 const res = await fetch("/api/friends");
-    //                 const data = await res.json();
-    //                 console.log(
-    //                     "data after fetch friends and wannabes",
-    //                     data.friends
-    //                 );
-    //                 //data is 1. array of objects when there is data; 2. empty array for 0 friends; 3. a message if there was an error
-
-    //                 //exclude cases when there is no data or when there was an error
-    //                 if (data.length !== 0 || !data.message) {
-    //                     // pass data from server to redux; redux will update our data because we use useSelector;
-    //                     // console.log("sending data to redux");
-    //                     //careful about the type of data being sent - wrapping it in an object or not
-    //                     dispatch(receiveFriendsAndWannabes(data.friends));
-    //                 }
-    //             } catch (err) {
-    //                 //TO DO: handle error here
-    //                 console.log("error in fetch friends", err);
-    //             }
-    //         })();
-    //     }
-    // }, []);
-
     const toggleUploader = () => {
         //this is changing to the opposite value of uploaderIsVisible
         setUploader(!uploaderIsVisible);
@@ -130,6 +79,60 @@ export default function App() {
                 console.log(err);
             });
     };
+
+    //FRIENDS AND WANNABES info
+    const dispatch = useDispatch();
+    //very important to define the following two variables: they allow the DOM to react to changes in Redux data
+
+    //first case of useSelector - if there is friends data, give back the ones with accepted false (wannabes)
+    //be careful about not messing up the arrow function below, it needs to return smth
+    const wannabes = useSelector(
+        (state) =>
+            state.friends && state.friends.filter((friend) => !friend.accepted)
+    );
+    // console.log("wannabes from the global state", wannabes);
+    //second case useSelector - if there is friends data, give back the ones with accepted true (friends)
+    const friends = useSelector(
+        (state) =>
+            state.friends && state.friends.filter((friend) => friend.accepted)
+    );
+    // console.log("friends from the global state", friends);
+
+    useEffect(() => {
+        //note the argument of useEffect: do this just once on mount, the rest of the state will be handled by Redux!
+
+        //the condition below ensures we don't talk to the database needlessly
+        if (friends.length == 0 || wannabes.length == 0) {
+            (async () => {
+                try {
+                    const res = await fetch("/api/friends");
+                    const data = await res.json();
+                    console.log(
+                        "data after fetch friends and wannabes",
+                        data.friends
+                    );
+                    //data is 1. array of objects when there is data; 2. empty array for 0 friends; 3. a message if there was an error
+
+                    //exclude cases when there is no data or when there was an error
+                    if (data.length !== 0 || !data.message) {
+                        // pass data from server to redux; redux will update our data because we use useSelector;
+                        // console.log("sending data to redux");
+                        //careful about the type of data being sent - wrapping it in an object or not
+                        dispatch(receiveFriendsAndWannabes(data.friends));
+                    }
+                } catch (err) {
+                    //TO DO: handle error here
+                    console.log("error in fetch friends", err);
+                }
+            })();
+        }
+    }, []);
+
+    //FIX THIS - stopped working after including subcomponents
+    //return something while we wait for the fetch above
+    // if (friends.length == 0 || wannabes.length == 0) {
+    //     return null;
+    // }
 
     return (
         <>

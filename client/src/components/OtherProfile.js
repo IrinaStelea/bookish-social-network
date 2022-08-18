@@ -5,21 +5,18 @@ import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import FriendButton from "./FriendButton";
-import Friends from "./friends-wannabes/Friends";
-import { useSelector } from "react-redux";
+import OtherFriends from "./OtherProfile-Friends";
+import { useSelector, useDispatch } from "react-redux";
+import { receiveOtherFriends } from "../redux/other-friends/slice";
 
 export default function OtherProfile() {
     //grab ID from params
     const { id } = useParams();
     const history = useHistory();
     const [user, setUser] = useState({});
+    const [areWeFriends, setAreWeFriends] = useState(false);
 
-    const friends = useSelector(
-        (state) =>
-            state.friends && state.friends.filter((friend) => friend.accepted)
-    );
-
-    //fetch the user profile when the component mounts
+    //GET USER PROFILE
     useEffect(() => {
         console.log("the id is", id);
         fetch(`/api/user/${id}`)
@@ -41,6 +38,47 @@ export default function OtherProfile() {
         //note it is necessary to watch the id because the profile might not be available as soon as the component mountes
     }, [id]);
 
+    //GET OTHER FRIENDS
+    const dispatch = useDispatch();
+
+    const otherFriends = useSelector((state) => state.otherFriends);
+    console.log("other friends from the global state", otherFriends);
+
+    useEffect(() => {
+        if (otherFriends.length == 0) {
+            (async () => {
+                try {
+                    // console.log("the id in other profile is", id);
+                    const res = await fetch(`/api/otherfriends/${id}`);
+                    const data = await res.json();
+                    // console.log("data after fetch other friends", data.friends);
+
+                    //exclude cases when there is no data or when there was an error
+                    if (data.friends || data.areWeFriends) {
+                        // pass data from server to redux; redux will update our data because we use useSelector;
+                        // console.log("sending data to redux");
+                        //careful about the type of data being sent - wrapping it in an object or not
+                        dispatch(receiveOtherFriends(data.friends));
+                        //check if we are friends - no longer necessary because data is pre-sorted on the server
+                        // if (data.areWeFriends) {
+                        //     setAreWeFriends(true);
+                        // }
+                    }
+                } catch (err) {
+                    //TO DO: handle error here
+                    console.log("error in fetch other friends", err);
+                }
+            })();
+        }
+    }, [id]);
+
+    //FIX THIS
+    // if (!otherFriends) {
+    //     return null;
+    // }
+
+    // console.log("are we friends", areWeFriends);
+
     return (
         <>
             <div className="profile-container">
@@ -59,12 +97,15 @@ export default function OtherProfile() {
                     <p id="bio">{user.bio || "No bio yet"}</p>
                 </div>
             </div>
-            <div className="friends">
-                <h3>Friends of {user.first}</h3>
-                {(friends.length !== 0 && <Friends friends={friends} />) || (
-                    <p>{user.first} has no friends.</p>
-                )}
-            </div>
+            {otherFriends.length !== 0 && (
+                <div className="friends">
+                    <h3>Friends of {user.first}</h3>
+                    <OtherFriends
+                        otherFriends={otherFriends}
+                        first={user.first}
+                    />
+                </div>
+            )}
         </>
     );
 }

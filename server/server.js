@@ -367,6 +367,43 @@ app.get("/api/friends", async (req, res) => {
     }
 });
 
+app.get("/api/otherfriends/:id", async (req, res) => {
+    let id = req.params.id;
+    console.log("id in post friends is", id);
+    let userId = req.session.userId;
+    try {
+        const result = await db.getOtherFriends(id);
+        // console.log("result in get other friends", result);
+        //send also the cookie id to be able to determine friendship relations
+        //friendship check
+        let friends = result.rows;
+        console.log("friends in get other friends", friends);
+        if (friends) {
+            let areWeFriends = friends.find(
+                (friend) =>
+                    friend.recipient_id == userId || friend.sender_id == userId
+            );
+            // console.log("are we friends", areWeFriends);
+            //friendship check
+            if (areWeFriends) {
+                friends = friends.filter(
+                    (friend) =>
+                        friend.recipient_id !== userId &&
+                        friend.sender_id !== userId
+                );
+                return res.json({ friends, areWeFriends: true });
+            } else {
+                return res.json({});
+            }
+        } else {
+            return res.json({});
+        }
+    } catch (err) {
+        console.log("error in get other friends results");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
+});
+
 app.get("/logout", (req, res) => {
     req.session = null;
     res.json({ logout: true });
@@ -404,7 +441,7 @@ io.on("connection", (socket) => {
         let result;
         try {
             result = await db.getGroupMessages();
-            console.log("result from get messages", result.rows);
+            // console.log("result from get messagens", result.rows);
             if (result.rows.length !== 0) {
                 //emit the latest 10 messages to the user who just connected
                 io.to(socket.id).emit("last-10-messages", result.rows);
