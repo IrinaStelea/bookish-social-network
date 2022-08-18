@@ -5,12 +5,19 @@ import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import FriendButton from "./FriendButton";
+import Friends from "./friends-wannabes/Friends";
+import { useSelector } from "react-redux";
 
 export default function OtherProfile() {
     //grab ID from params
     const { id } = useParams();
     const history = useHistory();
     const [user, setUser] = useState({});
+
+    const friends = useSelector(
+        (state) =>
+            state.friends && state.friends.filter((friend) => friend.accepted)
+    );
 
     //fetch the user profile when the component mounts
     useEffect(() => {
@@ -51,6 +58,12 @@ export default function OtherProfile() {
                     </h3>
                     <p id="bio">{user.bio || "No bio yet"}</p>
                 </div>
+            </div>
+            <div className="friends">
+                <h3>Friends of {user.first}</h3>
+                {(friends.length !== 0 && <Friends friends={friends} />) || (
+                    <p>{user.first} has no friends.</p>
+                )}
             </div>
         </>
     );

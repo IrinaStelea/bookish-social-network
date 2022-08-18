@@ -9,7 +9,7 @@ import "./Registration.css";
 import Profile from "./Profile.js";
 import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
-import FriendsAndWannabes from "./FriendsAndWannabes.js";
+import FriendsAndWannabes from "./friends-wannabes/FriendsAndWannabes.js";
 import Chat from "./chat/Chat.js";
 
 import {
