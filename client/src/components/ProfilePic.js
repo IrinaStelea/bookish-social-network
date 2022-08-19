@@ -26,9 +26,7 @@ export default function ProfilePic({ first, last, image, toggleUploader }) {
 
     return (
         <>
-            {/* <button onClick={togglePopup}>O
-            
-            pen popup</button> */}
+            {/* <button onClick={togglePopup}>Open popup</button> */}
             <img
                 onClick={toggleUploader}
                 src={image}

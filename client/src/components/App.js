@@ -14,6 +14,7 @@ import FindPeople from "./FindPeople.js";
 import OtherProfile from "./OtherProfile.js";
 import FriendsAndWannabes from "./friends-wannabes/FriendsAndWannabes.js";
 import Chat from "./chat/Chat.js";
+import Dropdown from "./Dropdown.js";
 
 import {
     BrowserRouter,
@@ -64,20 +65,6 @@ export default function App() {
     const changeProfilePic = (newUrl) => {
         setAvatarUrl(newUrl);
         setUploader(!uploaderIsVisible);
-    };
-
-    const logout = () => {
-        fetch("/logout")
-            .then((resp) => resp.json())
-            .then(() => {
-                // console.log("data after logout", data);
-                //redirect to login
-                location.replace("/login");
-                // location.reload("/"); //this did not work
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     };
 
     //FRIENDS AND WANNABES info
@@ -156,18 +143,25 @@ export default function App() {
                         <NavLink exact to="/users">
                             Find people
                         </NavLink>
-                        <NavLink exact to="/logout" onClick={logout}>
+                        {/* <NavLink exact to="/logout">
                             Logout
-                        </NavLink>
+                        </NavLink> */}
                     </div>
                     {/* passing the user data to ProfilePic */}
-                    <ProfilePic
-                        first={first}
-                        last={last}
-                        image={avatarUrl}
-                        toggleUploader={toggleUploader}
-                    />
+                    <div className="profile-info">
+                        <ProfilePic
+                            first={first}
+                            last={last}
+                            image={avatarUrl}
+                            toggleUploader={toggleUploader}
+                        />
+                        <Dropdown
+                            toggleUploader={toggleUploader}
+                            first={first}
+                        />
+                    </div>
                 </div>
+
                 <div id="footer">
                     <Footer />
                 </div>

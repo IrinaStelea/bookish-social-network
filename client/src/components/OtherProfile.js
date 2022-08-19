@@ -8,13 +8,13 @@ import FriendButton from "./FriendButton";
 import OtherFriends from "./OtherProfile-Friends";
 import { useSelector, useDispatch } from "react-redux";
 import { receiveOtherFriends } from "../redux/other-friends/slice";
+import { receiveAreWeFriends } from "../redux/are-we-friends/slice";
 
 export default function OtherProfile() {
     //grab ID from params
     const { id } = useParams();
     const history = useHistory();
     const [user, setUser] = useState({});
-    const [areWeFriends, setAreWeFriends] = useState(false);
 
     //GET USER PROFILE
     useEffect(() => {
@@ -42,27 +42,26 @@ export default function OtherProfile() {
     const dispatch = useDispatch();
 
     const otherFriends = useSelector((state) => state.otherFriends);
-    console.log("other friends from the global state", otherFriends);
+    const areWeFriends = useSelector((state) => state.areWeFriends);
+    console.log(
+        "other friends from the global state",
+        otherFriends,
+        "are we friends",
+        areWeFriends
+    );
 
     useEffect(() => {
         if (otherFriends.length == 0) {
             (async () => {
                 try {
-                    // console.log("the id in other profile is", id);
                     const res = await fetch(`/api/otherfriends/${id}`);
                     const data = await res.json();
                     // console.log("data after fetch other friends", data.friends);
 
-                    //exclude cases when there is no data or when there was an error
-                    if (data.friends || data.areWeFriends) {
-                        // pass data from server to redux; redux will update our data because we use useSelector;
-                        // console.log("sending data to redux");
-                        //careful about the type of data being sent - wrapping it in an object or not
+                    //pass data to redux only if the two are friends
+                    if (data.areWeFriends) {
                         dispatch(receiveOtherFriends(data.friends));
-                        //check if we are friends - no longer necessary because data is pre-sorted on the server
-                        // if (data.areWeFriends) {
-                        //     setAreWeFriends(true);
-                        // }
+                        dispatch(receiveAreWeFriends(data.areWeFriends));
                     }
                 } catch (err) {
                     //TO DO: handle error here
@@ -76,8 +75,6 @@ export default function OtherProfile() {
     // if (!otherFriends) {
     //     return null;
     // }
-
-    // console.log("are we friends", areWeFriends);
 
     return (
         <>
@@ -97,7 +94,7 @@ export default function OtherProfile() {
                     <p id="bio">{user.bio || "No bio yet"}</p>
                 </div>
             </div>
-            {otherFriends.length !== 0 && (
+            {areWeFriends && (
                 <div className="friends">
                     <h3>Friends of {user.first}</h3>
                     <OtherFriends

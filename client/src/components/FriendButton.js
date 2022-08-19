@@ -1,8 +1,10 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 
-export default function FriendButton() {
-    const { id } = useParams();
+export default function FriendButton({ userid }) {
+    //define the id dynamically - if an id gets passed from the other-profile-friends (this manages the button on the Other Friends list), if not, use the id in useParams (this manages the button on the main profile page)
+    const id = userid || useParams().id;
+
     const [button, setButton] = useState({
         text: "Send request",
         url: "/addfriend",
@@ -14,12 +16,6 @@ export default function FriendButton() {
         url: "/cancelfriendship",
     };
     const [error, setError] = useState({});
-
-    // const [friendMode, setFriendMode] = useState({
-    //     hasRequest: false,
-    //     accepted: false,
-    //     isMyRequest: false,
-    // });
 
     //fetch friendship status on mount
     useEffect(() => {

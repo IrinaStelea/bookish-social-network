@@ -406,7 +406,8 @@ app.get("/api/otherfriends/:id", async (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session = null;
-    res.json({ logout: true });
+    // res.json({ logout: true });
+    return res.redirect("/login");
 });
 
 app.get("*", function (req, res) {

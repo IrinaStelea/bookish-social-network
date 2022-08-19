@@ -168,7 +168,6 @@
     border: 1px solid transparent;
     border-radius: 50%;
     /* align to the right-most part of the flexbox */
-    margin-left: auto;
 }
 
 #logo {
@@ -299,7 +298,7 @@ button:active,
     text-transform: none;
     padding: 0.5vw;
     letter-spacing: 0.05em;
-    margin-top: 2vh;
+    margin-top: vh;
 }
 
 .friend-button:hover {
@@ -370,6 +369,43 @@ button:active,
     width: 12vw;
     object-fit: contain;
     opacity: 0.7;
-
     z-index: -100;
+}
+
+.profile-info {
+    margin-left: auto;
+    display: flex;
+}
+
+.dropdown {
+    display: none;
+    width: 10vw;
+    background-color: rgba(211, 211, 211, 0.5);
+    position: fixed;
+    right: 2vw;
+    margin-top: 1vh;
+    padding: 1vw;
+    list-style-type: none;
+}
+
+.dropdown li {
+    margin-top: 2vh;
+}
+
+.dropdown li:last-of-type a {
+    font-size: 0.9em;
+    margin-top: 1vh;
+}
+
+.dropdown hr {
+    margin: 1vh 0;
+}
+
+.dropdown-arrow {
+    align-self: flex-end;
+    margin-left: auto;
+}
+
+.dropdown-arrow:hover .dropdown {
+    display: block;
 }
