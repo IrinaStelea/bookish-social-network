@@ -29,7 +29,8 @@ exports.upload = (req, res, next) => {
         .putObject({
             Bucket: "ihamspiced",
             ACL: "public-read",
-            Key: filename,
+            // this has access to req.session so I can add the userid to create subfolder on AWS for each user
+            Key: req.session.userId + "/" + filename,
             Body: fs.createReadStream(path),
             ContentType: mimetype,
             ContentLength: size,
@@ -52,4 +53,56 @@ exports.upload = (req, res, next) => {
             console.log("error in upload put object -s3.js", err);
             res.sendStatus(404);
         });
+};
+
+exports.delete = (req, res, next) => {
+    var params = {
+        Bucket: "ihamspiced",
+        Prefix: req.session.userId + "/",
+    };
+
+    return s3
+        .listObjects(params)
+        .promise()
+        .then((data) => {
+            if (data.Contents.length === 0) {
+                throw new Error("List of objects empty.");
+            }
+
+            let currentData = data;
+
+            params = { Bucket: "ihamspiced" };
+            params.Delete = { Objects: [] };
+
+            currentData.Contents.forEach((content) => {
+                params.Delete.Objects.push({ Key: content.Key });
+            });
+
+            return s3
+                .deleteObjects(params)
+                .promise()
+                .then(() => {
+                    // it worked!!!
+                    console.log("amazon delete successful");
+                    next(); //adding this because this function will be used as middleware
+                })
+                .catch((err) => {
+                    // uh oh
+                    console.log("error in delete object", err);
+                    res.sendStatus(404);
+                });
+        });
+    // const promise = s3.deleteObject(params).promise();
+
+    // promise
+    //     .then(() => {
+    //         // it worked!!!
+    //         console.log("amazon delete successful");
+    //         next(); //adding this because this function will be used as middleware
+    //     })
+    //     .catch((err) => {
+    //         // uh oh
+    //         console.log("error in delete object", err);
+    //         res.sendStatus(404);
+    //     });
 };

@@ -194,3 +194,8 @@ module.exports.insertMessage = (id, text) => {
         [id, text]
     );
 };
+
+module.exports.deleteAccount = (id) => {
+    //this will delete the info from users, friendships & messages tables thanks to ON CASCADE DELETE on relevant ids
+    return db.query(`DELETE FROM users WHERE id=$1`, [id]);
+};

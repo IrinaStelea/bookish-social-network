@@ -15,6 +15,7 @@ import OtherProfile from "./OtherProfile.js";
 import FriendsAndWannabes from "./friends-wannabes/FriendsAndWannabes.js";
 import Chat from "./chat/Chat.js";
 import Dropdown from "./Dropdown.js";
+import Delete from "./Delete.js";
 
 import {
     BrowserRouter,
@@ -30,6 +31,7 @@ export default function App() {
     const [avatarUrl, setAvatarUrl] = useState("");
     const [bio, setBio] = useState("");
     const [uploaderIsVisible, setUploader] = useState(false);
+    const [deleteIsVisible, setDelete] = useState(false);
 
     //fetch user info once the component mounts; note this runs actually after the render
     useEffect(() => {
@@ -55,6 +57,11 @@ export default function App() {
     const toggleUploader = () => {
         //this is changing to the opposite value of uploaderIsVisible
         setUploader(!uploaderIsVisible);
+    };
+
+    const toggleDelete = () => {
+        //this is changing to the opposite value of uploaderIsVisible
+        setDelete(!deleteIsVisible);
     };
 
     const saveDraftBioToApp = (draftBio) => {
@@ -157,6 +164,7 @@ export default function App() {
                         />
                         <Dropdown
                             toggleUploader={toggleUploader}
+                            toggleDelete={toggleDelete}
                             first={first}
                         />
                     </div>
@@ -172,8 +180,11 @@ export default function App() {
                             toggleUploader={toggleUploader}
                         />
                     )}
+                    {deleteIsVisible && <Delete toggleDelete={toggleDelete} />}
                 </div>
-                {uploaderIsVisible && <div className="overlay"></div>}
+                {(uploaderIsVisible || deleteIsVisible) && (
+                    <div className="overlay"></div>
+                )}
                 {/* browser router for profile, FindPeople & OtherProfile, use the Switch to be able to add a catch all */}
                 <Switch>
                     <Route exact path="/">

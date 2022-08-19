@@ -379,20 +379,27 @@ button:active,
 
 .dropdown {
     display: none;
-    width: 10vw;
+    width: 14vw;
     background-color: rgba(211, 211, 211, 0.5);
     position: fixed;
     right: 2vw;
-    margin-top: 1vh;
     padding: 1vw;
     list-style-type: none;
 }
 
 .dropdown li {
     margin-top: 2vh;
+    cursor: pointer;
+    color: slategray;
+    text-decoration: underline;
 }
 
-.dropdown li:last-of-type a {
+.dropdown li:hover {
+    color: darkslategray;
+    text-decoration: underline;
+}
+
+.dropdown li:last-of-type {
     font-size: 0.9em;
     margin-top: 1vh;
 }

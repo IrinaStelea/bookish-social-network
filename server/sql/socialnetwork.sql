@@ -25,15 +25,15 @@ ALTER TABLE users ADD COLUMN bio TEXT;
 
 CREATE TABLE friendships(
     id SERIAL PRIMARY KEY,
-    sender_id INTEGER NOT NULL REFERENCES users(id),
-    recipient_id INTEGER NOT NULL REFERENCES users(id),
+    sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     accepted BOOLEAN DEFAULT false
 );
 
 CREATE TABLE messages(
     id SERIAL PRIMARY KEY,
     sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    recipient_id INTEGER DEFAULT null REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id INTEGER DEFAULT null REFERENCES users(id),
     message TEXT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

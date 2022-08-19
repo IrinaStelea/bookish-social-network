@@ -199,6 +199,8 @@ app.post(
         //get the full URL of the image (amazon url + filename)
         const avatarUrl = path.join(
             "https://s3.amazonaws.com/ihamspiced",
+            //add the userId for access to subfolder
+            `${req.session.userId}`,
             `${req.file.filename}`
         );
         // console.log("avatarUrl", avatarUrl);
@@ -354,6 +356,19 @@ app.post("/cancelfriendship", async (req, res) => {
     } catch (err) {
         console.log("error in get friendship results");
         return res.json({ message: "Something went wrong, please try again" });
+    }
+});
+
+//post for delete account, including with full delete of all profile pics uploaded to Amazon
+app.post("/api/delete-account", s3.delete, async (req, res) => {
+    try {
+        const result = await db.deleteAccount(req.session.userId);
+        // console.log("account delete successful", result);
+        req.session = null;
+        return res.redirect("/");
+    } catch (err) {
+        console.log("error in deleting account", err);
+        res.sendStatus(500);
     }
 });
 
