@@ -441,6 +441,7 @@ server.listen(process.env.PORT || 3001, function () {
 //SOCKET CODE
 //when the connection event fires it will run a callback; socket is an object representing the network connection between client and server; all the socket code has to be inside this connection event
 let onlineUsers = [];
+let mergedOnlineUsers = {};
 io.on("connection", (socket) => {
     //check if there is a userId set first
     if (!socket.request.session.userId) {
@@ -454,7 +455,7 @@ io.on("connection", (socket) => {
 
     onlineUsers.push({ [userId]: [`${socket.id}`] });
     console.log("online users", onlineUsers);
-    const mergedOnlineUsers = onlineUsers.reduce((acc, obj) => {
+    mergedOnlineUsers = onlineUsers.reduce((acc, obj) => {
         for (let key in obj) {
             acc[key] = acc[key] ? [...acc[key], obj[key]].flat() : obj[key];
         }
@@ -462,32 +463,6 @@ io.on("connection", (socket) => {
     }, {});
 
     console.log("merged online users", mergedOnlineUsers);
-
-    // (() => {
-    //     if (onlineUsers) {
-    //         for (let user of onlineUsers) {
-    //             if (user[userId] == undefined) {
-    //                 onlineUsers.push({ [userId]: `${socket.id}` });
-    //             }
-    //             // user[id] !== undefined
-    //             //     ? user[id].push(`${socket}`)
-    //             //     : onlineUsers.push({ [id]: `${socket}` });
-    //         }
-    //     } else {
-    //         console.log("in the else branch");
-    //     }
-
-    //     return onlineUsers;
-    // })();
-
-    // generateOnlineUsers(userId, socket.id);
-    //list of online users
-    // onlineUsers.push({ [userId]: `${socket.id}` });
-    // onlineUsers.map((user) =>
-    //     user[userId] !== undefined
-    //         ? user[userId].push(`${socket.id}`)
-    //         : onlineUsers.push({ [userId]: `${socket.id}` })
-    // );
 
     // console.log("online users", onlineUsers);
     //here:emit custom events and send some data (the payload of the event) -> we need to listen to these events on the client side
@@ -526,5 +501,19 @@ io.on("connection", (socket) => {
         console.log(
             `User with id ${userId} and socket-id ${socket.id} just disconnected`
         );
+        mergedOnlineUsers[userId] = mergedOnlineUsers[userId].filter(
+            (item) => item !== `${socket.id}`
+        );
+
+        mergedOnlineUsers[userId].length == 0 &&
+            delete mergedOnlineUsers[userId];
+
+        // Object.entries(mergedOnlineUsers).map((user) =>
+        //     user[userId]
+        //         ? user[userId].filter((item) => item !== `${socket.id}`)
+        //         : user
+        // );
+
+        console.log("merged online users on disconnect", mergedOnlineUsers);
     });
 });
