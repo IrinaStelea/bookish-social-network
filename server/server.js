@@ -363,7 +363,7 @@ app.post("/cancelfriendship", async (req, res) => {
 app.post("/api/delete-account", s3.delete, async (req, res) => {
     try {
         const result = await db.deleteAccount(req.session.userId);
-        // console.log("account delete successful", result);
+        console.log("account delete successful", result);
         req.session = null;
         return res.redirect("/");
     } catch (err) {
@@ -440,6 +440,7 @@ server.listen(process.env.PORT || 3001, function () {
 
 //SOCKET CODE
 //when the connection event fires it will run a callback; socket is an object representing the network connection between client and server; all the socket code has to be inside this connection event
+let onlineUsers = [];
 io.on("connection", (socket) => {
     //check if there is a userId set first
     if (!socket.request.session.userId) {
@@ -451,6 +452,44 @@ io.on("connection", (socket) => {
         `User with id ${userId} and socket-id ${socket.id} has connected`
     );
 
+    onlineUsers.push({ [userId]: [`${socket.id}`] });
+    console.log("online users", onlineUsers);
+    const mergedOnlineUsers = onlineUsers.reduce((acc, obj) => {
+        for (let key in obj) {
+            acc[key] = acc[key] ? [...acc[key], obj[key]].flat() : obj[key];
+        }
+        return acc;
+    }, {});
+
+    console.log("merged online users", mergedOnlineUsers);
+
+    // (() => {
+    //     if (onlineUsers) {
+    //         for (let user of onlineUsers) {
+    //             if (user[userId] == undefined) {
+    //                 onlineUsers.push({ [userId]: `${socket.id}` });
+    //             }
+    //             // user[id] !== undefined
+    //             //     ? user[id].push(`${socket}`)
+    //             //     : onlineUsers.push({ [id]: `${socket}` });
+    //         }
+    //     } else {
+    //         console.log("in the else branch");
+    //     }
+
+    //     return onlineUsers;
+    // })();
+
+    // generateOnlineUsers(userId, socket.id);
+    //list of online users
+    // onlineUsers.push({ [userId]: `${socket.id}` });
+    // onlineUsers.map((user) =>
+    //     user[userId] !== undefined
+    //         ? user[userId].push(`${socket.id}`)
+    //         : onlineUsers.push({ [userId]: `${socket.id}` })
+    // );
+
+    // console.log("online users", onlineUsers);
     //here:emit custom events and send some data (the payload of the event) -> we need to listen to these events on the client side
 
     (async () => {
