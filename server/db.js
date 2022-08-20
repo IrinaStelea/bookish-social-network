@@ -84,6 +84,14 @@ module.exports.getUserData = (id) => {
     );
 };
 
+//get info of online users
+module.exports.getUsersById = (arrayIds) => {
+    return db.query(
+        `SELECT id, first, last, avatarurl FROM users WHERE id = ANY($1)`,
+        [arrayIds]
+    );
+};
+
 module.exports.getUsers = (val) => {
     return db.query(
         `SELECT * FROM users WHERE first ILIKE $1 OR last ILIKE $1 ORDER BY id DESC LIMIT 5`,

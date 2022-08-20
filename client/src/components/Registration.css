@@ -167,7 +167,6 @@
     object-fit: cover;
     border: 1px solid transparent;
     border-radius: 50%;
-    /* align to the right-most part of the flexbox */
 }
 
 #logo {
@@ -210,9 +209,9 @@
     flex-direction: column-reverse;
     width: 45vw;
     height: 40vh;
-    grid-template-columns: 1fr;
+    /* grid-template-columns: 1fr; */
     justify-items: start;
-    overflow-y: scroll;
+    overflow-y: auto;
     padding: 1vh 1vw;
     background-color: rgba(211, 211, 211, 0.5);
 }
@@ -226,7 +225,8 @@
 }
 
 .chat-cell img {
-    border-radius: 5%;
+    border: 1px solid transparent;
+    border-radius: 50%;
     width: 5vw;
     height: 5vw;
     object-fit: cover;
@@ -373,6 +373,7 @@ button:active,
 }
 
 .profile-info {
+    /* align to the right most part of the flexbox */
     margin-left: auto;
     display: flex;
 }
@@ -415,4 +416,41 @@ button:active,
 
 .dropdown-arrow:hover .dropdown {
     display: block;
+}
+
+#online-users-panel {
+    position: fixed;
+    bottom: 0;
+    z-index: 1;
+    left: 65vw;
+    background-color: rgba(211, 211, 211, 0.5);
+    width: 15vw;
+    height: 28vh;
+    padding: 2vh 2vw;
+    overflow-y: auto;
+    border-top: 2px solid darkorange;
+    border-bottom: 2px solid darkorange;
+}
+
+.online-users {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: flex-start;
+    gap: 1vw;
+    margin-top: 3vh;
+}
+
+.online-user-row {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+}
+
+#online-user-avatar {
+    width: 4vw;
+    height: 4vw;
+    object-fit: cover;
+    border: 1px solid transparent;
+    border-radius: 50%;
 }

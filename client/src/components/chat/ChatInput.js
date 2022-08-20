@@ -32,7 +32,7 @@ const ChatInput = ({
         <div className="chat-input">
             <textarea
                 cols="40"
-                rows="10"
+                rows="6"
                 ref={textareaRef}
                 placeholder={textPlaceholder}
                 onKeyUp={onChange}

@@ -440,8 +440,7 @@ server.listen(process.env.PORT || 3001, function () {
 
 //SOCKET CODE
 //when the connection event fires it will run a callback; socket is an object representing the network connection between client and server; all the socket code has to be inside this connection event
-let onlineUsers = [];
-let mergedOnlineUsers = {};
+let onlineUsers = {};
 io.on("connection", (socket) => {
     //check if there is a userId set first
     if (!socket.request.session.userId) {
@@ -453,20 +452,60 @@ io.on("connection", (socket) => {
         `User with id ${userId} and socket-id ${socket.id} has connected`
     );
 
-    onlineUsers.push({ [userId]: [`${socket.id}`] });
-    console.log("online users", onlineUsers);
-    mergedOnlineUsers = onlineUsers.reduce((acc, obj) => {
-        for (let key in obj) {
-            acc[key] = acc[key] ? [...acc[key], obj[key]].flat() : obj[key];
-        }
-        return acc;
-    }, {});
-
-    console.log("merged online users", mergedOnlineUsers);
-
+    // onlineUsers.push({ [userId]: [`${socket.id}`] });
     // console.log("online users", onlineUsers);
+    // mergedOnlineUsers = onlineUsers.reduce((acc, obj) => {
+    //     for (let key in obj) {
+    //         acc[key] = acc[key] ? [...acc[key], obj[key]].flat() : obj[key];
+    //     }
+    //     return acc;
+    // }, {});
+
+    //emit info about new user joining
+    (async () => {
+        //if user is not already online, emit his/her info to all other users
+        if (!onlineUsers[userId]) {
+            let result;
+            try {
+                result = await db.getUserData(userId);
+                // console.log("result from getting user data", result.rows);
+
+                socket.broadcast.emit("user-joined", result.rows[0]);
+            } catch (err) {
+                console.log("error in getting user info");
+            }
+        }
+    })();
+
+    onlineUsers[userId] = onlineUsers[userId]
+        ? [...onlineUsers[userId], socket.id]
+        : [socket.id];
+
+    console.log("merged online users", onlineUsers);
+
     //here:emit custom events and send some data (the payload of the event) -> we need to listen to these events on the client side
 
+    //get online users and emit
+    (async () => {
+        let result;
+        try {
+            //remove current user from online Users
+            // const onlineMinusUser = Object.keys(onlineUsers).filter(
+            //     (user) => user != userId
+            // );
+            // console.log("online minus user", onlineMinusUser);
+            result = await db.getUsersById(Object.keys(onlineUsers));
+            console.log("result from get users by ids", result.rows);
+            if (result.rows.length !== 0) {
+                //emit list of online users to the user who just joined
+                io.to(socket.id).emit("online-users", result.rows);
+            }
+        } catch (err) {
+            console.log("error in getting online users by ids");
+        }
+    })();
+
+    //get chat messages and emit
     (async () => {
         let result;
         try {
@@ -501,19 +540,27 @@ io.on("connection", (socket) => {
         console.log(
             `User with id ${userId} and socket-id ${socket.id} just disconnected`
         );
-        mergedOnlineUsers[userId] = mergedOnlineUsers[userId].filter(
+
+        //remove users on disconnect
+        onlineUsers[userId] = onlineUsers[userId].filter(
             (item) => item !== `${socket.id}`
         );
+        //delete object key if no other sockets remain and emit that the user has left
+        const userLeft = async () => {
+            let result;
+            try {
+                result = await db.getUserData(userId);
+                // console.log("result from getting user data", result.rows);
+                io.emit("user-left", result.rows[0]);
+            } catch (err) {
+                console.log("error in getting user info");
+            }
+        };
+        if (onlineUsers[userId].length == 0) {
+            delete onlineUsers[userId];
+            userLeft();
+        }
 
-        mergedOnlineUsers[userId].length == 0 &&
-            delete mergedOnlineUsers[userId];
-
-        // Object.entries(mergedOnlineUsers).map((user) =>
-        //     user[userId]
-        //         ? user[userId].filter((item) => item !== `${socket.id}`)
-        //         : user
-        // );
-
-        console.log("merged online users on disconnect", mergedOnlineUsers);
+        console.log("merged online users on disconnect", onlineUsers);
     });
 });
