@@ -9,7 +9,6 @@ export default function Dropdown({ first, toggleUploader, toggleDelete }) {
                 <li>
                     <a href="/logout">Log out</a>
                 </li>
-                <hr></hr>
                 <li onClick={toggleDelete}>Delete account</li>
             </ul>
         </div>

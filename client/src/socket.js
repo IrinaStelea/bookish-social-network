@@ -1,10 +1,12 @@
 //socket-relevant code on the client side
 import { messagesReceived, messageReceived } from "./redux/messages/slice.js";
+import { onlineUserNotify } from "./redux/notify-user-joined/slice.js";
 import {
     onlineUsersReceived,
     onlineUserJoined,
     onlineUserLeft,
 } from "./redux/online-users/slice.js";
+import { friendRequestNotify } from "./redux/notify-friend-request/slice.js";
 import { io } from "socket.io-client";
 
 //export a socket variable to be used in the ChatInput component
@@ -39,6 +41,13 @@ export const init = (store) => {
         socket.on("user-joined", (user) => {
             // console.log("the latest message is:", message);
             store.dispatch(onlineUserJoined(user));
+            store.dispatch(onlineUserNotify(user.first));
+        });
+
+        //listening to new friend notification
+        socket.on("new-friend-notification", (data) => {
+            console.log("data in listen new friend notification", data);
+            store.dispatch(friendRequestNotify(data.sender_id));
         });
 
         //listening to user left

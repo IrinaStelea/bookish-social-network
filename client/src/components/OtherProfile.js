@@ -43,12 +43,12 @@ export default function OtherProfile() {
 
     const otherFriends = useSelector((state) => state.otherFriends);
     const areWeFriends = useSelector((state) => state.areWeFriends);
-    console.log(
-        "other friends from the global state",
-        otherFriends,
-        "are we friends",
-        areWeFriends
-    );
+    // console.log(
+    //     "other friends from the global state",
+    //     otherFriends,
+    //     "are we friends",
+    //     areWeFriends
+    // );
 
     useEffect(() => {
         if (otherFriends.length == 0) {

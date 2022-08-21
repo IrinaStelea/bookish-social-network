@@ -8,7 +8,7 @@ export default function Friends() {
         (state) =>
             state.friends && state.friends.filter((friend) => friend.accepted)
     );
-    console.log("friends from the global state", friends);
+    // console.log("friends from the global state", friends);
     const handleUnfriend = async (id) => {
         try {
             const res = await fetch("/cancelfriendship", {

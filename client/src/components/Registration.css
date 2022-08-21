@@ -45,13 +45,13 @@
 .navmenu {
     display: flex;
     /* width: 45vw; */
-    width: 60%;
+    width: 50%;
     /* justify-content: space-around; */
     justify-content: space-around;
     background-color: salmon;
     /* padding: 1vh 1vw; */
     padding: 1.5vh 4vw;
-    gap: 4vw;
+    gap: 3vw;
     clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
     font-size: 1.5 em;
     font-weight: 600;
@@ -214,6 +214,8 @@
     overflow-y: auto;
     padding: 1vh 1vw;
     background-color: rgba(211, 211, 211, 0.5);
+    border-top: 2px solid darkorange;
+    border-bottom: 2px solid darkorange;
 }
 
 .chat-cell {
@@ -386,6 +388,7 @@ button:active,
     right: 2vw;
     padding: 1vw;
     list-style-type: none;
+    border: 1vw solid floralwhite;
 }
 
 .dropdown li {
@@ -402,11 +405,7 @@ button:active,
 
 .dropdown li:last-of-type {
     font-size: 0.9em;
-    margin-top: 1vh;
-}
-
-.dropdown hr {
-    margin: 1vh 0;
+    margin-top: 4vh;
 }
 
 .dropdown-arrow {
@@ -453,4 +452,50 @@ button:active,
     object-fit: cover;
     border: 1px solid transparent;
     border-radius: 50%;
+}
+
+.newuser-notify {
+    color: green;
+    font-size: 0.8em;
+    font-weight: 600;
+    position: fixed;
+    margin-top: 2vh;
+    width: 6vw;
+    left: 75vw;
+    animation: slideUp 2s ease-in;
+}
+
+@keyframes slideUp {
+    0%,
+    50% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.friend-notification {
+    color: floralwhite;
+    background-color: salmon;
+    border: 1px solid salmon;
+    margin-right: 1vw;
+    /* width: 1vw;
+    height: 1vw; */
+    border-radius: 5px;
+    align-self: flex-end;
+}
+
+.friend-notification a {
+    padding: 0.4vw;
+    font-size: 0.9em;
+    color: floralwhite;
+    text-decoration: none;
+    margin: auto;
+    cursor: pointer;
+    font-weight: bolder;
 }

@@ -520,6 +520,17 @@ io.on("connection", (socket) => {
         }
     })();
 
+    //listen to friendship request
+    socket.on("new-friend-request", (data) => {
+        //check if user is online - if yes, send that user a notification
+        console.log("data from socket friendship request", data);
+        if (onlineUsers[data.recipient_id]) {
+            for (let socket of onlineUsers[data.recipient_id]) {
+                io.to(socket).emit("new-friend-notification", data);
+            }
+        }
+    });
+
     //listen to the new message event emitted in the ChatInput component
     socket.on("new-message", async (message) => {
         console.log("new message is", message, "user id is", userId);

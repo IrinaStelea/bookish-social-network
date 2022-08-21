@@ -7,7 +7,7 @@ export default function Wannabes() {
         (state) =>
             state.friends && state.friends.filter((friend) => !friend.accepted)
     );
-    console.log("wannabes from the global state", wannabes);
+    // console.log("wannabes from the global state", wannabes);
 
     const handleAccept = async (id) => {
         try {

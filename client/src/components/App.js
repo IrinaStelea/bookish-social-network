@@ -16,6 +16,8 @@ import FriendsAndWannabes from "./friends-wannabes/FriendsAndWannabes.js";
 import Chat from "./chat/Chat.js";
 import Dropdown from "./Dropdown.js";
 import Delete from "./Delete.js";
+import Notification from "./Notification.js";
+import FriendRequest from "./FriendRequest.js";
 
 import {
     BrowserRouter,
@@ -92,6 +94,10 @@ export default function App() {
     );
     // console.log("friends from the global state", friends);
 
+    //friend requests
+    const requests = useSelector((state) => state.requests);
+    console.log("requests in app", requests);
+
     useEffect(() => {
         //note the argument of useEffect: do this just once on mount, the rest of the state will be handled by Redux!
 
@@ -145,7 +151,7 @@ export default function App() {
                             Friends
                         </NavLink>
                         <NavLink exact to="/chat">
-                            Chat
+                            Chat{}
                         </NavLink>
                         <NavLink exact to="/users">
                             Find people
@@ -156,6 +162,7 @@ export default function App() {
                     </div>
                     {/* passing the user data to ProfilePic */}
                     <div className="profile-info">
+                        <FriendRequest requests={requests} />
                         <ProfilePic
                             first={first}
                             last={last}
@@ -169,7 +176,7 @@ export default function App() {
                         />
                     </div>
                 </div>
-
+                <Notification />
                 <div id="footer">
                     <Footer />
                 </div>

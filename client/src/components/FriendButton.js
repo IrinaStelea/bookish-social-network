@@ -1,9 +1,14 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
+import { socket } from "../socket";
+import { resetFriendRequests } from "../redux/notify-friend-request/slice";
+import { useDispatch } from "react-redux";
 
 export default function FriendButton({ userid }) {
     //define the id dynamically - if an id gets passed from the other-profile-friends (this manages the button on the Other Friends list), if not, use the id in useParams (this manages the button on the main profile page)
     const id = userid || useParams().id;
+
+    const dispatch = useDispatch();
 
     const [button, setButton] = useState({
         text: "Send request",
@@ -23,10 +28,9 @@ export default function FriendButton({ userid }) {
         fetch(`/api/friendship/${id}`)
             .then((resp) => resp.json())
             .then((data) => {
-                console.log("data after fetch user data in FriendButton", data);
+                // console.log("data after fetch user data in FriendButton", data);
                 let newState = handleResponse(data);
-                console.log("new state", newState);
-                console.log("new state equals false", newState === false);
+                // console.log("new state", newState);
                 //separating error from new button state
                 if (Object.keys(newState).length) {
                     setButton(newState);
@@ -77,11 +81,36 @@ export default function FriendButton({ userid }) {
         })
             .then((resp) => resp.json())
             .then((data) => {
-                console.log("data after button click");
+                console.log("data after button click", data);
                 let newState = handleResponse(data);
-                console.log("new state", newState);
-                //separating error from new button state
+                // console.log("new state", newState);
+                //emit message to socket, checking that this was a friendship request
+                const notifyFriendshipReq = () => {
+                    socket.emit("new-friend-request", {
+                        recipient_id: data[0].recipient_id,
+                        sender_id: data[0].sender_id,
+                    });
+                };
+
+                if (
+                    data[0] &&
+                    data[0].recipient_id &&
+                    data[0].sender_id &&
+                    data[0].accepted == false
+                ) {
+                    notifyFriendshipReq();
+                }
+
+                //reset the friendship request counter
+                // if (data[0] && data[0].accepted == true) {
+                //     dispatch(resetFriendRequests(data[0].sender_id));
+                // }
+                // if (data.length == 0) {
+                //     dispatch(resetFriendRequests(null));
+                // }
+
                 if (Object.keys(newState).length) {
+                    //set new button state - first separate error from new button state
                     setButton(newState);
                 }
             })
