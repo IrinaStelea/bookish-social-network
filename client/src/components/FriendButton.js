@@ -1,14 +1,14 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { socket } from "../socket";
-import { resetFriendRequests } from "../redux/notify-friend-request/slice";
-import { useDispatch } from "react-redux";
+// import { resetFriendRequests } from "../redux/notify-friend-request/slice";
+// import { useDispatch } from "react-redux";
 
 export default function FriendButton({ userid }) {
     //define the id dynamically - if an id gets passed from the other-profile-friends (this manages the button on the Other Friends list), if not, use the id in useParams (this manages the button on the main profile page)
     const id = userid || useParams().id;
 
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
 
     const [button, setButton] = useState({
         text: "Send request",

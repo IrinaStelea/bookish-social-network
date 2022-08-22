@@ -95,7 +95,10 @@ export default function App() {
     // console.log("friends from the global state", friends);
 
     //friend requests
-    const requests = useSelector((state) => state.requests);
+    // const requests = useSelector((state) => state.requests);
+
+    //get only unique values from the requests array (use Set)
+    let requests = [...new Set(useSelector((state) => state.requests))];
     console.log("requests in app", requests);
 
     useEffect(() => {
