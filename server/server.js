@@ -42,7 +42,7 @@ io.use((socket, next) => {
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-//TO DO: add middleware ensureSignedOut, validateRegistration (form validation) in the post register route
+//TO DO add middleware ensureSignedOut, validateRegistration (form validation) in the post register route
 
 //registration route
 app.post("/register.json", (req, res) => {
