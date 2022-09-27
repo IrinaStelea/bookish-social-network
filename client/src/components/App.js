@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { receiveFriendsAndWannabes } from "../redux/friends/slice.js";
+import { userDataReceive } from "../redux/userdata/slice.js";
 
 import Logo from "./Logo.js";
 import Footer from "./Footer.js";
@@ -28,6 +29,8 @@ import {
 } from "react-router-dom";
 
 export default function App() {
+    const dispatch = useDispatch();
+
     const [first, setFirst] = useState("");
     const [last, setLast] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
@@ -40,15 +43,16 @@ export default function App() {
         // console.log("the app component mounted");
         //fetch user info from the server
 
-        fetch("/api/user")
+        fetch("/api/current-user")
             .then((response) => response.json())
             .then((data) => {
-                // console.log("data after fetching user data", data);
+                console.log("APP RELOAD - data after fetching user data", data);
                 //pass the user info to the app
                 setFirst(data.first);
                 setLast(data.last);
                 setAvatarUrl(data.avatarurl);
                 setBio(data.bio);
+                dispatch(userDataReceive(data));
             })
             .catch((err) => {
                 //TO DO: handle error here
@@ -77,7 +81,6 @@ export default function App() {
     };
 
     //FRIENDS AND WANNABES info
-    const dispatch = useDispatch();
     //very important to define the following two variables: they allow the DOM to react to changes in Redux data
 
     //first case of useSelector - if there is friends data, give back the ones with accepted false (wannabes)
@@ -93,13 +96,6 @@ export default function App() {
             state.friends && state.friends.filter((friend) => friend.accepted)
     );
     // console.log("friends from the global state", friends);
-
-    //friend requests
-    // const requests = useSelector((state) => state.requests);
-
-    //get only unique values from the requests array (use Set)
-    let requests = [...new Set(useSelector((state) => state.requests))];
-    console.log("requests in app", requests);
 
     useEffect(() => {
         //note the argument of useEffect: do this just once on mount, the rest of the state will be handled by Redux!
@@ -165,7 +161,7 @@ export default function App() {
                     </div>
                     {/* passing the user data to ProfilePic */}
                     <div className="profile-info">
-                        <FriendRequest requests={requests} />
+                        <FriendRequest />
                         <ProfilePic
                             first={first}
                             last={last}
@@ -214,7 +210,7 @@ export default function App() {
                     <Route exact path="/users">
                         <FindPeople />
                     </Route>
-                    <Route exact path="/user/:id">
+                    <Route path="/user/:id">
                         {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
                         <OtherProfile />
                     </Route>

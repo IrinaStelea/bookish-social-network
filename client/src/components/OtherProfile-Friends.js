@@ -1,11 +1,11 @@
 import FriendButton from "./FriendButton";
 
-export default function OtherFriends({ first, otherFriends }) {
+export default function OtherUserFriends({ first, otherUserFriends }) {
     return (
         <>
-            {(otherFriends.length !== 0 && (
+            {(otherUserFriends.length !== 0 && (
                 <div className="friends-container">
-                    {otherFriends.map((friend) => {
+                    {otherUserFriends.map((friend) => {
                         return (
                             <div className="friends-cell" key={friend.id}>
                                 <a href={"/user/" + friend.id}>

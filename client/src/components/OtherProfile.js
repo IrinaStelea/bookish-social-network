@@ -5,9 +5,9 @@ import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import FriendButton from "./FriendButton";
-import OtherFriends from "./OtherProfile-Friends";
+import OtherUserFriends from "./OtherProfile-Friends";
 import { useSelector, useDispatch } from "react-redux";
-import { receiveOtherFriends } from "../redux/other-friends/slice";
+import { receiveOtherUserFriends } from "../redux/other-friends/slice";
 import { receiveAreWeFriends } from "../redux/are-we-friends/slice";
 
 export default function OtherProfile() {
@@ -18,7 +18,6 @@ export default function OtherProfile() {
 
     //GET USER PROFILE
     useEffect(() => {
-        console.log("the id is", id);
         fetch(`/api/user/${id}`)
             .then((resp) => resp.json())
             .then((data) => {
@@ -41,38 +40,38 @@ export default function OtherProfile() {
     //GET OTHER FRIENDS
     const dispatch = useDispatch();
 
-    const otherFriends = useSelector((state) => state.otherFriends);
+    const otherUserFriends = useSelector((state) => state.otherUserFriends);
     const areWeFriends = useSelector((state) => state.areWeFriends);
     // console.log(
-    //     "other friends from the global state",
-    //     otherFriends,
+    //     "other user friends from the global state",
+    //     otherUserFriends,
     //     "are we friends",
     //     areWeFriends
     // );
 
     useEffect(() => {
-        if (otherFriends.length == 0) {
+        if (otherUserFriends.length == 0) {
             (async () => {
                 try {
-                    const res = await fetch(`/api/otherfriends/${id}`);
+                    const res = await fetch(`/api/otheruserfriends/${id}`);
                     const data = await res.json();
                     // console.log("data after fetch other friends", data.friends);
 
                     //pass data to redux only if the two are friends
                     if (data.areWeFriends) {
-                        dispatch(receiveOtherFriends(data.friends));
+                        dispatch(receiveOtherUserFriends(data.friends));
                         dispatch(receiveAreWeFriends(data.areWeFriends));
                     }
                 } catch (err) {
                     //TO DO: handle error here
-                    console.log("error in fetch other friends", err);
+                    console.log("error in fetch other user friends", err);
                 }
             })();
         }
     }, [id]);
 
     //FIX THIS
-    // if (!otherFriends) {
+    // if (!otherUserFriends) {
     //     return null;
     // }
 
@@ -97,8 +96,8 @@ export default function OtherProfile() {
             {areWeFriends && (
                 <div className="friends">
                     <h3>Friends of {user.first}</h3>
-                    <OtherFriends
-                        otherFriends={otherFriends}
+                    <OtherUserFriends
+                        otherUserFriends={otherUserFriends}
                         first={user.first}
                     />
                 </div>

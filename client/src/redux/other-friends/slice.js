@@ -1,17 +1,17 @@
-export default function OtherFriendsReducer(otherFriends = [], action) {
-    if (action.type === "other-friends/receive") {
+export default function OtherUserFriendsReducer(otherUserFriends = [], action) {
+    if (action.type === "other-user-friends/receive") {
         //set the friends on the global state based on the payload
-        otherFriends = action.payload.friends;
-        console.log("other friends in main reducer", otherFriends);
+        otherUserFriends = action.payload.friends;
+        console.log("other friends in main reducer", otherUserFriends);
     }
 
-    return otherFriends;
+    return otherUserFriends;
 }
 
 //action for other friends (when visiting other profile pages)
-export function receiveOtherFriends(friends) {
+export function receiveOtherUserFriends(friends) {
     return {
-        type: "other-friends/receive",
+        type: "other-user-friends/receive",
         payload: { friends },
     };
 }

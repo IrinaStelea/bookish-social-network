@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { acceptFriend, rejectFriend } from "../../redux/friends/slice.js";
 
 export default function Wannabes() {
@@ -7,7 +8,7 @@ export default function Wannabes() {
         (state) =>
             state.friends && state.friends.filter((friend) => !friend.accepted)
     );
-    // console.log("wannabes from the global state", wannabes);
+    console.log("wannabes from the global state", wannabes);
 
     const handleAccept = async (id) => {
         try {
@@ -56,7 +57,7 @@ export default function Wannabes() {
                     {wannabes.map((wannabe) => {
                         return (
                             <div className="friends-cell" key={wannabe.id}>
-                                <a href={"/user/" + wannabe.id}>
+                                <Link to={"/user/" + wannabe.id}>
                                     <img
                                         src={
                                             wannabe.avatarurl ||
@@ -64,11 +65,11 @@ export default function Wannabes() {
                                         }
                                         alt={wannabe.first + " " + wannabe.last}
                                     />
-                                </a>
+                                </Link>
                                 <div className="friends-name-button">
-                                    <a href={"/user/" + wannabe.id}>
+                                    <Link to={"/user/" + wannabe.id}>
                                         {wannabe.first} {wannabe.last}
-                                    </a>
+                                    </Link>
                                     <button
                                         className="friend-button"
                                         onClick={() => handleAccept(wannabe.id)}

@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { socket } from "../socket";
 // import { resetFriendRequests } from "../redux/notify-friend-request/slice";
 // import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function FriendButton({ userid }) {
     //define the id dynamically - if an id gets passed from the other-profile-friends (this manages the button on the Other Friends list), if not, use the id in useParams (this manages the button on the main profile page)
     const id = userid || useParams().id;
 
     // const dispatch = useDispatch();
+    const userData = useSelector((state) => state.userData);
 
     const [button, setButton] = useState({
         text: "Send request",
@@ -83,12 +85,19 @@ export default function FriendButton({ userid }) {
             .then((data) => {
                 console.log("data after button click", data);
                 let newState = handleResponse(data);
-                // console.log("new state", newState);
-                //emit message to socket, checking that this was a friendship request
+                console.log("new state", newState);
+                //emit message to socket, checking that this was a friendship request or a request cancellation
                 const notifyFriendshipReq = () => {
                     socket.emit("new-friend-request", {
                         recipient_id: data[0].recipient_id,
                         sender_id: data[0].sender_id,
+                    });
+                };
+
+                const cancelFriendshipReq = () => {
+                    socket.emit("new-friend-cancel", {
+                        recipient_id: id,
+                        sender_id: userData.id,
                     });
                 };
 
@@ -101,6 +110,9 @@ export default function FriendButton({ userid }) {
                     notifyFriendshipReq();
                 }
 
+                if (!data.length) {
+                    cancelFriendshipReq();
+                }
                 //reset the friendship request counter
                 // if (data[0] && data[0].accepted == true) {
                 //     dispatch(resetFriendRequests(data[0].sender_id));

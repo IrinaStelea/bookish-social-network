@@ -8,3 +8,4 @@ module.exports.cleanString = (string) => {
         .map((item) => item[0].toUpperCase() + item.slice(1).toLowerCase())
         .join(" ");
 };
+

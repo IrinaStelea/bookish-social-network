@@ -1,6 +1,7 @@
 // import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { rejectFriend } from "../../redux/friends/slice.js";
+import { Link } from "react-router-dom";
 
 export default function Friends() {
     const dispatch = useDispatch();
@@ -8,7 +9,7 @@ export default function Friends() {
         (state) =>
             state.friends && state.friends.filter((friend) => friend.accepted)
     );
-    // console.log("friends from the global state", friends);
+    console.log("friends from the global state", friends);
     const handleUnfriend = async (id) => {
         try {
             const res = await fetch("/cancelfriendship", {
@@ -36,7 +37,7 @@ export default function Friends() {
                     {friends.map((friend) => {
                         return (
                             <div className="friends-cell" key={friend.id}>
-                                <a href={"/user/" + friend.id}>
+                                <Link to={"/user/" + friend.id}>
                                     <img
                                         src={
                                             friend.avatarurl ||
@@ -44,11 +45,11 @@ export default function Friends() {
                                         }
                                         alt={friend.first + " " + friend.last}
                                     />
-                                </a>
+                                </Link>
                                 <div className="friends-name-button">
-                                    <a href={"/user/" + friend.id}>
+                                    <Link to={"/user/" + friend.id}>
                                         {friend.first} {friend.last}
-                                    </a>
+                                    </Link>
                                     <button
                                         className="deny-friend-button"
                                         onClick={() =>

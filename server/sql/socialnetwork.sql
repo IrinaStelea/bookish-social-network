@@ -37,3 +37,9 @@ CREATE TABLE messages(
     message TEXT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE friendrequests(
+    id SERIAL PRIMARY KEY,
+    userid INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    requests INTEGER[]
+);

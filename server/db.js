@@ -183,7 +183,7 @@ module.exports.getFriendsAndWannabes = (id) => {
     );
 };
 
-module.exports.getOtherFriends = (id) => {
+module.exports.getOtherUserFriends = (id) => {
     return db.query(
         `SELECT users.id, first, last, avatarurl, sender_id, recipient_id FROM users JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) ORDER BY first`,
         [id]
@@ -206,4 +206,20 @@ module.exports.insertMessage = (id, text) => {
 module.exports.deleteAccount = (id) => {
     //this will delete the info from users, friendships & messages tables thanks to ON CASCADE DELETE on relevant ids
     return db.query(`DELETE FROM users WHERE id=$1`, [id]);
+};
+
+module.exports.storeFriendRequests = (id, requests) => {
+    return db.query(
+        `INSERT INTO friendrequests (userid, requests)
+                VALUES ($1, $2)
+                ON CONFLICT (userid)
+                DO UPDATE SET requests=$2`,
+        [id, requests]
+    );
+};
+
+module.exports.getFriendRequests = (id) => {
+    return db.query(`SELECT requests FROM friendrequests WHERE userid=$1`, [
+        id,
+    ]);
 };

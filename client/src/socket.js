@@ -7,6 +7,8 @@ import {
     onlineUserLeft,
 } from "./redux/online-users/slice.js";
 import { friendRequestNotify } from "./redux/notify-friend-request/slice.js";
+import { friendRequestCancel } from "./redux/notify-friend-request/slice.js";
+import { receiveFriendRequests } from "./redux/notify-friend-request/slice";
 import { io } from "socket.io-client";
 
 //export a socket variable to be used in the ChatInput component
@@ -23,6 +25,12 @@ export const init = (store) => {
             //messages should be an array of objects
             // console.log("got last 10 messages:", messages);
             store.dispatch(messagesReceived(messages));
+        });
+
+        socket.on("number-of-friend-requests", (data) => {
+            //messages should be an array of objects
+            // console.log("got last 10 messages:", messages);
+            store.dispatch(receiveFriendRequests(data));
         });
 
         //listening to when a new message was just added to the database via the server socket that emits an event for this
@@ -48,6 +56,12 @@ export const init = (store) => {
         socket.on("new-friend-notification", (data) => {
             console.log("data in listen new friend notification", data);
             store.dispatch(friendRequestNotify(data.sender_id));
+        });
+
+        //listening to cancel friend request
+        socket.on("new-friend-request-cancel", (data) => {
+            console.log("data in cancel new friend request", data);
+            store.dispatch(friendRequestCancel(data.sender_id));
         });
 
         //listening to user left
