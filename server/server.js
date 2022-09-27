@@ -16,6 +16,7 @@ app.use(express.json());
 
 //boilerplate code for web socket - socket io requires a native node server (not express) for handling the initial http request
 //creating a native node server and passing to it our express app so that the app can also work with sockets
+
 //TO DO: adapt the io code to work for a deployment environment
 const server = require("http").Server(app);
 const io = require("socket.io")(server, {
