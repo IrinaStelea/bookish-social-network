@@ -208,18 +208,26 @@ module.exports.deleteAccount = (id) => {
     return db.query(`DELETE FROM users WHERE id=$1`, [id]);
 };
 
-module.exports.storeFriendRequests = (id, requests) => {
+module.exports.getFriendRequestNotifications = (id) => {
+    return db.query(`SELECT senderid FROM friendrequests WHERE userid=$1`, [
+        id,
+    ]);
+};
+
+module.exports.addFriendRequestNotification = (userid, senderid) => {
     return db.query(
-        `INSERT INTO friendrequests (userid, requests)
-                VALUES ($1, $2)
-                ON CONFLICT (userid)
-                DO UPDATE SET requests=$2`,
-        [id, requests]
+        `INSERT INTO friendrequests (userid, senderid) VALUES ($1, $2) RETURNING *`,
+        [userid, senderid]
     );
 };
 
-module.exports.getFriendRequests = (id) => {
-    return db.query(`SELECT requests FROM friendrequests WHERE userid=$1`, [
-        id,
-    ]);
+module.exports.deleteFriendRequestNotification = (userid, senderid) => {
+    return db.query(
+        `DELETE from friendrequests WHERE userid=$1 AND senderid=$2`,
+        [userid, senderid]
+    );
+};
+
+module.exports.deleteAllFriendRequestNotifications = (userid) => {
+    return db.query(`DELETE from friendrequests WHERE userid=$1`, [userid]);
 };

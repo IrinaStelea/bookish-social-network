@@ -1,10 +1,12 @@
 import { useSelector, useDispatch } from "react-redux";
 import { resetFriendRequests } from "../redux/notify-friend-request/slice";
+import { socket } from "../socket";
 import "./Registration.css";
 
 export default function FriendRequest() {
     const dispatch = useDispatch();
 
+    const userData = useSelector((state) => state.userData);
     //friend requests
     // const requests = useSelector((state) => state.requests);
 
@@ -14,6 +16,9 @@ export default function FriendRequest() {
 
     const resetRequests = () => {
         dispatch(resetFriendRequests());
+        socket.emit("all-friend-requests-read", {
+            recipient_id: userData.id,
+        });
     };
 
     return (

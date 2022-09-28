@@ -27,12 +27,6 @@ export const init = (store) => {
             store.dispatch(messagesReceived(messages));
         });
 
-        socket.on("number-of-friend-requests", (data) => {
-            //messages should be an array of objects
-            // console.log("got last 10 messages:", messages);
-            store.dispatch(receiveFriendRequests(data));
-        });
-
         //listening to when a new message was just added to the database via the server socket that emits an event for this
         socket.on("added-new-message", (message) => {
             // console.log("the latest message is:", message);
@@ -50,6 +44,12 @@ export const init = (store) => {
             // console.log("the latest message is:", message);
             store.dispatch(onlineUserJoined(user));
             store.dispatch(onlineUserNotify(user.first));
+        });
+
+        socket.on("number-of-friend-requests", (data) => {
+            //messages should be an array of objects
+            // console.log("got last 10 messages:", messages);
+            store.dispatch(receiveFriendRequests(data));
         });
 
         //listening to new friend notification

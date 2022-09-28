@@ -472,15 +472,6 @@ io.on("connection", (socket) => {
         `User with id ${userId} and socket-id ${socket.id} has connected`
     );
 
-    // onlineUsers.push({ [userId]: [`${socket.id}`] });
-    // console.log("online users", onlineUsers);
-    // mergedOnlineUsers = onlineUsers.reduce((acc, obj) => {
-    //     for (let key in obj) {
-    //         acc[key] = acc[key] ? [...acc[key], obj[key]].flat() : obj[key];
-    //     }
-    //     return acc;
-    // }, {});
-
     //emit info about new user joining
     (async () => {
         //if user is not already online, emit his/her info to all other users
@@ -543,39 +534,58 @@ io.on("connection", (socket) => {
     //get number of friend requests and emit to the user who just connected
     (async () => {
         try {
-            const result = await db.getFriendRequests(userId);
+            const result = await db.getFriendRequestNotifications(userId);
             console.log("result from getting nb of friendships", result.rows);
-            if (result.rows[0]?.requests.length > 0) {
-                //store the friendship requests in a cookie
-                io.to(socket.id).emit(
-                    "number-of-friend-requests",
-                    result.rows[0].requests
-                );
-                socket[`requests`] = result.rows[0].requests;
-                console.log("socket requests in async", socket.requests);
+            if (result.rows.length) {
+                //merge the ids of request senders into an array
+                let requests = result.rows.map((e) => e.senderid);
+                io.to(socket.id).emit("number-of-friend-requests", requests);
             }
         } catch (err) {
             console.log("error in getting nb of friend requests", err);
         }
     })();
 
-    //listen to friendship request
-    socket.on("new-friend-request", (data) => {
+    //listen to friendship requests notifications
+    socket.on("new-friend-request", async (data) => {
         //check if user is online - if yes, send that user a notification
         console.log("data from socket friendship request", data);
+
+        //store the request in the table
+        let result;
+        try {
+            result = await db.addFriendRequestNotification(
+                data.recipient_id,
+                data.sender_id
+            );
+            console.log("result from adding new friend request", result);
+        } catch (err) {
+            console.log("error from adding friend request", err);
+        }
+
+        //additionally if user is online, emit that friend request
         if (onlineUsers[data.recipient_id]) {
             for (let socket of onlineUsers[data.recipient_id]) {
                 io.to(socket).emit("new-friend-notification", data);
                 console.log("inside friend request emit event");
-                socket.requests = socket.requests
-                    ? socket.requests.push(data.sender_id)
-                    : [data];
             }
         }
     });
 
-    socket.on("new-friend-cancel", (data) => {
-        //check if user is online first
+    socket.on("new-friend-cancel", async (data) => {
+        //delete the request from the friend notifications table
+        let result;
+        try {
+            result = await db.deleteFriendRequestNotification(
+                data.recipient_id,
+                data.sender_id
+            );
+            console.log("result from deleting new friend request", result);
+        } catch (err) {
+            console.log("error deleting friend request", err);
+        }
+
+        //additionally if user is online, emit that friend request is cancelled
         if (onlineUsers[data.recipient_id]) {
             for (let socket of onlineUsers[data.recipient_id]) {
                 io.to(socket).emit("new-friend-request-cancel", data);
@@ -583,14 +593,21 @@ io.on("connection", (socket) => {
                     "inside friend request emit event",
                     socket.requests
                 );
-                if (socket.requests) {
-                    socket.requests.filter((id) => id !== data.sender_id);
-                    console.log(
-                        "inside the if, socket requests is",
-                        socket.requests
-                    );
-                }
             }
+        }
+    });
+
+    socket.on("all-friend-requests-read", async (data) => {
+        console.log("data inside socket server delete all notifications", data);
+        //delete all requests from the friend notifications table
+        let result;
+        try {
+            result = await db.deleteAllFriendRequestNotifications(
+                data.recipient_id
+            );
+            console.log("result from deleting all friend requests", result);
+        } catch (err) {
+            console.log("error deleting friend request notifications", err);
         }
     });
 
@@ -621,21 +638,6 @@ io.on("connection", (socket) => {
         onlineUsers[userId] = onlineUsers[userId].filter(
             (item) => item !== `${socket.id}`
         );
-
-        // store friend requests in database, if requests > 0
-
-        if (socket.requests) {
-            (async () => {
-                let result;
-                try {
-                    result = await db.storeFriendRequests(userId, [
-                        ...new Set(socket.requests),
-                    ]);
-                } catch (err) {
-                    console.log("error in storing friend requests", err);
-                }
-            })();
-        }
 
         //delete object key if no other sockets remain and emit that the user has left
         const userLeft = async () => {
