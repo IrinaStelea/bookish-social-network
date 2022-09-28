@@ -3,26 +3,19 @@ const app = express();
 const compression = require("compression");
 const path = require("path");
 const cookieSession = require("cookie-session");
-const db = require("./db.js");
 const cryptoRandomString = require("crypto-random-string");
-const { sendCodeEmail } = require("./ses");
-const s3 = require("./s3");
-const { uploader } = require("./middleware");
-const helpers = require("./helpers.js");
-
-app.use(compression());
-//enable us to unpack JSON IN the request body
-app.use(express.json());
-
-//boilerplate code for web socket - socket io requires a native node server (not express) for handling the initial http request
-//creating a native node server and passing to it our express app so that the app can also work with sockets
-
-//TO DO: adapt the io code to work for a deployment environment
-const server = require("http").Server(app);
+//TO DO: adapt the socket.io code to work for a deployment environment
+const server = require("http").Server(app); //socket.io requires a native node server to handle the initial http request
 const io = require("socket.io")(server, {
     allowRequest: (req, callback) =>
         callback(null, req.headers.referer.startsWith("http://localhost:3000")),
 });
+
+const { sendCodeEmail } = require("./ses");
+const db = require("./db.js");
+const s3 = require("./s3");
+const { uploader } = require("./middleware");
+const helpers = require("./helpers.js");
 
 const COOKIE_SECRET =
     process.env.COOKIE_SECRET || require("../secrets.json").COOKIE_SECRET;
@@ -33,21 +26,20 @@ const cookieSessionMiddleware = cookieSession({
     sameSite: true,
 });
 
+app.use(compression());
+app.use(express.json());
 app.use(cookieSessionMiddleware);
+
 //additional middleware so that socket has access to cookie
 io.use((socket, next) => {
     cookieSessionMiddleware(socket.request, socket.request.res, next);
 });
 
-//important to include body parser
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "..", "client", "public")));
 
-//TO DO add middleware ensureSignedOut, validateRegistration (form validation) in the post register route
-
 //registration route
 app.post("/register.json", (req, res) => {
-    //add user to database, cleaning the data
     db.insertUser(
         helpers.cleanString(req.body.firstName),
         helpers.cleanString(req.body.lastName),
@@ -55,16 +47,10 @@ app.post("/register.json", (req, res) => {
         req.body.password
     )
         .then((results) => {
-            console.log("inserting new user worked");
-            //set the cookie session on the user id to keep track of login
             const userId = results.rows[0].id;
-            // const firstName = results.rows[0].first;
             req.session = {
                 userId,
-                // firstName,
             };
-            // console.log("user id cookie assigned", req.session.userId);
-            //send success message
             return res.json({ success: true });
         })
         .catch((err) => {
@@ -80,8 +66,6 @@ app.post("/register.json", (req, res) => {
 app.post("/login.json", (req, res) => {
     db.validateUser(req.body.email.toLowerCase(), req.body.password)
         .then((result) => {
-            console.log("user id cookie assigned at login", result);
-            //set the cookie
             req.session = {
                 userId: result,
             };
@@ -98,27 +82,21 @@ app.post("/login.json", (req, res) => {
         });
 });
 
-//password reset
+//password reset - part 1
 app.post("/password/reset/start.json", (req, res) => {
     db.findUser(req.body.email.toLowerCase())
         .then((results) => {
-            console.log("user exists", results.rows);
             //generate secret code
             let secretCode = cryptoRandomString({
                 length: 6,
             });
-            //insert secret code in new table
             db.insertCode(results.rows[0].email, secretCode)
                 .then((results) => {
-                    console.log(
-                        "secret code was added successfully",
-                        results.rows
-                    );
                     //send code to user via SES
                     let code = results.rows[0].code;
                     return sendCodeEmail(code)
                         .then(() => {
-                            console.log("email code sent successfully");
+                            // console.log("email code sent successfully");
                             return res.json({
                                 success: true,
                             });
@@ -149,22 +127,14 @@ app.post("/password/reset/start.json", (req, res) => {
         });
 });
 
+//password reset - part 2
 app.post("/password/reset/verify.json", (req, res) => {
     //find code among the codes saved in the last 10 mins
     db.findCode(req.body.email.toLowerCase())
         .then((results) => {
-            console.log(
-                "user email exists in reset codes table, here is the entire info",
-                results.rows
-            );
-            //check if the codes correspond
             if (results.rows[0].code === req.body.code) {
-                console.log("the two codes correspond");
-
-                //hash the password and update the users row in the users table
                 db.updatePassword(results.rows[0].email, req.body.password)
-                    .then((results) => {
-                        console.log("update password worked", results);
+                    .then(() => {
                         return res.json({
                             success: true,
                         });
@@ -201,24 +171,19 @@ app.post(
     uploader.single("file"),
     s3.upload,
     async (req, res) => {
-        //get the full URL of the image (amazon url + filename)
         const avatarUrl = path.join(
             "https://s3.amazonaws.com/ihamspiced",
             //add the userId for access to subfolder
             `${req.session.userId}`,
             `${req.file.filename}`
         );
-        // console.log("avatarUrl", avatarUrl);
-
         try {
             const result = await db.updateImage(req.session.userId, avatarUrl);
-            // console.log("updating image url worked", result.rows[0].avatarurl);
             return res.json({
                 success: true,
                 avatar: result.rows[0].avatarurl,
             });
         } catch (err) {
-            // console.log("error in uploading new profile pic", err);
             return res.json({
                 success: false,
                 message: "Something went wrong, please try again",
@@ -231,7 +196,6 @@ app.post(
 app.post("/edit-bio", (req, res) => {
     db.updateBio(req.session.userId, req.body.bio)
         .then((results) => {
-            console.log("updating bio worked, new bio is", results.rows[0].bio);
             return res.json({
                 success: true,
                 bio: results.rows[0].bio,
@@ -250,26 +214,27 @@ app.post("/edit-bio", (req, res) => {
 app.get("/api/current-user", function (req, res) {
     db.getUserData(req.session.userId)
         .then((result) => {
-            console.log("getting user data");
-            return res.json(result.rows[0]);
+            return res.json({
+                success: true,
+                profile: result.rows[0],
+            });
         })
         .catch((err) => {
             console.log("error in getting user data", err);
+            return res.json({
+                success: false,
+            });
         });
 });
 
-//fetch other user's data on OtherProfile mount
+//fetch profile of other users on OtherProfile mount
 app.get("/api/user/:id", function (req, res) {
     const { id } = req.params;
-
     //exclude cases where the id is not a number
     if (!isNaN(id)) {
         db.getUserData(id)
             .then((result) => {
-                // console.log("result of getUserdata", result);
-
-                //handle edge cases: invalid user id or id matches that of the loggedin user - send success: false response so that the App redirects to /
-
+                //edge cases: invalid user id or id matches that of the loggedin user
                 if (result.rows.length == 0 || id == req.session.userId) {
                     return res.json({
                         success: false,
@@ -285,45 +250,40 @@ app.get("/api/user/:id", function (req, res) {
                 console.log("error in getting user data", err);
             });
     } else {
-        console.log("inside the else");
         return res.json({
             success: false,
         });
     }
 });
 
-//fetch request on FindPeople mount
+//fetch request from FindPeople component
 app.get("/api/findusers/:val", function (req, res) {
-    //get just the value of the query, without json
-    let val = req.params.val.split(".").shift();
-    // console.log("val: 	", val);
+    let val = req.params.val.split(".").shift(); //get just the value of the query, without json extension
     db.getUsers(val)
         .then((result) => {
             return res.json(result.rows);
         })
         .catch((err) => {
-            console.log("error in getting the three most recent users", err);
+            console.log("error in getting users", err);
         });
 });
 
-//fetch on start
+//check for userid in cookie on start
 app.get("/user/id.json", function (req, res) {
     if (req.session.userId) {
-        console.log("cookie exists");
         res.json({
             userId: req.session.userId,
         });
     } else {
-        console.log("cookie does not exist");
+        // console.log("cookie does not exist");
         res.json({});
     }
 });
 
-//fetch request for FriendButton mount
+//fetch for status of FriendButton
 app.get("/api/friendship/:id", async (req, res) => {
     let sender = req.session.userId;
     let recipient = req.params.id;
-    // console.log("sender id", sender, "recipient id", recipient);
     try {
         const result = await db.findFriendship(sender, recipient);
         return res.json(result.rows);
@@ -333,7 +293,7 @@ app.get("/api/friendship/:id", async (req, res) => {
     }
 });
 
-//post fetches for FriendshipButton - make sure they return data identical in structure to the GET friendship request
+//post fetches for FriendshipButton - must return data consistent in structure to the GET friendship request
 app.post("/friendshiprequest", async (req, res) => {
     try {
         const result = await db.friendshipRequest(
@@ -348,13 +308,10 @@ app.post("/friendshiprequest", async (req, res) => {
 });
 
 app.post("/acceptfriendship", async (req, res) => {
-    //note the order of the parameters, in this case the recipient is actually the user stored in the cookie session
-
-    //TO DO: check that the friendship exists first
     try {
         const result = await db.acceptFriendship(
             req.body.id,
-            req.session.userId
+            req.session.userId //the recipient is the user stored in cookie session
         );
         return res.json(result.rows);
     } catch (err) {
@@ -376,11 +333,10 @@ app.post("/cancelfriendship", async (req, res) => {
     }
 });
 
-//post for delete account, including with full delete of all profile pics uploaded to Amazon
+//post request account delete, including full deletion of user's all profile pics uploaded to S3 bucket
 app.post("/api/delete-account", s3.delete, async (req, res) => {
     try {
-        const result = await db.deleteAccount(req.session.userId);
-        console.log("account delete successful", result);
+        await db.deleteAccount(req.session.userId);
         req.session = null;
         return res.redirect("/");
     } catch (err) {
@@ -389,7 +345,7 @@ app.post("/api/delete-account", s3.delete, async (req, res) => {
     }
 });
 
-//get friends and wannabes route
+//get list of friends and wannabes on App mount
 app.get("/api/friends", async (req, res) => {
     try {
         const result = await db.getFriendsAndWannabes(req.session.userId);
@@ -400,25 +356,20 @@ app.get("/api/friends", async (req, res) => {
     }
 });
 
-//get friends of other user
+//get list of friends of other user on OtherProfile mount
 app.get("/api/otheruserfriends/:id", async (req, res) => {
     let id = req.params.id;
-    console.log("id in post friends is", id);
     let userId = req.session.userId;
     try {
         const result = await db.getOtherUserFriends(id);
-        // console.log("result in get other friends", result);
-        //send also the cookie id to be able to determine friendship relations
-        //friendship check
+        //TO DO send also the cookie id to be able to determine friendship relations
+        //check friendship logged-in user - other user and only send list of friends if true
         let friends = result.rows;
-        console.log("friends in get other friends", friends);
         if (friends) {
             let areWeFriends = friends.find(
                 (friend) =>
                     friend.recipient_id == userId || friend.sender_id == userId
             );
-            // console.log("are we friends", areWeFriends);
-            //friendship check
             if (areWeFriends) {
                 friends = friends.filter(
                     (friend) =>
@@ -440,7 +391,6 @@ app.get("/api/otheruserfriends/:id", async (req, res) => {
 
 app.get("/logout", (req, res) => {
     req.session = null;
-    // res.json({ logout: true });
     return res.redirect("/login");
 });
 
@@ -448,39 +398,30 @@ app.get("*", function (req, res) {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
-// app.listen(process.env.PORT || 3001, function () {
-//     console.log("I'm listening.");
-// });
-
-//listen to the server instead to make the socket work
 server.listen(process.env.PORT || 3001, function () {
     console.log("I'm listening.");
 });
 
 //SOCKET CODE
-//when the connection event fires it will run a callback; socket is an object representing the network connection between client and server; all the socket code has to be inside this connection event
 let onlineUsers = {};
-
 io.on("connection", (socket) => {
-    //check if there is a userId set first
+    //check for existence of userid in the cookie session
     if (!socket.request.session.userId) {
         return socket.disconnect(true);
     }
-    //if we've reached this point, we have a userId
     const userId = socket.request.session.userId;
-    console.log(
-        `User with id ${userId} and socket-id ${socket.id} has connected`
-    );
+    // console.log(
+    //     `User with id ${userId} and socket-id ${socket.id} has connected`
+    // );
 
     //emit info about new user joining
     (async () => {
+        //TO DO: emit only to people who are friends
         //if user is not already online, emit his/her info to all other users
         if (!onlineUsers[userId]) {
             let result;
             try {
                 result = await db.getUserData(userId);
-                // console.log("result from getting user data", result.rows);
-
                 socket.broadcast.emit("user-joined", result.rows[0]);
             } catch (err) {
                 console.log("error in getting user info");
@@ -488,25 +429,16 @@ io.on("connection", (socket) => {
         }
     })();
 
+    //keep track of online users
     onlineUsers[userId] = onlineUsers[userId]
         ? [...onlineUsers[userId], socket.id]
         : [socket.id];
 
-    console.log("merged online users", onlineUsers);
-
-    //here:emit custom events and send some data (the payload of the event) -> we need to listen to these events on the client side
-
-    //get online users and emit
+    //get info of online users and emit
     (async () => {
         let result;
         try {
-            //remove current user from online Users
-            // const onlineMinusUser = Object.keys(onlineUsers).filter(
-            //     (user) => user != userId
-            // );
-            // console.log("online minus user", onlineMinusUser);
             result = await db.getUsersById(Object.keys(onlineUsers));
-            // console.log("result from get users by ids", result.rows);
             if (result.rows.length !== 0) {
                 //emit list of online users to the user who just joined
                 io.to(socket.id).emit("online-users", result.rows);
@@ -521,7 +453,6 @@ io.on("connection", (socket) => {
         let result;
         try {
             result = await db.getGroupMessages();
-            // console.log("result from get messagens", result.rows);
             if (result.rows.length !== 0) {
                 //emit the latest 10 messages to the user who just connected
                 io.to(socket.id).emit("last-10-messages", result.rows);
@@ -531,14 +462,14 @@ io.on("connection", (socket) => {
         }
     })();
 
-    //get number of friend requests and emit to the user who just connected
+    //get number of new friend notifications
     (async () => {
         try {
             const result = await db.getFriendRequestNotifications(userId);
-            console.log("result from getting nb of friendships", result.rows);
             if (result.rows.length) {
                 //merge the ids of request senders into an array
                 let requests = result.rows.map((e) => e.senderid);
+                // emit to the user who just connected
                 io.to(socket.id).emit("number-of-friend-requests", requests);
             }
         } catch (err) {
@@ -548,64 +479,46 @@ io.on("connection", (socket) => {
 
     //listen to friendship requests notifications
     socket.on("new-friend-request", async (data) => {
-        //check if user is online - if yes, send that user a notification
-        console.log("data from socket friendship request", data);
-
-        //store the request in the table
-        let result;
+        //store the new friend notification in the db
         try {
-            result = await db.addFriendRequestNotification(
+            await db.addFriendRequestNotification(
                 data.recipient_id,
                 data.sender_id
             );
-            console.log("result from adding new friend request", result);
         } catch (err) {
             console.log("error from adding friend request", err);
         }
-
-        //additionally if user is online, emit that friend request
+        //additionally if user is online, emit the new friend notification
         if (onlineUsers[data.recipient_id]) {
             for (let socket of onlineUsers[data.recipient_id]) {
                 io.to(socket).emit("new-friend-notification", data);
-                console.log("inside friend request emit event");
             }
         }
     });
 
     socket.on("new-friend-cancel", async (data) => {
-        //delete the request from the friend notifications table
-        let result;
+        //delete the new friend notification from the db
         try {
-            result = await db.deleteFriendRequestNotification(
+            await db.deleteFriendRequestNotification(
                 data.recipient_id,
                 data.sender_id
             );
-            console.log("result from deleting new friend request", result);
         } catch (err) {
             console.log("error deleting friend request", err);
         }
 
-        //additionally if user is online, emit that friend request is cancelled
+        //additionally if user is online, emit that the new friend notification is cancelled
         if (onlineUsers[data.recipient_id]) {
             for (let socket of onlineUsers[data.recipient_id]) {
                 io.to(socket).emit("new-friend-request-cancel", data);
-                console.log(
-                    "inside friend request emit event",
-                    socket.requests
-                );
             }
         }
     });
 
     socket.on("all-friend-requests-read", async (data) => {
-        console.log("data inside socket server delete all notifications", data);
         //delete all requests from the friend notifications table
-        let result;
         try {
-            result = await db.deleteAllFriendRequestNotifications(
-                data.recipient_id
-            );
-            console.log("result from deleting all friend requests", result);
+            await db.deleteAllFriendRequestNotifications(data.recipient_id);
         } catch (err) {
             console.log("error deleting friend request notifications", err);
         }
@@ -613,12 +526,10 @@ io.on("connection", (socket) => {
 
     //listen to the new message event emitted in the ChatInput component
     socket.on("new-message", async (message) => {
-        console.log("new message is", message, "user id is", userId);
         //add new message to database
         let result;
         try {
             result = await db.insertMessage(userId, message.text);
-            console.log("result from inserting new message", result.rows[0]);
             //emit the new message to all users
             io.emit("added-new-message", result.rows[0]);
         } catch (err) {
@@ -626,25 +537,22 @@ io.on("connection", (socket) => {
         }
     });
 
-    //listen to when the connection disconnects
+    //listen to user disconnect
     socket.on("disconnect", () => {
-        console.log(
-            `User with id ${userId} and socket-id ${socket.id} just disconnected`
-        );
+        // console.log(
+        //     `User with id ${userId} and socket-id ${socket.id} just disconnected`
+        // );
 
-        console.log("socket requests on disconnnect", socket.requests);
-
-        //remove users on disconnect
+        //remove socket on disconnect
         onlineUsers[userId] = onlineUsers[userId].filter(
             (item) => item !== `${socket.id}`
         );
 
-        //delete object key if no other sockets remain and emit that the user has left
+        //if no other sockets remain, emit that the user has left and delete object key
         const userLeft = async () => {
             let result;
             try {
                 result = await db.getUserData(userId);
-                // console.log("result from getting user data", result.rows);
                 io.emit("user-left", result.rows[0]);
             } catch (err) {
                 console.log("error in getting user info");
@@ -654,7 +562,5 @@ io.on("connection", (socket) => {
             delete onlineUsers[userId];
             userLeft();
         }
-
-        console.log("merged online users on disconnect", onlineUsers);
     });
 });

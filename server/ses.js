@@ -2,7 +2,7 @@ const aws = require("aws-sdk");
 
 let secrets;
 if (process.env.NODE_ENV == "production") {
-    secrets = process.env; // in prod the secrets are environment variables
+    secrets = process.env;
 } else {
     secrets = require("../secrets.json");
 }
@@ -10,16 +10,14 @@ if (process.env.NODE_ENV == "production") {
 const ses = new aws.SES({
     accessKeyId: secrets.AWS_KEY,
     secretAccessKey: secrets.AWS_SECRET,
-    region: "us-east-1", // Make sure this corresponds to the region in which you have verified your email address
+    region: "us-east-1", //this corresponds to the region where email address was verified
 });
 
-//function version with formatting
-//normally we would also pass an email to the function
 exports.sendCodeEmail = (code) => {
     let params = {
         Source: "Bookish <irina.a.stelea@gmail.com>",
         Destination: {
-            ToAddresses: ["irina.a.stelea@gmail.com"],
+            ToAddresses: ["irina.a.stelea@gmail.com"], //for test purposes - normally we would pass the user's email to the function
         },
         ReplyToAddresses: [],
         Message: {
@@ -60,31 +58,3 @@ exports.sendCodeEmail = (code) => {
         .then(() => console.log("Sending email with reset code worked"))
         .catch((err) => console.log("error in sending email: ", err));
 };
-
-//original version - does not include formatting
-// exports.sendCodeEmail = function (code) {
-//     //sendEmail below is a method from SES
-//     return ses
-//         .sendEmail({
-//             Source: "Your social network <irina.a.stelea@gmail.com>",
-//             Destination: {
-//                 ToAddresses: ["irina.a.stelea@gmail.com"],
-//             },
-//             Message: {
-//                 Body: {
-//                     Text: {
-//                         Data: `
-//                         Hello,
-//                         This is your code:
-//                         ${code}`,
-//                     },
-//                 },
-//                 Subject: {
-//                     Data: "Your password reset code / Social network",
-//                 },
-//             },
-//         })
-//         .promise()
-//         .then(() => console.log("sending emails worked!"))
-//         .catch((err) => console.log(err));
-// };

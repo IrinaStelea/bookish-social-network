@@ -47,12 +47,16 @@ export default function App() {
             .then((response) => response.json())
             .then((data) => {
                 console.log("APP RELOAD - data after fetching user data", data);
-                //pass the user info to the app
-                setFirst(data.first);
-                setLast(data.last);
-                setAvatarUrl(data.avatarurl);
-                setBio(data.bio);
-                dispatch(userDataReceive(data));
+                if (!data.success) {
+                    history.push("/");
+                } else {
+                    //pass the user info to the app
+                    setFirst(data.profile.first);
+                    setLast(data.profile.last);
+                    setAvatarUrl(data.profile.avatarurl);
+                    setBio(data.profile.bio);
+                    dispatch(userDataReceive(data.profile));
+                }
             })
             .catch((err) => {
                 //TO DO: handle error here

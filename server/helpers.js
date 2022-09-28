@@ -1,5 +1,4 @@
 //function to clean first and last name
-
 module.exports.cleanString = (string) => {
     return string
         .trim()
@@ -8,4 +7,3 @@ module.exports.cleanString = (string) => {
         .map((item) => item[0].toUpperCase() + item.slice(1).toLowerCase())
         .join(" ");
 };
-

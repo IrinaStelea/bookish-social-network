@@ -14,7 +14,6 @@ if (process.env.NODE_ENV === "production") {
 
 const spicedPg = require("spiced-pg");
 const db = spicedPg(databaseUrl);
-
 const bcrypt = require("bcryptjs");
 
 function hashPassword(pass) {
@@ -24,16 +23,14 @@ function hashPassword(pass) {
             return bcrypt.hash(pass, salt);
         })
         .then((hashedPassword) => {
-            console.log("password in hash function", hashedPassword);
             return hashedPassword;
         });
 }
 
 module.exports.insertUser = (first, last, email, password) => {
     return hashPassword(password).then((hashedPass) => {
-        // console.log("hashed pass", hashedPass);
         return db.query(
-            //add user to users table returning the id & first name to store in the cookie session
+            //return id & first name to store in the cookie session
             `
             INSERT INTO users(first, last, email, password)
             VALUES ($1, $2, $3, $4) RETURNING id, first`,
@@ -51,26 +48,17 @@ module.exports.validateUser = (email, inputPass) => {
     return db
         .query(`SELECT * FROM users WHERE email = $1`, [email])
         .then((results) => {
-            console.log(
-                "user email exists, here is the entire info",
-                results.rows
-            );
-            //get db password
             let dbPass = results.rows[0].password;
-
-            //get id from db
             userId = results.rows[0].id;
-
             //compare passwords
             return bcrypt.compare(inputPass, dbPass).then((result) => {
                 if (result) {
-                    console.log("authentication successful");
-                    // const firstName = results.rows[0].first;
+                    // console.log("authentication successful");
                     //return userId for the cookie
                     return userId;
                 } else {
-                    console.log("authentication failed. passwords don't match");
-                    // throw error for the POST login catch
+                    // console.log("authentication failed. passwords don't match");
+                    // throw error for the catch in POST login
                     throw new Error("Passwords don't match");
                 }
             });
@@ -84,7 +72,7 @@ module.exports.getUserData = (id) => {
     );
 };
 
-//get info of online users
+//get the info of all users online
 module.exports.getUsersById = (arrayIds) => {
     return db.query(
         `SELECT id, first, last, avatarurl FROM users WHERE id = ANY($1)`,
@@ -97,7 +85,7 @@ module.exports.getUsers = (val) => {
         `SELECT * FROM users WHERE first ILIKE $1 OR last ILIKE $1 ORDER BY id DESC LIMIT 5`,
         [val + "%" || null]
     );
-    // could add to find the search query inside the words "%" + val + "%"
+    // use "%" + val + "%" to find the search string inside of a name, not only at start
 };
 
 module.exports.updateImage = (userId, imageUrl) => {
@@ -175,7 +163,7 @@ module.exports.cancelFriendship = (sender, recipient) => {
     );
 };
 
-//get friends query - needs to use both users & friendships table; the joins refer to the person we want info about
+//"get friends" query uses both users & friendships table; the joins need to target the person we want info about
 module.exports.getFriendsAndWannabes = (id) => {
     return db.query(
         `SELECT users.id, first, last, avatarurl, accepted FROM users JOIN friendships ON (accepted=true AND recipient_id=$1 AND users.id=friendships.sender_id) OR (accepted=true and sender_id=$1 AND users.id=friendships.recipient_id) OR (accepted = false AND recipient_id=$1 AND users.id = friendships.sender_id) ORDER BY first`,
@@ -204,7 +192,7 @@ module.exports.insertMessage = (id, text) => {
 };
 
 module.exports.deleteAccount = (id) => {
-    //this will delete the info from users, friendships & messages tables thanks to ON CASCADE DELETE on relevant ids
+    //this query will delete the info from users, friendships & messages tables thanks to ON CASCADE DELETE constraint on the other tables
     return db.query(`DELETE FROM users WHERE id=$1`, [id]);
 };
 
