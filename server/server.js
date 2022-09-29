@@ -4,8 +4,10 @@ const compression = require("compression");
 const path = require("path");
 const cookieSession = require("cookie-session");
 const cryptoRandomString = require("crypto-random-string");
-//TO DO: adapt the socket.io code to work for a deployment environment
+
 const server = require("http").Server(app); //socket.io requires a native node server to handle the initial http request
+
+//TO DO: adapt the socket.io code to work for a deployment environment
 const io = require("socket.io")(server, {
     allowRequest: (req, callback) =>
         callback(null, req.headers.referer.startsWith("http://localhost:3000")),

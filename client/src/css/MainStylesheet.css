@@ -2,7 +2,6 @@
 #login,
 #reset,
 #send-code {
-    /* width: 30vw; */
     display: flex;
     flex-direction: column;
     gap: 1vh;
@@ -12,7 +11,6 @@
 #login,
 #reset,
 #send-code label {
-    /* margin: 2vh 0; */
     font-size: 0.9em;
     font-weight: 500;
 }
@@ -35,21 +33,16 @@
 .loggedin-container {
     display: flex;
     width: 95vw;
-    /* justify-content: space-between; */
     justify-content: flex-start;
     align-items: center;
-    /* margin-top: 2vh; */
     gap: 6vw;
 }
 
 .navmenu {
     display: flex;
-    /* width: 45vw; */
     width: 50%;
-    /* justify-content: space-around; */
     justify-content: space-around;
     background-color: salmon;
-    /* padding: 1vh 1vw; */
     padding: 1.5vh 4vw;
     gap: 3vw;
     clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
@@ -76,23 +69,13 @@
     text-decoration: none;
 }
 
-/* .profile-container {
-    align-self: flex-start;
-    width: 20vw;
-    gap: 2vh;
-    display: flex;
-    flex-direction: column;
-} */
-
 .profile-container {
     align-self: flex-start;
     display: grid;
     width: 45vw;
     grid-template-columns: 1fr 1.5fr;
-    /* justify-items: start;
-    align-items: flex-start; */
     margin-top: 5vh;
-    /* margin left calculated based on space occupied top items */
+    /* margin left calculated based on space occupied by top items */
     margin-left: 16vw;
 }
 
@@ -174,13 +157,6 @@
     object-fit: contain;
 }
 
-/* .editor-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2vh;
-} */
-
 .people,
 .friends,
 .chat {
@@ -194,7 +170,6 @@
 }
 
 .people-container {
-    /* align-self: flex-start; */
     display: grid;
     width: 30vw;
     grid-template-columns: 1fr 1fr;
@@ -205,11 +180,10 @@
 
 .chat-container {
     display: flex;
-    /* use column reverse to have hte last comment appear at the end of the scroll */
+    /* use column reverse to have the last chat message appear at the end of the scroll */
     flex-direction: column-reverse;
     width: 45vw;
     height: 40vh;
-    /* grid-template-columns: 1fr; */
     justify-items: start;
     overflow-y: auto;
     padding: 1vh 1vw;
@@ -335,10 +309,6 @@ button:active,
     margin-top: 2vh;
 }
 
-/* .friends h3 {
-    margin-top: 2vh; 
-} */
-
 .friends-cell {
     display: flex;
     align-items: center;
@@ -375,7 +345,7 @@ button:active,
 }
 
 .profile-info {
-    /* align to the right most part of the flexbox */
+    /* align to the right-most part of the flexbox */
     margin-left: auto;
     display: flex;
 }
@@ -465,27 +435,11 @@ button:active,
     animation: slideUp 2s ease-in;
 }
 
-@keyframes slideUp {
-    0%,
-    50% {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-
-    60%,
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
 .friend-notification {
     color: floralwhite;
     background-color: salmon;
     border: 1px solid salmon;
     margin-right: 1vw;
-    /* width: 1vw;
-    height: 1vw; */
     border-radius: 5px;
     align-self: flex-end;
 }
@@ -498,4 +452,18 @@ button:active,
     margin: auto;
     cursor: pointer;
     font-weight: bolder;
+}
+
+@keyframes slideUp {
+    0%,
+    50% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

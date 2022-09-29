@@ -21,7 +21,6 @@ export default function OtherUserFriends({ first, otherUserFriends }) {
                                     <a href={"/user/" + friend.id}>
                                         {friend.first} {friend.last}
                                     </a>
-                                    {/* pass down userid for the button in the other friends list to work */}
                                     <FriendButton userid={friend.id} />
                                 </div>
                             </div>

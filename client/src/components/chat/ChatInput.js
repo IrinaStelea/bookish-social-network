@@ -1,27 +1,24 @@
-//button title default value is Reply if no other value is provided from the Chat component
-
 import { useRef } from "react";
 import { socket } from "../../socket.js";
 
 const ChatInput = ({
-    buttonTitle = "Reply",
+    buttonTitle,
     textPlaceholder = "Write a message to the Bookish community",
 }) => {
-    //the hook useRef allows me to gain access to specific DOM elements  - to do so, use the current property of the ref
     const textareaRef = useRef();
 
     const sendMessage = () => {
         const message = textareaRef.current.value;
-        //emit socket event when there is a new message; the server listens to this event
+        //socket emits when there is a new message
         socket.emit("new-message", {
             text: message,
         });
-
+        //clear the textarea and keep focus on it
         textareaRef.current.value = "";
         textareaRef.current.focus();
     };
 
-    //submit the chat message also when clicking on Enter
+    //submit message when clicking Enter
     const onChange = (e) => {
         if (e.keyCode == 13 && !e.shiftKey) {
             sendMessage();
@@ -43,7 +40,3 @@ const ChatInput = ({
 };
 
 export default ChatInput;
-
-//click on button
-//emit an event on the socket so the server can grab the new message and store it in the database and then use the socket there to emit the latest messages and eventually updated the global state; simply clicking on button and dispatching (without socket) means the state would update just for me, not for everyone
-//update the store

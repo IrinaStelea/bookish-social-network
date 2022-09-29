@@ -4,7 +4,6 @@ export default class BioEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // bio comes from app -> when the component mounts it checks whetehr there is a bio -> this is going to make the component change accordingly
             draftBio: props.bio,
             isEditorVisible: false,
             errorMessage: "",
@@ -47,27 +46,23 @@ export default class BioEditor extends Component {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("data after edit bio", data);
                 //if something goes wrong, display error message
                 if (!data.success && data.message) {
                     this.setState({
                         errorMessage: data.message,
                     });
                 } else {
-                    //calling show editor to toggle the editor and update the editing state
+                    //if all well toggle the editor and update the draft bio in the state
                     this.showEditor();
-                    //if all is well call saveDraftBiotoApp to send new bio to app
                     this.props.saveDraftBioToApp(data.bio);
-                    // this.setState({
-                    //     button: "Cancel",
-                    // });
                 }
             })
             .catch((err) => {
-                console.log(err);
+                console.log("error in fetch edit-bio", err);
             });
     }
 
+    //conditional rendering of edit-bio buttons
     render() {
         return (
             <div className="name-bio-container">
@@ -118,7 +113,7 @@ export default class BioEditor extends Component {
                                 </button>
                             </>
                         ) : (
-                            // if there is no bio show an add bio button
+                            // if there is no bio, show an add bio button
                             <button id="add" onClick={this.showEditor}>
                                 Add bio
                             </button>

@@ -1,25 +1,5 @@
-// this component holds all the log in info
-
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { receiveFriendsAndWannabes } from "../redux/friends/slice.js";
-import { userDataReceive } from "../redux/userdata/slice.js";
-
-import Logo from "./Logo.js";
-import Footer from "./Footer.js";
-import ProfilePic from "./ProfilePic.js";
-import Uploader from "./Uploader.js";
-import "./Registration.css";
-import Profile from "./Profile.js";
-import FindPeople from "./FindPeople.js";
-import OtherProfile from "./OtherProfile.js";
-import FriendsAndWannabes from "./friends-wannabes/FriendsAndWannabes.js";
-import Chat from "./chat/Chat.js";
-import Dropdown from "./Dropdown.js";
-import Delete from "./Delete.js";
-import Notification from "./Notification.js";
-import FriendRequest from "./FriendRequest.js";
-
 import {
     BrowserRouter,
     Route,
@@ -27,6 +7,25 @@ import {
     Redirect,
     Switch,
 } from "react-router-dom";
+
+import Logo from "./Logo.js";
+import Footer from "./Footer.js";
+import ProfilePic from "./ProfilePic.js";
+import Uploader from "./Uploader.js";
+import Profile from "./Profile.js";
+import FindPeople from "./FindPeople.js";
+import OtherProfile from "./OtherUserProfile.js";
+import FriendsAndWannabes from "./friends-wannabes/FriendsAndWannabes.js";
+import Chat from "./chat/Chat.js";
+import Dropdown from "./Dropdown.js";
+import DeleteAccount from "./Delete.js";
+import NotificationUserOnline from "./Notification.js";
+import FriendRequest from "./FriendRequest.js";
+
+import { receiveFriendsAndWannabes } from "../redux/friends/slice.js";
+import { userDataReceive } from "../redux/userdata/slice.js";
+
+import "../css/MainStylesheet.css";
 
 export default function App() {
     const dispatch = useDispatch();
@@ -38,19 +37,41 @@ export default function App() {
     const [uploaderIsVisible, setUploader] = useState(false);
     const [deleteIsVisible, setDelete] = useState(false);
 
-    //fetch user info once the component mounts; note this runs actually after the render
-    useEffect(() => {
-        // console.log("the app component mounted");
-        //fetch user info from the server
+    //get the wannabes and friends
+    const wannabes = useSelector(
+        (state) =>
+            state.friends && state.friends.filter((friend) => !friend.accepted)
+    );
+    const friends = useSelector(
+        (state) =>
+            state.friends && state.friends.filter((friend) => friend.accepted)
+    );
 
+    const toggleUploader = () => {
+        setUploader(!uploaderIsVisible);
+    };
+
+    const toggleDeleteConfirmation = () => {
+        setDelete(!deleteIsVisible);
+    };
+
+    const saveDraftBioToApp = (draftBio) => {
+        setBio(draftBio);
+    };
+
+    const changeProfilePic = (newUrl) => {
+        setAvatarUrl(newUrl);
+        setUploader(!uploaderIsVisible);
+    };
+
+    //fetch user info
+    useEffect(() => {
         fetch("/api/current-user")
             .then((response) => response.json())
             .then((data) => {
-                console.log("APP RELOAD - data after fetching user data", data);
                 if (!data.success) {
                     history.push("/");
                 } else {
-                    //pass the user info to the app
                     setFirst(data.profile.first);
                     setLast(data.profile.last);
                     setAvatarUrl(data.profile.avatarurl);
@@ -59,83 +80,27 @@ export default function App() {
                 }
             })
             .catch((err) => {
-                //TO DO: handle error here
                 console.log(err);
             });
     }, []);
 
-    const toggleUploader = () => {
-        //this is changing to the opposite value of uploaderIsVisible
-        setUploader(!uploaderIsVisible);
-    };
-
-    const toggleDelete = () => {
-        //this is changing to the opposite value of uploaderIsVisible
-        setDelete(!deleteIsVisible);
-    };
-
-    const saveDraftBioToApp = (draftBio) => {
-        setBio(draftBio);
-    };
-
-    //change profile pic from child (ProfilePic) to parent (App); pass this entire function as a prop (named changePic)
-    const changeProfilePic = (newUrl) => {
-        setAvatarUrl(newUrl);
-        setUploader(!uploaderIsVisible);
-    };
-
-    //FRIENDS AND WANNABES info
-    //very important to define the following two variables: they allow the DOM to react to changes in Redux data
-
-    //first case of useSelector - if there is friends data, give back the ones with accepted false (wannabes)
-    //be careful about not messing up the arrow function below, it needs to return smth
-    const wannabes = useSelector(
-        (state) =>
-            state.friends && state.friends.filter((friend) => !friend.accepted)
-    );
-    // console.log("wannabes from the global state", wannabes);
-    //second case useSelector - if there is friends data, give back the ones with accepted true (friends)
-    const friends = useSelector(
-        (state) =>
-            state.friends && state.friends.filter((friend) => friend.accepted)
-    );
-    // console.log("friends from the global state", friends);
-
     useEffect(() => {
-        //note the argument of useEffect: do this just once on mount, the rest of the state will be handled by Redux!
-
         //the condition below ensures we don't talk to the database needlessly
         if (friends.length == 0 || wannabes.length == 0) {
             (async () => {
                 try {
                     const res = await fetch("/api/friends");
                     const data = await res.json();
-                    console.log(
-                        "data after fetch friends and wannabes",
-                        data.friends
-                    );
-                    //data is 1. array of objects when there is data; 2. empty array for 0 friends; 3. a message if there was an error
-
-                    //exclude cases when there is no data or when there was an error
+                    //exclude cases where there's no data or when there was an error
                     if (data.length !== 0 || !data.message) {
-                        // pass data from server to redux; redux will update our data because we use useSelector;
-                        // console.log("sending data to redux");
-                        //careful about the type of data being sent - wrapping it in an object or not
                         dispatch(receiveFriendsAndWannabes(data.friends));
                     }
                 } catch (err) {
-                    //TO DO: handle error here
                     console.log("error in fetch friends", err);
                 }
             })();
         }
     }, []);
-
-    //FIX THIS - stopped working after including subcomponents
-    //return something while we wait for the fetch above
-    // if (friends.length == 0 || wannabes.length == 0) {
-    //     return null;
-    // }
 
     return (
         <>
@@ -143,11 +108,7 @@ export default function App() {
                 <div className="loggedin-container">
                     <Logo />
                     <div className="navmenu">
-                        <NavLink
-                            // "exact" ensures only this link is marked as active when its descendant paths are matched
-                            exact
-                            to="/"
-                        >
+                        <NavLink exact to="/">
                             My profile
                         </NavLink>
                         <NavLink exact to="/friends">
@@ -159,11 +120,7 @@ export default function App() {
                         <NavLink exact to="/users">
                             Find people
                         </NavLink>
-                        {/* <NavLink exact to="/logout">
-                            Logout
-                        </NavLink> */}
                     </div>
-                    {/* passing the user data to ProfilePic */}
                     <div className="profile-info">
                         <FriendRequest />
                         <ProfilePic
@@ -174,12 +131,12 @@ export default function App() {
                         />
                         <Dropdown
                             toggleUploader={toggleUploader}
-                            toggleDelete={toggleDelete}
+                            toggleDelete={toggleDeleteConfirmation}
                             first={first}
                         />
                     </div>
                 </div>
-                <Notification />
+                <NotificationUserOnline />
                 <div id="footer">
                     <Footer />
                 </div>
@@ -190,17 +147,17 @@ export default function App() {
                             toggleUploader={toggleUploader}
                         />
                     )}
-                    {deleteIsVisible && <Delete toggleDelete={toggleDelete} />}
+                    {deleteIsVisible && (
+                        <DeleteAccount
+                            toggleDelete={toggleDeleteConfirmation}
+                        />
+                    )}
                 </div>
                 {(uploaderIsVisible || deleteIsVisible) && (
                     <div className="overlay"></div>
                 )}
-                {/* browser router for profile, FindPeople & OtherProfile, use the Switch to be able to add a catch all */}
                 <Switch>
                     <Route exact path="/">
-                        {/* setting a separate css class for the profile that will also affect ProfilePic */}
-                        {/* <div className="title-container"> */}
-                        {/* passing the user data to Profile */}
                         <Profile
                             first={first}
                             last={last}
@@ -209,13 +166,11 @@ export default function App() {
                             toggleUploader={toggleUploader}
                             saveDraftBioToApp={saveDraftBioToApp}
                         />
-                        {/* </div> */}
                     </Route>
                     <Route exact path="/users">
                         <FindPeople />
                     </Route>
                     <Route path="/user/:id">
-                        {/* don't put anything in the OtherProfile component as a prop, we will do a fetch for this */}
                         <OtherProfile />
                     </Route>
                     <Route exact path="/friends">
@@ -224,9 +179,6 @@ export default function App() {
                     <Route exact path="/chat">
                         <Chat />
                     </Route>
-                    {/* <Route path="/logout">
-                        <Redirect to="/" />
-                    </Route> */}
                     <Route path="*">
                         <Redirect to="/" />
                     </Route>

@@ -1,7 +1,6 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
-import "./Registration.css";
-// import useStatefulFields from "../hooks/useStatefulFields";
+import "../css/MainStylesheet.css";
 
 class Registration extends Component {
     constructor() {
@@ -11,7 +10,6 @@ class Registration extends Component {
             lastName: "",
             email: "",
             password: "",
-            // isUserLoggedIn: false, //convention is that variables with boolean values are prefixed with "is"
             errorMessage: "",
             errors: {
                 firstName: false,
@@ -20,24 +18,13 @@ class Registration extends Component {
                 password: false,
             },
         };
-        //very important to bind these two functions here
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.validateForm = this.validateForm.bind(this);
     }
 
-    componentDidMount() {
-        console.log("the registration component mounted");
-    }
-
-    componentWillUnmount() {
-        //here you can clear up resources that might be needed
-    }
-
-    //whenever there is a change in one of the input fields, set the state immediately to update it
     onFormInputChange(e) {
         const target = e.currentTarget;
-        console.log(`${target.value}`);
         this.setState({
             [target.name]: target.value,
         });
@@ -53,12 +40,11 @@ class Registration extends Component {
             if (!this.state[field]) {
                 errors[field] = true;
                 errorMessage = "Please fill out all fields \n";
-                console.log("this field is not filled", field);
                 validField = true;
             }
         }
 
-        //email
+        //email validation
         if (this.state.email) {
             let lastAtPos = this.state.email.lastIndexOf("@");
             let lastDotPos = this.state.email.lastIndexOf(".");
@@ -78,7 +64,7 @@ class Registration extends Component {
             }
         }
 
-        //password
+        //password validation
         if (this.state.password && this.state.password.length < 6) {
             errors.password = true;
             validField = true;
@@ -86,24 +72,18 @@ class Registration extends Component {
                 "Please provide a password that's longer than 6 characters \n";
         }
 
-        //consider using error = error first OR error last OR error email OR error password to set the whole thing in one step
-
         //important to set state only at the end otherwise async behaviour of setState might not lead to realtime updates
         this.setState({
             errors: errors,
             errorMessage: errorMessage,
         });
-        console.log("errors state in validateForm", this.state.errors);
         return validField;
     }
 
     onFormSubmit(e) {
-        //preventDefault prevents the page from reloading on submission, which is the default HTML form behavior
         e.preventDefault();
 
         if (this.validateForm()) {
-            console.log("not all fields are valid, return");
-            console.log("error state in onFormSubmit", this.state.errors);
             return;
         }
 
@@ -123,8 +103,7 @@ class Registration extends Component {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("data after register fetch", data);
-                //if something goes wrong, stay on page and display error message
+                //if something goes wrong, display error message
                 if (!data.success && data.message) {
                     this.setState({
                         errorMessage: data.message,
@@ -138,19 +117,10 @@ class Registration extends Component {
                 console.log(err);
             });
     }
-    // logInUser() {
-    //     this.setState({
-    //         isUserLoggedIn: true,
-    //     });
-    // }
 
     render() {
         return (
             <>
-                {/* condition to check if the user is logged in */}
-                {/* {!this.state.isUserLoggedIn && ( */}
-                {/* //the second set of brackets to create another parent element
-                    <> */}
                 <h1>Welcome to Bookish</h1>
                 <div className="loggedout-container">
                     <img src="../../Logo_Bookish.png" alt="Logo" />
@@ -225,11 +195,7 @@ class Registration extends Component {
                     <p>
                         Already a member? <Link to="/login">Log in</Link>
                     </p>
-                    {/* <button onClick={() => this.logInUser()}>Log in</button> */}
                 </div>
-                {/* </> */}
-                {/* )} */}
-                {/* {this.state.isUserLoggedIn && <h1>User is logged in!</h1>} */}
             </>
         );
     }

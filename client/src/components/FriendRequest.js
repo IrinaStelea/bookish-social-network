@@ -1,18 +1,14 @@
 import { useSelector, useDispatch } from "react-redux";
-import { resetFriendRequests } from "../redux/notify-friend-request/slice";
 import { socket } from "../socket";
-import "./Registration.css";
+import { resetFriendRequests } from "../redux/notify-friend-request/slice";
+import "../css/MainStylesheet.css";
 
 export default function FriendRequest() {
     const dispatch = useDispatch();
-
     const userData = useSelector((state) => state.userData);
-    //friend requests
-    // const requests = useSelector((state) => state.requests);
 
-    //get only unique values from the requests array (use Set)
+    //get only unique values from the requests array
     let requests = [...new Set(useSelector((state) => state.requests))];
-    console.log("requests in friend request component", requests);
 
     const resetRequests = () => {
         dispatch(resetFriendRequests());

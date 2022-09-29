@@ -1,7 +1,6 @@
-// import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { rejectFriend } from "../../redux/friends/slice.js";
 import { Link } from "react-router-dom";
+import { rejectFriend } from "../../redux/friends/slice.js";
 
 export default function Friends() {
     const dispatch = useDispatch();
@@ -9,7 +8,7 @@ export default function Friends() {
         (state) =>
             state.friends && state.friends.filter((friend) => friend.accepted)
     );
-    console.log("friends from the global state", friends);
+
     const handleUnfriend = async (id) => {
         try {
             const res = await fetch("/cancelfriendship", {
@@ -19,11 +18,7 @@ export default function Friends() {
             });
 
             const data = await res.json();
-            console.log("data after clicking on unfriend button", data);
             if (!data.message) {
-                //prepare the action and dispatch it to our rejectFriend reducer
-                console.log("data id is", data);
-                console.log("id in reject is", id);
                 dispatch(rejectFriend(id));
             }
         } catch (err) {

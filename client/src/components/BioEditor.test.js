@@ -21,17 +21,16 @@ test("Clicking the Add or Edit button causes a textarea and a Save button to be 
     //option 1 : working with Cancel as value instead of Save because this is the default of my button - test passes
     // expect(container.querySelector("button").innerHTML).toContain("Cancel");
 
-    //option 2: simulating a change in the textarea
+    //option 2: simulating a change in textarea
     fireEvent.change(container.querySelector("textarea"), {
         target: { value: "This is a new bio" },
     });
 
     expect(container.querySelector("button").innerHTML).toContain("Save");
-    // expect(container.querySelectorAll("textarea").length).toBe(1);
     expect(container.querySelector("textarea")).toBeTruthy();
 });
 
-//Clicking the "Save" button causes an HTTP request. The request should not actually happen during your test, and it won't because Jest has been configured to automatically use a mock of fetch in your tests.
+//Clicking the "Save" button causes an HTTP request. The request should not actually happen during the test - Jest has been configured to automatically use a mock of fetch.
 
 test("clicking Save causes HTTP request that changes the bio via the function that was passed down as prop to BioEditor -  mock fetch is pre-set in the Jest configuration", async () => {
     let newBio = "This is a new bio";
@@ -70,9 +69,4 @@ test("clicking Save causes HTTP request that changes the bio via the function th
     );
 
     expect(saveDraftBioToApp).toHaveBeenCalledWith(newBio);
-
-    //testing if the new bio is displayed = this means the function got called
-    // expect(container.querySelector("div.editor-container").innerHTML).toContain(
-    //     newBio
-    // );
 });

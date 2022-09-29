@@ -1,8 +1,6 @@
 export default function AreWeFriendsReducer(areWeFriends = false, action) {
-    if (action.type === "other-friends/are-we-friends") {
-        //set the friends on the global state based on the payload
+    if (action.type === "are-we-friends") {
         areWeFriends = action.payload.areWeFriends;
-        console.log("are we friends in main reducer", areWeFriends);
     }
 
     return areWeFriends;
@@ -10,7 +8,7 @@ export default function AreWeFriendsReducer(areWeFriends = false, action) {
 
 export function receiveAreWeFriends(areWeFriends) {
     return {
-        type: "other-friends/are-we-friends",
+        type: "are-we-friends",
         payload: { areWeFriends },
     };
 }

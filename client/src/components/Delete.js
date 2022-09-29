@@ -1,4 +1,4 @@
-export default function Delete({ toggleDelete }) {
+export default function DeleteAccount({ toggleDelete }) {
     const deleteAccount = () => {
         fetch("/api/delete-account", {
             method: "POST",

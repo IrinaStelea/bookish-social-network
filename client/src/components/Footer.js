@@ -1,4 +1,4 @@
-import "./Registration.css";
+import "../css/MainStylesheet.css";
 
 export default function Footer() {
     return (

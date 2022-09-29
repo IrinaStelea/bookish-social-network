@@ -1,79 +1,58 @@
-//making a separate component OtherProfile because we cannot repurpose Profile bc OtherProfile needs to make a fetch every time it mounts; also Profile has the BioEditor and Uploader functionalities which are not necessary in OtherProfile
-
-//import useParams hook provided by React to have access to the id
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import FriendButton from "./FriendButton";
-import OtherUserFriends from "./OtherProfile-Friends";
 import { useSelector, useDispatch } from "react-redux";
+import FriendButton from "./FriendButton";
+import OtherUserFriends from "./OtherUserProfile-Friends";
 import { receiveOtherUserFriends } from "../redux/other-friends/slice";
 import { receiveAreWeFriends } from "../redux/are-we-friends/slice";
 
 export default function OtherProfile() {
-    //grab ID from params
-    const { id } = useParams();
+    const dispatch = useDispatch();
+    const { id } = useParams(); //grab ID in URL from params
     const history = useHistory();
     const [user, setUser] = useState({});
 
-    //GET USER PROFILE
+    //get friends of viewed user
+    const otherUserFriends = useSelector((state) => state.otherUserFriends);
+    const areWeFriends = useSelector((state) => state.areWeFriends);
+
+    //fetch profile info of viewed user
     useEffect(() => {
         fetch(`/api/user/${id}`)
             .then((resp) => resp.json())
             .then((data) => {
-                // console.log("data after fetch user data in OtherProfile", data);
-                //handle edge cases
                 if (!data.success) {
-                    //redirect the user away using the history object from the React Router
+                    //for edge cases, redirect the user away using the history object from the React Router
                     history.push("/");
                 } else {
                     setUser(data.profile);
                 }
             })
             .catch((err) => {
-                //TO DO: handle error here
-                console.log("error in fetch request OtherProfile", err);
+                console.log("error in fetch request OtherUserProfile", err);
             });
-        //note it is necessary to watch the id because the profile might not be available as soon as the component mountes
+        //note it is necessary to watch the id because the profile might not be available as soon as the component mounts
     }, [id]);
 
-    //GET OTHER FRIENDS
-    const dispatch = useDispatch();
-
-    const otherUserFriends = useSelector((state) => state.otherUserFriends);
-    const areWeFriends = useSelector((state) => state.areWeFriends);
-    // console.log(
-    //     "other user friends from the global state",
-    //     otherUserFriends,
-    //     "are we friends",
-    //     areWeFriends
-    // );
-
+    //fetch friends of viewed user
     useEffect(() => {
         if (otherUserFriends.length == 0) {
             (async () => {
                 try {
                     const res = await fetch(`/api/otheruserfriends/${id}`);
                     const data = await res.json();
-                    // console.log("data after fetch other friends", data.friends);
-
-                    //pass data to redux only if the two are friends
+                    //pass data to redux only if user & viewed user are friends
                     if (data.areWeFriends) {
                         dispatch(receiveOtherUserFriends(data.friends));
                         dispatch(receiveAreWeFriends(data.areWeFriends));
                     }
                 } catch (err) {
-                    //TO DO: handle error here
-                    console.log("error in fetch other user friends", err);
+                    console.log("error in fetch other user's friends", err);
                 }
             })();
         }
     }, [id]);
-
-    //FIX THIS
-    // if (!otherUserFriends) {
-    //     return null;
-    // }
 
     return (
         <>

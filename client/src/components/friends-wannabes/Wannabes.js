@@ -8,7 +8,6 @@ export default function Wannabes() {
         (state) =>
             state.friends && state.friends.filter((friend) => !friend.accepted)
     );
-    console.log("wannabes from the global state", wannabes);
 
     const handleAccept = async (id) => {
         try {
@@ -19,10 +18,7 @@ export default function Wannabes() {
             });
 
             const data = await res.json();
-            console.log("data after clicking on accept button", data);
             if (!data.message) {
-                //prepare the action and dispatch it to our acceptFriend reducer (action = acceptFriend(id))
-                console.log("data id is", data[0].sender_id);
                 dispatch(acceptFriend(data[0].sender_id));
             }
         } catch (err) {
@@ -39,11 +35,7 @@ export default function Wannabes() {
             });
 
             const data = await res.json();
-            console.log("data after clicking on unfriend button", data);
             if (!data.message) {
-                //prepare the action and dispatch it to our rejectFriend reducer
-                console.log("data id is", data);
-                console.log("id in reject is", id);
                 dispatch(rejectFriend(id));
             }
         } catch (err) {

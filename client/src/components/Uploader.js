@@ -1,4 +1,3 @@
-//component for uploading a new image
 import { Component } from "react";
 
 export default class Uploader extends Component {
@@ -14,18 +13,13 @@ export default class Uploader extends Component {
 
     handleImageInput(e) {
         const file = e.target.files[0];
-        // console.log("e target name", e.target.name);
-        // console.log("the uploaded file is", file);
         this.setState({ [e.target.name]: file });
     }
 
     onImageSubmit(e) {
-        // const file = e.target.files[0];
-        // console.log("the uploaded file is", e.target);
         e.preventDefault();
-        // console.log("this state file is", this.state.file);
 
-        //file validation: check the file extension
+        //file validation client-side
         let extension = this.state.file.name.substr(
             this.state.file.name.lastIndexOf(".")
         );
@@ -36,7 +30,7 @@ export default class Uploader extends Component {
             });
             return;
         }
-        // console.log("file extension", extension);
+
         if (
             extension.toLowerCase() != ".gif" &&
             extension.toLowerCase() != ".jpg" &&
@@ -59,18 +53,13 @@ export default class Uploader extends Component {
         })
             .then((result) => result.json())
             .then((data) => {
-                console.log("response from upload image fetch", data); //this is the res.json we define in the post /upload route
                 if (!data.success && data.message) {
                     this.setState({
                         errorMessage: data.message,
                     });
                 } else {
                     //if all is well send avatarurl to parent
-                    // location.href = "/";
                     this.props.changePic(data.avatar);
-                    // this.setState({
-                    //     errorMessage: "Image upload successful",
-                    // });
                 }
             });
     }

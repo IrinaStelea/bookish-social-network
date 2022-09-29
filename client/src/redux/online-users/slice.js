@@ -2,7 +2,6 @@
 export default function OnlineUsersReducer(onlineUsers = [], action) {
     switch (action.type) {
         case "/online-users/received":
-            console.log("online users", action.payload);
             return action.payload;
         case "/online-user/joined":
             return [action.payload, ...onlineUsers];

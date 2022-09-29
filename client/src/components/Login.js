@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
-import "./Registration.css";
+import "../css/MainStylesheet.css";
 
 class Login extends Component {
     constructor() {
@@ -9,33 +9,50 @@ class Login extends Component {
             email: "",
             password: "",
             errorMessage: "",
-            // errors: {
-            //     email: false,
-            //     password: false,
-            // },
+            errors: {
+                email: false,
+                password: false,
+            },
         };
-        //very important to bind these two functions here
         this.onFormInputChange = this.onFormInputChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
-    }
-
-    componentDidMount() {
-        console.log("the login component mounted");
+        this.validateForm = this.validateForm.bind(this);
     }
 
     onFormInputChange(e) {
         const target = e.currentTarget;
-        console.log(`${target.value}`);
         this.setState({
             [target.name]: target.value,
         });
     }
 
+    validateForm() {
+        const errors = {};
+        let validField = false;
+        let errorMessage = ``;
+        const fields = ["email", "password"];
+
+        for (let field of fields) {
+            if (!this.state[field]) {
+                errors[field] = true;
+                errorMessage = "Please fill out all fields \n";
+                validField = true;
+            }
+        }
+
+        this.setState({
+            errors: errors,
+            errorMessage: errorMessage,
+        });
+        return validField;
+    }
+
     onFormSubmit(e) {
         e.preventDefault();
-        // if(this.validateFields()){
-        //     return;
-        // }
+
+        if (this.validateForm()) {
+            return;
+        }
 
         const formData = {
             email: this.state.email,
@@ -51,7 +68,6 @@ class Login extends Component {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("data after login fetch", data);
                 //if something goes wrong, display error message
                 if (!data.success && data.message) {
                     this.setState({
@@ -63,15 +79,9 @@ class Login extends Component {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                console.log("error in fetch login", err);
             });
     }
-
-    // validateFields() {
-    //     const errors = {};
-    //     let valid = true;
-    //     const fields = ["firstName", "lastName", "email", "password"];
-    // }
 
     render() {
         return (
@@ -96,7 +106,9 @@ class Login extends Component {
                             placeholder="Email"
                             value={this.state.email}
                             onChange={this.onFormInputChange}
-                            // className={this.state.errors.firstName ? "error" : ""}
+                            className={
+                                this.state.errors.email ? "errorfield" : ""
+                            }
                         ></input>
                         <label htmlFor="password">Password</label>
                         <input
@@ -105,6 +117,9 @@ class Login extends Component {
                             placeholder="Password"
                             value={this.state.password}
                             onChange={this.onFormInputChange}
+                            className={
+                                this.state.errors.password ? "errorfield" : ""
+                            }
                         ></input>
                         <input type="submit" id="submit" value="Login"></input>
                     </form>

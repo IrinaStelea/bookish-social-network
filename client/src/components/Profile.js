@@ -1,6 +1,6 @@
-import "./Registration.css";
 import ProfilePic from "./ProfilePic";
 import BioEditor from "./BioEditor";
+import "../css/MainStylesheet.css";
 
 export default function Profile({
     toggleUploader,
@@ -12,10 +12,8 @@ export default function Profile({
 }) {
     return (
         <>
-            {/* <h3>Profile</h3> */}
             <div className="profile-container">
                 <ProfilePic image={image} toggleUploader={toggleUploader} />
-                {/* passing user data to BioEditor */}
                 <BioEditor
                     saveDraftBioToApp={saveDraftBioToApp}
                     bio={bio}

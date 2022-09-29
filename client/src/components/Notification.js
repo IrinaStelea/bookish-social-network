@@ -1,12 +1,9 @@
-import "./Registration.css";
-import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import "../css/MainStylesheet.css";
 
-export default function Notification() {
+export default function NotificationUserOnline() {
     const userJoinedFirst = useSelector((state) => state.userJoined);
-
-    // console.log("user joined first", userJoinedFirst);
-
     const [notification, setNotification] = useState(false);
 
     const toggleNotification = () => {
@@ -14,16 +11,13 @@ export default function Notification() {
     };
 
     const hideNotification = () => {
-        console.log("inside hide notification");
         setTimeout(() => {
-            console.log("inside time out");
             setNotification(false);
         }, 3000);
     };
 
     useEffect(() => {
         if (userJoinedFirst) {
-            console.log("calling toggle notification");
             toggleNotification();
             hideNotification();
         }

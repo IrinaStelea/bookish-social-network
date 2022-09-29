@@ -25,7 +25,6 @@ export default class resetPassword extends Component {
 
     onFormInputChange(e) {
         const target = e.currentTarget;
-        console.log(`${target.value}`);
         this.setState({
             [target.name]: target.value,
         });
@@ -36,7 +35,7 @@ export default class resetPassword extends Component {
         let validField = false;
         let errorMessage = ``;
 
-        //password
+        //password validation client-side
         if (this.state.password && this.state.password.length < 6) {
             errors.password = true;
             validField = true;
@@ -48,11 +47,9 @@ export default class resetPassword extends Component {
             errors: errors,
             errorMessage: errorMessage,
         });
-        console.log("errors state in validateForm", this.state.errors);
         return validField;
     }
 
-    //function which sets the view stat
     startResetPassword(e) {
         e.preventDefault();
 
@@ -69,7 +66,6 @@ export default class resetPassword extends Component {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("data after reset password stage 1 fetch", data);
                 //if something goes wrong, display error message
                 if (!data.success && data.message) {
                     if (
@@ -92,7 +88,7 @@ export default class resetPassword extends Component {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                console.log("error in fetch password reset route", err);
             });
     }
 
@@ -100,8 +96,6 @@ export default class resetPassword extends Component {
         e.preventDefault();
 
         if (this.validateForm()) {
-            console.log("password field not valied, return");
-            console.log("error is", this.state.errors);
             return;
         }
 
@@ -111,7 +105,6 @@ export default class resetPassword extends Component {
             password: this.state.password,
         };
 
-        console.log("stored email in reset password is", this.state.email);
         fetch("/password/reset/verify.json", {
             method: "POST",
             headers: {
@@ -121,7 +114,6 @@ export default class resetPassword extends Component {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log("data after reset password stage 2 fetch", data);
                 //if something goes wrong, display error message
                 if (!data.success && data.message) {
                     if (
@@ -141,7 +133,7 @@ export default class resetPassword extends Component {
                 } else {
                     //if all is well change to view 3
                     this.setState({ view: 3 });
-                    //redirect to login - note it is important to use this.props because we are inside a componeent
+                    //redirect to login after 3 seconds - note it is important to use this.props because we are inside a component
                     setTimeout(() => {
                         this.props.history.push("/login");
                     }, 3000);
@@ -152,7 +144,7 @@ export default class resetPassword extends Component {
             });
     }
 
-    //create a function to decide what view we are on
+    //function to set the current view
     currentView() {
         if (this.state.view === 1) {
             return (
@@ -194,9 +186,6 @@ export default class resetPassword extends Component {
                 </>
             );
         } else if (this.state.view === 2) {
-            //next view, button submit code
-            //form with code and new password
-            //another fetch
             return (
                 <>
                     <div className="loggedout-container">
@@ -268,8 +257,6 @@ export default class resetPassword extends Component {
     render() {
         return (
             <>
-                {/* <Logo /> */}
-                {/* note syntax for calling the function */}
                 {this.currentView()}
             </>
         );
