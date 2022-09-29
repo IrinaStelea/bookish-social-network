@@ -15,7 +15,7 @@ const rootReducer = combineReducers({
     otherUserFriends: OtherUserFriendsReducer,
     areWeFriends: AreWeFriendsReducer,
     onlineUsers: OnlineUsersReducer,
-    userJoined: UserJoinedNotificationReducer,
+    userJoinedNotification: UserJoinedNotificationReducer,
     requests: NotifyFriendRequestReducer,
     userData: UserDataReducer,
 });

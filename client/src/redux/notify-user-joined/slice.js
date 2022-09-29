@@ -1,13 +1,13 @@
-export default function UserJoinedNotificationReducer(userJoined = "", action) {
+export default function UserJoinedNotificationReducer(userJoinedNotification = {}, action) {
     if (action.type === "online-user/notify") {
-        userJoined = action.payload;
+        userJoinedNotification = action.payload;
     }
-    return userJoined;
+    return userJoinedNotification;
 }
 
-export function onlineUserNotify(userJoined) {
+export function onlineUserNotify(user) {
     return {
         type: "online-user/notify",
-        payload: userJoined,
+        payload: user,
     };
 }

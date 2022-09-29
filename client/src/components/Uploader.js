@@ -4,7 +4,7 @@ export default class Uploader extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            file: {},
+            file: null,
             errorMessage: "",
         };
         this.onImageSubmit = this.onImageSubmit.bind(this);
@@ -18,26 +18,28 @@ export default class Uploader extends Component {
 
     onImageSubmit(e) {
         e.preventDefault();
-
         //file validation client-side
-        let extension = this.state.file.name.substr(
-            this.state.file.name.lastIndexOf(".")
-        );
-
-        if (extension == "") {
+        if (!this.state.file) {
             this.setState({
                 errorMessage: "Please upload a valid image file",
             });
             return;
         }
 
-        if (
-            extension.toLowerCase() != ".gif" &&
-            extension.toLowerCase() != ".jpg" &&
-            extension.toLowerCase() != ".jpeg" &&
-            extension.toLowerCase() != ".png" &&
-            extension != ""
-        ) {
+        if (this.state.file.size > 2097152) {
+            this.setState({
+                errorMessage: "Image must be less than 2MB",
+            });
+            return;
+        }
+
+        let extension = this.state.file.name.substr(
+            this.state.file.name.lastIndexOf(".")
+        );
+
+        let validExtensions = [".gif", ".jpg", ".jpeg", ".png"];
+
+        if (validExtensions.indexOf(extension.toLowerCase()) === -1) {
             this.setState({
                 errorMessage: "Please upload a valid image file",
             });

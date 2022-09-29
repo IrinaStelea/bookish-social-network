@@ -34,7 +34,7 @@ export const init = (store) => {
         //listening to new user joined online
         socket.on("user-joined", (user) => {
             store.dispatch(onlineUserJoined(user));
-            store.dispatch(onlineUserNotify(user.first));
+            store.dispatch(onlineUserNotify(user));
         });
 
         //listening to the nb of friend request notifications

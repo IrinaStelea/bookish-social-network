@@ -364,8 +364,7 @@ app.get("/api/otheruserfriends/:id", async (req, res) => {
     let userId = req.session.userId;
     try {
         const result = await db.getOtherUserFriends(id);
-        //TO DO send also the cookie id to be able to determine friendship relations
-        //check friendship logged-in user - other user and only send list of friends if true
+        //check friendship between logged-in user and OtherUser and only send list of friends if true
         let friends = result.rows;
         if (friends) {
             let areWeFriends = friends.find(
