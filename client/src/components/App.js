@@ -109,7 +109,6 @@ export default function App() {
         fetch("/api/wallposts")
             .then((response) => response.json())
             .then((data) => {
-                console.log("data from fetch wallposts in App", data);
                 if (data.wallPosts.length && !data.message) {
                     dispatch(wallPostsReceived(data.wallPosts));
                 }

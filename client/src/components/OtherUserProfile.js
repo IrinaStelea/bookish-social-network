@@ -13,7 +13,7 @@ export default function OtherProfile() {
     const { id } = useParams(); //grab ID in URL from params
     const history = useHistory();
     const [user, setUser] = useState({});
-    const [wallPosts, setWallPosts] = useState({});
+    const [wallPosts, setWallPosts] = useState([]);
 
     //get friends of viewed user
     const otherUserFriends = useSelector((state) => state.otherUserFriends);
@@ -86,7 +86,12 @@ export default function OtherProfile() {
                     />
                 </div>
             )}
-            {areWeFriends && <Wall wallPosts={wallPosts} />}
+            {areWeFriends && (
+                <section className="wall">
+                    <h3>{user.first}&apos;s wall</h3>
+                    <Wall wallPosts={wallPosts} />
+                </section>
+            )}
         </>
     );
 }

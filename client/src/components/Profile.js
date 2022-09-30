@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import ProfilePic from "./ProfilePic";
 import BioEditor from "./BioEditor";
 import Wall from "./wall/Wall";
@@ -11,6 +12,7 @@ export default function Profile({
     last,
     image,
 }) {
+    const wallPosts = useSelector((state) => state.wallPosts);
     return (
         <>
             <div className="profile-container">
@@ -22,7 +24,10 @@ export default function Profile({
                     last={last}
                 />
             </div>
-            <Wall />
+            <section className="wall">
+                <h3>My wall</h3>
+                <Wall wallPosts={wallPosts} />
+            </section>
         </>
     );
 }

@@ -7,7 +7,6 @@ export default function WallPostsReducer(
 ): WallPost[] {
     switch (action.type) {
         case "/wallposts/received":
-            console.log("payload in reducer", action.payload);
             return action.payload;
         case "/wallpost/received":
             return [action.payload, ...wallPosts];
@@ -17,7 +16,6 @@ export default function WallPostsReducer(
 }
 
 export function wallPostsReceived(wallPosts: WallPost[]) {
-    console.log("wallposts in function", wallPosts);
     return {
         type: "/wallposts/received",
         payload: wallPosts,
