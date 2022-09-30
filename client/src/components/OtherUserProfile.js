@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import FriendButton from "./FriendButton";
+import Wall from "./wall/Wall";
 import OtherUserFriends from "./OtherUserProfile-Friends";
 import { receiveOtherUserFriends } from "../redux/other-friends/slice";
 import { receiveAreWeFriends } from "../redux/are-we-friends/slice";
@@ -12,6 +13,7 @@ export default function OtherProfile() {
     const { id } = useParams(); //grab ID in URL from params
     const history = useHistory();
     const [user, setUser] = useState({});
+    const [wallPosts, setWallPosts] = useState({});
 
     //get friends of viewed user
     const otherUserFriends = useSelector((state) => state.otherUserFriends);
@@ -35,7 +37,7 @@ export default function OtherProfile() {
         //note it is necessary to watch the id because the profile might not be available as soon as the component mounts
     }, [id]);
 
-    //fetch friends of viewed user
+    //fetch friends and wall posts of viewed user
     useEffect(() => {
         if (otherUserFriends.length == 0) {
             (async () => {
@@ -46,6 +48,9 @@ export default function OtherProfile() {
                     if (data.areWeFriends) {
                         dispatch(receiveOtherUserFriends(data.friends));
                         dispatch(receiveAreWeFriends(data.areWeFriends));
+                        if (data.wallPosts.length) {
+                            setWallPosts(data.wallPosts);
+                        }
                     }
                 } catch (err) {
                     console.log("error in fetch other user's friends", err);
@@ -81,6 +86,7 @@ export default function OtherProfile() {
                     />
                 </div>
             )}
+            {areWeFriends && <Wall wallPosts={wallPosts} />}
         </>
     );
 }

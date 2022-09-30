@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import * as immutableState from "redux-immutable-state-invariant";
 import { composeWithDevTools } from "redux-devtools-extension";
 import thunk from "redux-thunk";
-import rootReducer from "./redux/reducer.js";
+import rootReducer from "./redux/reducer";
 import Welcome from "./components/Welcome.js";
 import App from "./components/App.js";
 import { init } from "./socket.js";

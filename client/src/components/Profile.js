@@ -1,5 +1,6 @@
 import ProfilePic from "./ProfilePic";
 import BioEditor from "./BioEditor";
+import Wall from "./wall/Wall";
 import "../css/MainStylesheet.css";
 
 export default function Profile({
@@ -21,6 +22,7 @@ export default function Profile({
                     last={last}
                 />
             </div>
+            <Wall />
         </>
     );
 }

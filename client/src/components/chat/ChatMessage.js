@@ -1,19 +1,21 @@
+import { Link } from "react-router-dom";
+
 const ChatMessage = ({ message }) => {
     return (
         <div className="chat-cell" key={message.id}>
-            <a href={"/user/" + message.sender_id}>
+            <Link to={"/user/" + message.sender_id}>
                 <img
                     src={message.avatarurl || "../../no_avatar.png"}
                     alt={message.first + " " + message.last}
                 />
-            </a>
+            </Link>
             <div className="chat-text-posted">
                 <p>{message.message}</p>
                 <p>
                     Posted by{" "}
-                    <a href={"/user/" + message.sender_id}>
+                    <Link to={"/user/" + message.sender_id}>
                         {message.first} {message.last}
-                    </a>{" "}
+                    </Link>{" "}
                     on{" "}
                     {message.timestamp
                         .slice(0, 10)

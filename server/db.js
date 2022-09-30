@@ -191,6 +191,20 @@ module.exports.insertMessage = (id, text) => {
     );
 };
 
+module.exports.getWallPosts = (userId) => {
+    return db.query(
+        `SELECT wallposts.id, sender_id, post, link, timestamp, first, last, avatarurl FROM wallposts JOIN users ON wallposts.sender_id=users.id WHERE wallposts.recipient_id=$1 ORDER BY wallposts.id DESC`,
+        [userId]
+    );
+};
+
+module.exports.insertWallPost = (sender_id, recipient_id, post) => {
+    return db.query(
+        `WITH "user" AS (SELECT * FROM users WHERE id = $1), inserted_post as (INSERT INTO wallposts (sender_id, recipient_id, post) VALUES ($1, $2, $3) RETURNING *) SELECT inserted_post.id, sender_id, recipient_id, post, timestamp, first, last, avatarurl FROM "user", inserted_post`,
+        [sender_id, recipient_id, post]
+    );
+};
+
 module.exports.deleteAccount = (id) => {
     //this query will delete the info from users, friendships & messages tables thanks to ON CASCADE DELETE constraint on the other tables
     return db.query(`DELETE FROM users WHERE id=$1`, [id]);

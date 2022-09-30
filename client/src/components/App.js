@@ -24,6 +24,7 @@ import FriendRequest from "./FriendRequest.js";
 
 import { receiveFriendsAndWannabes } from "../redux/friends/slice.js";
 import { userDataReceive } from "../redux/userdata/slice.js";
+import { wallPostsReceived } from "../redux/wallposts/slice.ts";
 
 import "../css/MainStylesheet.css";
 
@@ -84,6 +85,7 @@ export default function App() {
             });
     }, []);
 
+    //fetch user friends and wannabes
     useEffect(() => {
         //the condition below ensures we don't talk to the database needlessly
         if (friends.length == 0 || wannabes.length == 0) {
@@ -100,6 +102,21 @@ export default function App() {
                 }
             })();
         }
+    }, []);
+
+    //fetch user wall posts
+    useEffect(() => {
+        fetch("/api/wallposts")
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("data from fetch wallposts in App", data);
+                if (data.wallPosts.length && !data.message) {
+                    dispatch(wallPostsReceived(data.wallPosts));
+                }
+            })
+            .catch((err) => {
+                console.log("error from fetch wallposts", err);
+            });
     }, []);
 
     return (

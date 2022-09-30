@@ -43,3 +43,12 @@ CREATE TABLE friendrequests(
     userid INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     senderid INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE wallposts(
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id INTEGER NOT NULL REFERENCES users(id),
+    post TEXT NOT NULL,
+    link TEXT DEFAULT null, 
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

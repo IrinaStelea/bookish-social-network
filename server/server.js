@@ -358,6 +358,19 @@ app.get("/api/friends", async (req, res) => {
     }
 });
 
+//get wall posts on App mount
+app.get("/api/wallposts", async (req, res) => {
+    try {
+        const result = await db.getWallPosts(req.session.userId);
+        if (result.rows.length) {
+            return res.json({ wallPosts: result.rows });
+        }
+    } catch (err) {
+        console.log("error in getting wall posts");
+        return res.json({ message: "Something went wrong, please try again" });
+    }
+});
+
 //get list of friends of other user on OtherProfile mount
 app.get("/api/otheruserfriends/:id", async (req, res) => {
     let id = req.params.id;
@@ -377,7 +390,13 @@ app.get("/api/otheruserfriends/:id", async (req, res) => {
                         friend.recipient_id !== userId &&
                         friend.sender_id !== userId
                 );
-                return res.json({ friends, areWeFriends: true });
+                //get wall posts of other user
+                const wallPosts = await db.getWallPosts(id);
+                return res.json({
+                    friends,
+                    areWeFriends: true,
+                    wallPosts: wallPosts.rows,
+                });
             } else {
                 return res.json({});
             }
@@ -449,7 +468,7 @@ io.on("connection", (socket) => {
         }
     })();
 
-    //get chat messages and emit
+    //get chats and emit
     (async () => {
         let result;
         try {
@@ -535,6 +554,24 @@ io.on("connection", (socket) => {
             io.emit("added-new-message", result.rows[0]);
         } catch (err) {
             console.log("error in adding new message to the database");
+        }
+    });
+
+    //listen to the new wall post event emitted in the Wall component
+    socket.on("new-wall-post", async (post) => {
+        //add new message to database
+        let result;
+        try {
+            result = await db.insertWallPost(
+                userId,
+                (post.id = userId),
+                post.text
+            );
+            console.log("result from adding new wall post", result.rows[0]);
+            //emit the new message to all users
+            // io.emit("added-new-wallpost", result.rows[0]);
+        } catch (err) {
+            console.log("error in adding new wall post to the database");
         }
     });
 
