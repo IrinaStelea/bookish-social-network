@@ -26,6 +26,10 @@
     gap: 2vh;
 }
 
+.loggedout-container p:first-of-type {
+    margin-top: 4vh;
+}
+
 .loggedout-container img {
     width: 40vw;
     margin: 3vh 0;
@@ -42,12 +46,8 @@
 .navmenu {
     display: flex;
     width: 50%;
-    justify-content: space-around;
-    background-color: salmon;
-    padding: 1.5vh 4vw;
-    gap: 3vw;
-    clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%);
-    font-size: 1.5 em;
+    gap: 0.2vw;
+    font-size: 1em;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -55,19 +55,22 @@
 .navmenu a {
     color: darkslategrey;
     text-decoration: none;
+    background-color: salmon;
+    padding: 2vh 2.5vw;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    /* clip-path: polygon(3% 0%, 100% 0%, 97% 100%, 0% 100%); */
 }
 
 .navmenu a:hover {
     color: snow;
-}
-
-.navmenu a:active {
-    transform: translateY(2px);
+    background-color: darkorange;
 }
 
 .active {
     color: snow !important;
     text-decoration: none;
+    background-color: darkorange !important;
 }
 
 .profile-container {
@@ -75,7 +78,7 @@
     display: grid;
     width: 45vw;
     grid-template-columns: 1fr 1.5fr;
-    margin-top: 5vh;
+    margin-top: 2vh;
     /* margin left calculated based on space occupied by top items */
     margin-left: 16vw;
 }
@@ -126,6 +129,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     padding: 2vw;
     width: 100%;
     gap: 2vh;
@@ -154,8 +158,9 @@
 }
 
 #logo {
-    width: 13vw;
+    width: 10vw;
     object-fit: contain;
+    margin-right: 3vw;
 }
 
 .people,
@@ -338,11 +343,26 @@ button:active,
 #footer {
     position: fixed;
     bottom: 0;
+}
+
+#footer-illustration {
+    position: fixed;
+    bottom: 0;
     right: 2.5vw;
     width: 20vw;
     object-fit: contain;
     opacity: 0.7;
     z-index: -100;
+}
+
+#footnote {
+    position: fixed;
+    bottom: 0;
+    left: 3vw;
+    right: 0;
+    font-size: 0.7em;
+    opacity: 0.8;
+    width: auto;
 }
 
 .profile-info {
@@ -354,12 +374,15 @@ button:active,
 .dropdown {
     display: none;
     width: 14vw;
-    background-color: rgba(211, 211, 211, 0.5);
+    /* background-color: rgba(211, 211, 211, 0.5); */
     position: fixed;
     right: 2vw;
     padding: 1vw;
     list-style-type: none;
     border: 1vw solid floralwhite;
+    background-color: rgba(250, 128, 114, 0.2);
+    border: 1px solid transparent;
+    border-radius: 5px;
 }
 
 .dropdown li {
@@ -377,6 +400,7 @@ button:active,
 .dropdown li:last-of-type {
     font-size: 0.9em;
     margin-top: 4vh;
+    margin-bottom: 2vh;
 }
 
 .dropdown-arrow {
@@ -393,13 +417,16 @@ button:active,
     bottom: 0;
     z-index: 1;
     left: 65vw;
-    background-color: rgba(211, 211, 211, 0.5);
+    /* background-color: rgba(211, 211, 211, 0.5); */
     width: 15vw;
     height: 28vh;
     padding: 2vh 2vw;
     overflow-y: auto;
-    border-top: 2px solid darkorange;
-    border-bottom: 2px solid darkorange;
+    /* border-top: 2px solid darkorange;
+    border-bottom: 2px solid darkorange; */
+    background-color: rgba(250, 128, 114, 0.2);
+    border-top: 2px solid salmon;
+    border-bottom: 2px solid salmon;
 }
 
 .online-users {
@@ -427,10 +454,9 @@ button:active,
 
 .newuser-notify {
     color: green;
-    font-size: 0.8em;
+    font-size: 1em;
     font-weight: 600;
     position: fixed;
-    margin-top: 2vh;
     width: 6vw;
     left: 75vw;
     animation: slideUp 2s ease-in;
@@ -466,7 +492,6 @@ button:active,
 
 .wall-container {
     display: flex;
-    /* use column reverse to have the last chat message appear at the end of the scroll */
     flex-direction: column;
     width: 45vw;
     max-height: 40vh;

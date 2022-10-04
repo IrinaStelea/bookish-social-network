@@ -5,11 +5,11 @@ export default function FriendsAndWannabes() {
     return (
         <>
             <section className="friends">
-                <h3>Friend requests:</h3>
+                <h3>Friend requests</h3>
                 <Wannabes />
 
                 <hr></hr>
-                <h3>Friends:</h3>
+                <h3>Friends</h3>
                 <Friends />
             </section>
         </>

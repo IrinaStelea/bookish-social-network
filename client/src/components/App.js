@@ -137,6 +137,7 @@ export default function App() {
                             Find people
                         </NavLink>
                     </div>
+                    <NotificationUserOnline />
                     <div className="profile-info">
                         <FriendRequest />
                         <ProfilePic
@@ -152,7 +153,7 @@ export default function App() {
                         />
                     </div>
                 </div>
-                <NotificationUserOnline />
+
                 <div id="footer">
                     <Footer />
                 </div>

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users;
+createdb socialnetwork
 
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
@@ -6,7 +6,9 @@ CREATE TABLE users(
     last VARCHAR NOT NULL CHECK (last != ''),
     email VARCHAR UNIQUE NOT NULL CHECK (email != ''),
     password VARCHAR NOT NULL CHECK (password != ''),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    avatarurl TEXT,
+    bio TEXT
 );
 
 
@@ -16,12 +18,6 @@ CREATE TABLE reset_codes(
     code VARCHAR NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-imageUrl TEXT
-
-ALTER TABLE users ADD COLUMN avatarurl TEXT;
-
-ALTER TABLE users ADD COLUMN bio TEXT;
 
 CREATE TABLE friendships(
     id SERIAL PRIMARY KEY,
@@ -49,6 +45,5 @@ CREATE TABLE wallposts(
     sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     recipient_id INTEGER NOT NULL REFERENCES users(id),
     post TEXT NOT NULL,
-    link TEXT DEFAULT null, 
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
