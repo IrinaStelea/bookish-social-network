@@ -121,13 +121,14 @@ class Registration extends Component {
     render() {
         return (
             <>
-                <h1>Welcome to Bookish</h1>
                 <div className="loggedout-container">
                     <img src="../../Logo_Bookish.png" alt="Logo" />
                     {this.state.errorMessage && (
                         <p className="error">{this.state.errorMessage}</p>
                     )}
-                    <h4>Register to discuss your favorite books:</h4>
+                    <h1>Love reading? </h1>
+                    <h1>Welcome to Bookish! </h1>
+                    <p>Register to meet fellow book worms:</p>
                     <div className="form-container">
                         <form
                             id="registration"

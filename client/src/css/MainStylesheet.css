@@ -27,7 +27,8 @@
 }
 
 .loggedout-container img {
-    width: 30vw;
+    width: 40vw;
+    margin: 3vh 0;
 }
 
 .loggedin-container {
@@ -35,7 +36,7 @@
     width: 95vw;
     justify-content: flex-start;
     align-items: center;
-    gap: 6vw;
+    gap: 3vw;
 }
 
 .navmenu {
@@ -153,7 +154,7 @@
 }
 
 #logo {
-    width: 10vw;
+    width: 13vw;
     object-fit: contain;
 }
 
@@ -338,7 +339,7 @@ button:active,
     position: fixed;
     bottom: 0;
     right: 2.5vw;
-    width: 12vw;
+    width: 20vw;
     object-fit: contain;
     opacity: 0.7;
     z-index: -100;
@@ -468,38 +469,47 @@ button:active,
     /* use column reverse to have the last chat message appear at the end of the scroll */
     flex-direction: column;
     width: 45vw;
-    height: 40vh;
+    max-height: 40vh;
     justify-items: start;
     overflow-y: auto;
-    padding: 1vh 1vw;
-    background-color: rgba(250, 128, 114, 0.2);
-    border-top: 2px solid salmon;
-    border-bottom: 2px solid salmon;
 }
 
 .wall-cell {
     display: grid;
     width: 100%;
-    grid-template-columns: 1fr 6fr;
+    grid-template-columns: 1fr 7fr;
     justify-items: start;
-    margin-top: 3vh;
+    margin-bottom: 1.5vh;
+    margin-top: 0.5vh;
+    background-color: rgba(250, 128, 114, 0.2);
+    border: 2px solid salmon;
+    border-radius: 5px;
+    padding: 3vh 3vw;
 }
 
 .wall-cell img {
     border: 1px solid transparent;
     border-radius: 50%;
-    width: 5vw;
-    height: 5vw;
+    width: 4vw;
+    height: 4vw;
     object-fit: cover;
 }
 
 .wall-post {
+    margin-top: 1vh;
     line-height: 1.5em;
+    grid-column: span 2;
 }
 
-.wall-post p:last-of-type {
-    font-size: 0.9em;
+.wall-post-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
     margin-top: 1vh;
+}
+
+.wall-post-header p:last-of-type {
+    font-size: 0.8em;
 }
 
 .wall-input {

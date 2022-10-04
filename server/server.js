@@ -212,6 +212,27 @@ app.post("/edit-bio", (req, res) => {
         });
 });
 
+//fetch post route to add new wall post
+app.post("/api/new-wall-post", async (req, res) => {
+    try {
+        const result = await db.insertWallPost(
+            req.session.userId,
+            req.body.id || req.session.userId,
+            req.body.text
+        );
+        return res.json({
+            success: true,
+            wallPost: result.rows[0],
+        });
+    } catch (err) {
+        console.log("error in adding new wall post to the database");
+        return res.json({
+            success: false,
+            message: "Something went wrong, please try again",
+        });
+    }
+});
+
 //fetch user data on App mount
 app.get("/api/current-user", function (req, res) {
     db.getUserData(req.session.userId)
@@ -554,24 +575,6 @@ io.on("connection", (socket) => {
             io.emit("added-new-message", result.rows[0]);
         } catch (err) {
             console.log("error in adding new message to the database");
-        }
-    });
-
-    //listen to the new wall post event emitted in the Wall component
-    socket.on("new-wall-post", async (post) => {
-        //add new message to database
-        let result;
-        try {
-            result = await db.insertWallPost(
-                userId,
-                (post.id = userId),
-                post.text
-            );
-            console.log("result from adding new wall post", result.rows[0]);
-            //emit the new message to all users
-            // io.emit("added-new-wallpost", result.rows[0]);
-        } catch (err) {
-            console.log("error in adding new wall post to the database");
         }
     });
 

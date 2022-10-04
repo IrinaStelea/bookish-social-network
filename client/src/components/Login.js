@@ -86,13 +86,15 @@ class Login extends Component {
     render() {
         return (
             <>
-                <h1>Welcome to Bookish</h1>
                 <div className="loggedout-container">
                     <img src="../../Logo_Bookish.png" alt="Logo" />
                     {this.state.errorMessage && (
                         <p className="error">{this.state.errorMessage}</p>
                     )}
-                    <h4>Login to discuss your favorite books:</h4>
+
+                    <h1>Love reading? </h1>
+                    <h1>Welcome to Bookish! </h1>
+                    <p>Login to meet fellow book worms:</p>
                     <form
                         id="login"
                         onSubmit={this.onFormSubmit}

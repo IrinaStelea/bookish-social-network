@@ -1,33 +1,48 @@
-import React, { useRef, useEffect } from "react";
-// import { useSelector } from "react-redux";
+import React, { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router";
-// import { ReduxStore } from "../../redux/reducer";
 import { Link } from "react-router-dom";
-import { socket } from "../../socket.js";
 import { WallPost } from "../../types";
+import { wallPostReceived } from "../../redux/wallposts/slice";
 
 interface WallPostProps {
     wallPosts: WallPost[];
 }
 
 export default function Wall(props: WallPostProps) {
+    const dispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
-    // const wallPosts = useSelector((state: ReduxStore) => state.wallPosts);
+    const [error, setError] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>();
-    // const wallRef = useRef<HTMLDivElement>();
 
-    const sendWallPost = () => {
+    const sendWallPost = async () => {
         if (textareaRef.current) {
-            const wallPost = textareaRef.current.value;
-            //TO DO: socket emits when there is a new wall post
-            socket.emit("new-wall-post", {
-                text: wallPost,
-                id: id || null,
-            });
+            try {
+                const wallPost = textareaRef.current.value;
 
-            //clear the textarea and keep the focus on it
-            textareaRef.current.value = "";
-            textareaRef.current.focus();
+                const res = await fetch("/api/new-wall-post", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ text: wallPost, id: id || null }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    //if this is the user's own wall, add post to store
+                    if (!id) {
+                        dispatch(wallPostReceived(data.wallPost));
+                    }
+                    //clear the textarea and keep the focus on it
+                    textareaRef.current.value = "";
+                    textareaRef.current.focus();
+                } else {
+                    setError("Something went wrong, please try again");
+                }
+            } catch (err) {
+                console.log("error in adding new message", err);
+                setError("Something went wrong, please try again");
+            }
         }
     };
 
@@ -38,10 +53,9 @@ export default function Wall(props: WallPostProps) {
         }
     };
 
-    //TO DO: wall posts should appear in reverse chronological order
-
     return (
         <>
+            {error && <p className="error">{error}</p>}
             {props.wallPosts.length !== 0 ? (
                 <div className="wall-container">
                     {props.wallPosts.map((post: WallPost) => (
@@ -54,14 +68,13 @@ export default function Wall(props: WallPostProps) {
                                     alt={post.first + " " + post.last}
                                 />
                             </Link>
-                            <div className="wall-post">
-                                <p>{post.post}</p>
+                            <div className="wall-post-header">
                                 <p>
-                                    Posted by{" "}
                                     <Link to={"/user/" + post.sender_id}>
                                         {post.first} {post.last}
                                     </Link>{" "}
-                                    on{" "}
+                                </p>
+                                <p>
                                     {post.timestamp
                                         .slice(0, 10)
                                         .split("-")
@@ -69,6 +82,9 @@ export default function Wall(props: WallPostProps) {
                                         .join("-")}{" "}
                                     at {post.timestamp.slice(11, 19)}
                                 </p>
+                            </div>
+                            <div className="wall-post">
+                                <p>{post.post}</p>
                             </div>
                         </div>
                     ))}

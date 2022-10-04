@@ -193,7 +193,7 @@ module.exports.insertMessage = (id, text) => {
 
 module.exports.getWallPosts = (userId) => {
     return db.query(
-        `SELECT wallposts.id, sender_id, post, link, timestamp, first, last, avatarurl FROM wallposts JOIN users ON wallposts.sender_id=users.id WHERE wallposts.recipient_id=$1 ORDER BY wallposts.id DESC`,
+        `SELECT wallposts.id, sender_id, post, timestamp, first, last, avatarurl FROM wallposts JOIN users ON wallposts.sender_id=users.id WHERE wallposts.recipient_id=$1 ORDER BY wallposts.id DESC`,
         [userId]
     );
 };
