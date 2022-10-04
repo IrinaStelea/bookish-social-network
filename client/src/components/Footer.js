@@ -5,7 +5,7 @@ export default function Footer() {
         <>
             <p id="footnote">
                 Made during the Spiced Academy Full Stack Bootcamp 2022 |
-                Illustrations via Adobe Express{" "}
+                Illustrations: Adobe Express{" "}
             </p>
             <img
                 id="footer-illustration"

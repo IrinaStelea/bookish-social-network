@@ -340,11 +340,6 @@ button:active,
     margin-top: 2vh;
 }
 
-#footer {
-    position: fixed;
-    bottom: 0;
-}
-
 #footer-illustration {
     position: fixed;
     bottom: 0;
@@ -358,11 +353,12 @@ button:active,
 #footnote {
     position: fixed;
     bottom: 0;
-    left: 3vw;
     right: 0;
+    width: 10vw;
     font-size: 0.7em;
-    opacity: 0.8;
-    width: auto;
+    opacity: 0.6;
+    display: inline-block;
+    text-align: center; 
 }
 
 .profile-info {
