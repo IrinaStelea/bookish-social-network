@@ -10,8 +10,10 @@ export default function Chat() {
     return (
         <section className="chat">
             <h3>Chat</h3>
-            <OnlineUsers users={onlineUsers} />
-            <ChatBoard messages={messages} />
+            <div className="chat-online-users-container">
+                <ChatBoard messages={messages} />
+                <OnlineUsers users={onlineUsers} />
+            </div>
             <ChatInput buttonTitle="Send" />
         </section>
     );

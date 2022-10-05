@@ -10,19 +10,19 @@ const ChatMessage = ({ message }) => {
                 />
             </Link>
             <div className="chat-text-posted">
-                <p>{message.message}</p>
                 <p>
-                    Posted by{" "}
                     <Link to={"/user/" + message.sender_id}>
                         {message.first} {message.last}
-                    </Link>{" "}
-                    on{" "}
-                    {message.timestamp
+                    </Link>
+                    : {message.message}
+                </p>
+                <p>
+                    Posted on {message.timestamp
                         .slice(0, 10)
                         .split("-")
                         .reverse()
                         .join("-")}{" "}
-                    at {message.timestamp.slice(11, 19)}
+                    at {message.timestamp.slice(11, 16)}
                 </p>
             </div>
         </div>

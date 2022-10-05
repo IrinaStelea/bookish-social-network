@@ -56,51 +56,58 @@ export default function Wall(props: WallPostProps) {
     return (
         <>
             {error && <p className="error">{error}</p>}
-            {props.wallPosts.length !== 0 ? (
-                <div className="wall-container">
-                    {props.wallPosts.map((post: WallPost) => (
-                        <div className="wall-cell" key={post.id}>
-                            <Link to={"/user/" + post.sender_id}>
-                                <img
-                                    src={
-                                        post.avatarurl || "../../no_avatar.png"
-                                    }
-                                    alt={post.first + " " + post.last}
-                                />
-                            </Link>
-                            <div className="wall-post-header">
-                                <p>
-                                    <Link to={"/user/" + post.sender_id}>
-                                        {post.first} {post.last}
-                                    </Link>{" "}
-                                </p>
-                                <p>
-                                    {post.timestamp
-                                        .slice(0, 10)
-                                        .split("-")
-                                        .reverse()
-                                        .join("-")}{" "}
-                                    at {post.timestamp.slice(11, 19)}
-                                </p>
+            <div className="wall-input-container">
+                {props.wallPosts.length !== 0 ? (
+                    <div className="wall-container">
+                        {props.wallPosts.map((post: WallPost) => (
+                            <div className="wall-cell" key={post.id}>
+                                <Link to={"/user/" + post.sender_id}>
+                                    <img
+                                        src={
+                                            post.avatarurl ||
+                                            "../../no_avatar.png"
+                                        }
+                                        alt={post.first + " " + post.last}
+                                    />
+                                </Link>
+                                <div className="wall-post-header">
+                                    <p>
+                                        <Link to={"/user/" + post.sender_id}>
+                                            {post.first} {post.last}
+                                        </Link>{" "}
+                                    </p>
+                                    <p>
+                                        {post.timestamp
+                                            .slice(0, 10)
+                                            .split("-")
+                                            .reverse()
+                                            .join("-")}{" "}
+                                        at {post.timestamp.slice(11, 16)}
+                                    </p>
+                                </div>
+                                <div className="wall-post">
+                                    <p>{post.post}</p>
+                                </div>
                             </div>
-                            <div className="wall-post">
-                                <p>{post.post}</p>
-                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="wall-cell">
+                        <div className="wall-post">
+                            <p>Be the first to add a wall post.</p>
                         </div>
-                    ))}
+                    </div>
+                )}
+                <div className="wall-input">
+                    <textarea
+                        cols={30} //note brackets to conform to type "number"
+                        rows={6}
+                        ref={textareaRef}
+                        placeholder="Write a wall post"
+                        onKeyUp={onKeyUp}
+                    ></textarea>
+                    <button onClick={sendWallPost}>Post</button>
                 </div>
-            ) : (
-                <p>Be the first to add a wall post.</p>
-            )}
-            <div className="wall-input">
-                <textarea
-                    cols={40} //note brackets to conform to type "number"
-                    rows={6}
-                    ref={textareaRef}
-                    placeholder="Write a wall post"
-                    onKeyUp={onKeyUp}
-                ></textarea>
-                <button onClick={sendWallPost}>Post</button>
             </div>
         </>
     );

@@ -72,7 +72,7 @@ module.exports.getUserData = (id) => {
     );
 };
 
-//get the info of all users online
+//get the info of all online users
 module.exports.getUsersById = (arrayIds) => {
     return db.query(
         `SELECT id, first, last, avatarurl FROM users WHERE id = ANY($1)`,

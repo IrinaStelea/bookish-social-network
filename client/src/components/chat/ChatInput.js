@@ -3,7 +3,7 @@ import { socket } from "../../socket.js";
 
 const ChatInput = ({
     buttonTitle,
-    textPlaceholder = "Write a message to the Bookish community",
+    textPlaceholder = "Chat with the Bookish community",
 }) => {
     const textareaRef = useRef();
 

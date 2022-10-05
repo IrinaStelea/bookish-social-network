@@ -1,4 +1,4 @@
-# Bookish - Social network for book worms 📚
+# 📚🐛 Bookish - Social network for book worms
 
 ## Overview
 
@@ -6,7 +6,7 @@ Bookish is an authentication-based SPA with social network functionalities: prof
 
 🖥 Optimized for full-screen desktop.
 
-❓ This project was made during the full stack bootcamp at Spiced Academy.
+❓ This application was made as a learning project during the full stack bootcamp at Spiced Academy and it was my introduction to all-things React.
 
 ## Features
 
@@ -44,8 +44,8 @@ Bookish is an authentication-based SPA with social network functionalities: prof
 ## Technology
 
 -   Javascript
--   React & Redux
 -   A pinch of Typescript
+-   React & Redux
 -   Node.js & Express
 -   PostgreSQL
 -   AWS S3 & SES
@@ -60,46 +60,52 @@ Bookish is an authentication-based SPA with social network functionalities: prof
 -   install all the dependencies with `npm install`
 -   run the project locally with `npm run dev` and open it at `localhost:3000`
 
-<!-- ## Previews
+## Previews
 
-### Interacting with map pins
+### Login + own profile + edit bio
 
-<img src="client/public/pin_info_popup.gif">
-
-<br>
-
-### Adding a new user sighting
-
-<img src="client/public/adding_new_pin.gif">
+<img src="client/public/login_editbio.gif">
 
 <br>
 
-### Deleting a pin + logout
+### Uploading a profile pic
+
+<img src="client/public/user_upload.gif">
+
+<br>
+
+### Wall posts
+
+<img src="client/public/wall_post.gif">
+
+<br>
+
+### User search
+
+<img src="client/public/user_search.gif">
+
+<br>
+
+### Real-time friendship notifications and managing own friends
+
+<img src="client/public/friendship.gif">
+
+<br>
+
+### Profile of other users
+
+<img src="client/public/other_user_profile.gif">
+
+<br>
+
+### Live chat with list of online users and "friend is online" notification
+
+<img src="client/public/live_chat.gif">
+
+<br>
+
+### Delete account preview and logout
 
 <img src="client/public/delete_logout.gif">
 
 <br>
-
-### Search function
-
-<img src="client/public/search_function.gif">
-
-<br>
-
-### Login and map load with geolocation off
-
-<img src="client/public/login_geolocation_off.gif">
-
-<br>
-
-### Login new user and map load with geolocation on
-
-<img src="client/public/new_user_login_geolocation_on.gif">
-
-<br>
-
-### Registration screen with form validation
-
-<img src="client/public/registration_form_validation.gif">
-
-<br> -->

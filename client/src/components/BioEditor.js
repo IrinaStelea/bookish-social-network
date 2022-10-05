@@ -23,7 +23,6 @@ export default class BioEditor extends Component {
 
     onFormInputChange(e) {
         const target = e.currentTarget;
-        console.log(`${target.value}`);
         this.setState({
             draftBio: target.value,
             editing: true,

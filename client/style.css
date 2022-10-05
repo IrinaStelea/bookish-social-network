@@ -36,3 +36,8 @@ a {
 a:hover {
     color: darkslategray;
 }
+
+::-webkit-scrollbar {
+    width: 0;
+    background: transparent; /* make scrollbar invisible */
+}

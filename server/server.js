@@ -457,7 +457,6 @@ io.on("connection", (socket) => {
 
     //emit info about new user joining
     (async () => {
-        //TO DO: emit only to people who are friends
         //if user is not already online, emit his/her info to all other users
         if (!onlineUsers[userId]) {
             let result;
