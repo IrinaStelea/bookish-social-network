@@ -1,0 +1,11 @@
+services:
+    - type: web
+      name: bookish-social-network
+      env: node
+      plan: free
+      startCommand: node server/server.js
+      buildCommand: npm install
+
+databases:
+    - name: socialnetwork
+      plan: free
