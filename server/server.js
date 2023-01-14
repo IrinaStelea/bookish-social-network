@@ -9,9 +9,20 @@ const server = require("http").Server(app); //socket.io requires a native node s
 
 //TO DO: adapt the socket.io code to work for a deployment environment
 const io = require("socket.io")(server, {
-    allowRequest: (req, callback) =>
-        callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+    cors: {
+        // array of origins
+        origin: [
+            "https://bookish-social-network.onrender.com",
+            "http://localhost:3000",
+        ],
+        credentials: true,
+    },
 });
+
+// const io = require("socket.io")(server, {
+//     allowRequest: (req, callback) =>
+//         callback(null, req.headers.referer.startsWith("http://localhost:3000")),
+// });
 
 const { sendCodeEmail } = require("./ses");
 const db = require("./db.js");

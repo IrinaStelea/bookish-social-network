@@ -4,7 +4,7 @@ services:
       env: node
       plan: free
       startCommand: node server/server.js
-      buildCommand: webpack --mode production
+      buildCommand: npm install
 
 databases:
     - name: socialnetwork
