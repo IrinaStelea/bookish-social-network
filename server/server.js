@@ -173,12 +173,14 @@ app.post(
     uploader.single("file"),
     s3.upload,
     async (req, res) => {
-        const avatarUrl = path.join(
-            "https://s3.amazonaws.com/ihamspiced",
-            //add the userId for access to subfolder
-            `${req.session.userId}`,
-            `${req.file.filename}`
-        );
+        const avatarUrl = `https://s3.amazonaws.com/ihamspiced/${req.session.userId}/${req.file.filename}`;
+        //following version results in only one slash after https when used in deployment
+        // const avatarUrl = path.join(
+        //     "https://s3.amazonaws.com/ihamspiced",
+        //     //add the userId for access to subfolder
+        //     `${req.session.userId}`,
+        //     `${req.file.filename}`
+        // );
         try {
             const result = await db.updateImage(req.session.userId, avatarUrl);
             return res.json({
@@ -451,9 +453,9 @@ io.on("connection", (socket) => {
         return socket.disconnect(true);
     }
     const userId = socket.request.session.userId;
-    // console.log(
-    //     `User with id ${userId} and socket-id ${socket.id} has connected`
-    // );
+    console.log(
+        `User with id ${userId} and socket-id ${socket.id} has connected`
+    );
 
     //emit info about new user joining
     (async () => {
