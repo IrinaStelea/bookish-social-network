@@ -10,6 +10,7 @@ const ChatInput = ({
     const sendMessage = () => {
         const message = textareaRef.current.value;
         //socket emits when there is a new message
+        console.log("sockt id is", socket.id);
         socket.emit("new-message", {
             text: message,
         });
