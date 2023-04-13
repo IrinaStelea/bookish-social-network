@@ -1,9 +1,9 @@
 # 📚🐛 Bookish - Social network for book worms
 
-## Live at:
+<!--## Live at:
 
 https://bookish-social-network.onrender.com
-
+-->
 ## Overview
 
 Bookish is an authentication-based SPA with social network functionalities: profile editing, networking, chatting, notifications.
